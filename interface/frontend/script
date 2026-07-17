@@ -1,0 +1,43 @@
+Hi 
+we run the website locally using this node js command 
+and volla 
+
+this is the dashboard interface of the dynamic customer segmentation project
+
+The purpose of the dashboard is to demonstrate how customer transaction data can be transformed into useful business insights through Cascaded RFM and Dynamic Modified Fuzzy C-Means clustering.
+
+all the results,  numbers and  findings presented here were hardcorded to simulate how the dashboard would look when the final research results are collected
+
+The home page gives an overview of the project, the two simulations, and the core idea behind the system.”
+
+"The user can move between the model explanation, Simulation A, and Simulation B. Simulation A represents a cosmetic retail context, while Simulation B represents the UK online retail dataset.”
+
+This page explains the model used in the system. The dashboard currently shows the model as a four-phase process.
+
+First, Cascaded RFM is used to calculate customer behaviour using Recency, Frequency and Monetary value. Then K-means is used to create the initial baseline clusters. After that, the dynamic clustering stage updates the segments over time as new transaction data becomes available.
+
+The main idea is that customer segments should not remain fixed. As customers buy more, buy less, or stop purchasing, the model should be able to reflect those changes. The final phase focuses on validation, using measures such as the Silhouette Score and Xie-Beni Index to check the quality of the clusters.
+
+“This is the overview page for Simulation A, which represents the cosmetic retail dataset. The dashboard shows the total number of customers, the number of segments, the average spend, and the churn risk.
+
+This is the overview page for Simulation B, which uses the UK online retail dataset. The structure is similar to Simulation A, but the values and customer segments are different because the dataset represents a different retail context.
+
+This page shows the data and features used in the selected simulation. It provides a short description of the dataset, the number of records, the number of unique customers, and the date range.
+
+The data preview table gives a small example of how customer records appear before they are used for segmentation.”
+
+This page explains the segmentation approach
+
+This page shows the actual customer segments produced by the model. Each segment has a name, size, and behavioural description. For example, some customers may be classified as high-value loyal customers, while others may be at-risk or dormant.
+
+his page shows a sample customer table. Each row represents a customer and includes information such as customer ID, segment, spend, recency, and frequency.
+
+The purpose of this page is to make the segmentation results more practical.
+
+“This page translates the segmentation results into business actions. Instead of only showing the clusters, it suggests what the business can do with each segment.
+
+“This page shows how the model is evaluated. The dashboard currently displays the Silhouette Score and the Xie-Beni Index. These metrics help assess whether the clusters are meaningful and well separated.
+
+This current version of the dashboard interface shows the proposed structure and functionality of the CSRS website and incase you wondering csrs stands for customer segmentation in the retail sector .
+
+a quick look to the wireframes that inspired the outlook and structure of the current version of dashboard interface 
