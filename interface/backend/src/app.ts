@@ -10,6 +10,7 @@ import { router } from "./routes";
 import { notFoundHandler } from "./middleware/notFound";
 import { errorHandler } from "./middleware/errorHandler";
 import { swaggerSpec } from "./config/swagger";
+import fs from "fs";
 
 export const app = express();
 
@@ -50,6 +51,22 @@ app.use(
 
 // Serve frontend static files from dist/
 const frontendDistPath = path.resolve(__dirname, "..", "..", "frontend", "dist");
+
+console.log("===== FRONTEND DEBUG =====");
+console.log("__dirname:", __dirname);
+console.log("frontendDistPath:", frontendDistPath);
+console.log("dist exists:", fs.existsSync(frontendDistPath));
+
+const frontendFolder = path.resolve(__dirname, "..", "..", "frontend");
+
+if (fs.existsSync(frontendFolder)) {
+  console.log("frontend folder contents:", fs.readdirSync(frontendFolder));
+} else {
+  console.log("frontend folder does NOT exist");
+}
+
+console.log("==========================");
+
 app.use(
   "/CSRS",
   express.static(frontendDistPath, {
