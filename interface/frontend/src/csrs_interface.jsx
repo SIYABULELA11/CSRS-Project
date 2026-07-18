@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import IconOnly from "./assets/iconOnly.png";
 import HeroImg from "./assets/home.png";
 import HomeSimplified from "./assets/homeSimplier.png";
@@ -7,9 +7,12 @@ import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from "recharts";
+import { fetchOverviewData, fetchSegmentsData, fetchCustomersData, fetchModelEvaluation } from "./services/dashboardService";
+import { mapOverviewData, mapSegmentsData, mapCustomersData, mapModelEvaluationData } from "./services/dashboardMapper";
 
 // ─── DATA ──────────────────────────────────────────────────────────────────
 
+// SIM_A - Research data (no backend data available)
 const SIM_A = {
   totalCustomers: 22702,
   segments: 5,
@@ -904,7 +907,39 @@ const ModelEvaluation = ({ data, isSB }) => (
 
 // ─── SIMULATION SHELL ────────────────────────────────────────────────────────
 
-const SimShell = ({ sim, data, isSB }) => {
+const SimShell = ({ sim, data, isSB, isLoading, error, onRetry, isUnavailable }) => {
+  if (isUnavailable) {
+    return (
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column" }}>
+        <DataUnavailableMessage />
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column" }}>
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column" }}>
+        <ErrorMessage error={error} onRetry={onRetry} />
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column" }}>
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   const [subPage, setSubPage] = useState("overview");
   const links = ["overview", "data", "segmentation", "segments", "customers", "insights", "evaluation"];
   const labels = { overview: "Overview", data: "Data & Features", segmentation: "Segmentation", segments: "Segments", customers: "Customers", insights: "Insights & Actions", evaluation: "Model Evaluation" };
@@ -939,10 +974,90 @@ const SimShell = ({ sim, data, isSB }) => {
   );
 };
 
+// ─── LOADING & ERROR STATES ────────────────────────────────────────────────
+
+const LoadingSpinner = () => (
+  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "400px", flexDirection: "column" }}>
+    <div style={{ fontSize: 32, marginBottom: 16, animation: "spin 1s linear infinite" }}>⟳</div>
+    <p style={{ color: T.textMuted, fontSize: 14 }}>Loading dashboard data...</p>
+    <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+  </div>
+);
+
+const ErrorMessage = ({ error, onRetry }) => (
+  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "400px", flexDirection: "column", padding: "2rem" }}>
+    <div style={{ fontSize: 32, marginBottom: 16, color: T.danger }}>⚠</div>
+    <p style={{ color: T.danger, fontSize: 14, marginBottom: 8, textAlign: "center" }}>Failed to load dashboard data</p>
+    <p style={{ color: T.textMuted, fontSize: 12, marginBottom: 16, textAlign: "center", maxWidth: 400 }}>{error}</p>
+    {onRetry && (
+      <button style={{ ...s.btn(true), padding: "8px 16px" }} onClick={onRetry}>
+        Retry
+      </button>
+    )}
+  </div>
+);
+
+const DataUnavailableMessage = () => (
+  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "400px", flexDirection: "column", padding: "2rem" }}>
+    <div style={{ fontSize: 32, marginBottom: 16, color: T.gold500 }}>ℹ</div>
+    <p style={{ color: T.textMuted, fontSize: 14, marginBottom: 8, textAlign: "center" }}>Simulation A Data Not Available</p>
+    <p style={{ color: T.textMuted, fontSize: 12, textAlign: "center", maxWidth: 400 }}>
+      The research data for Simulation A is not stored in the database. 
+      This page contains static research results from the original analysis.
+    </p>
+  </div>
+);
+
 // ─── ROOT ────────────────────────────────────────────────────────────────────
 
 export default function CSRS() {
   const [page, setPage] = useState("home");
+  
+  // SIM_B live data state
+  const [simBData, setSimBData] = useState(null);
+  const [simBLoading, setSimBLoading] = useState(false);
+  const [simBError, setSimBError] = useState(null);
+
+  // Fetch SIM_B data when page changes to simB
+  useEffect(() => {
+    if (page !== "simB") return;
+
+    const loadSimBData = async () => {
+      setSimBLoading(true);
+      setSimBError(null);
+
+      try {
+        // Fetch all necessary data in parallel
+        const [overviewResp, segmentsResp, customersResp, modelEvalResp] = await Promise.all([
+          fetchOverviewData(),
+          fetchSegmentsData(),
+          fetchCustomersData(1, 5),
+          fetchModelEvaluation(),
+        ]);
+
+        // Transform data using mappers
+        const overview = mapOverviewData(overviewResp, true); // isSB = true
+        const segments = mapSegmentsData(segmentsResp, true);
+        const customers = mapCustomersData(customersResp, true);
+
+        // Combine into single data object matching UI structure
+        const combinedData = {
+          ...overview,
+          ...segments,
+          ...customers,
+        };
+
+        setSimBData(combinedData);
+      } catch (err) {
+        console.error("Error loading SIM_B data:", err);
+        setSimBError(err.message || "Failed to load dashboard data. Please check your connection.");
+      } finally {
+        setSimBLoading(false);
+      }
+    };
+
+    loadSimBData();
+  }, [page]);
 
   const navItems = [
     { id: "home", label: "Home" },
@@ -983,8 +1098,19 @@ export default function CSRS() {
             <ModelPage />
           </div>
         )}
-        {page === "simA" && <SimShell sim="Simulation A" data={SIM_A} isSB={false} />}
-        {page === "simB" && <SimShell sim="Simulation B" data={SIM_B} isSB={true} />}
+        {page === "simA" && (
+          <SimShell sim="Simulation A" data={SIM_A} isSB={false} isUnavailable={true} />
+        )}
+        {page === "simB" && (
+          <SimShell 
+            sim="Simulation B" 
+            data={simBData} 
+            isSB={true} 
+            isLoading={simBLoading}
+            error={simBError}
+            onRetry={() => setPage("simB")}
+          />
+        )}
       </div>
     </div>
   );

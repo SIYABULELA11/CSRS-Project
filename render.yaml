@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: csrs-backend
+    env: node
+    region: ohio
+    plan: free
+    buildCommand: cd interface/backend && npm install && npm run build
+    startCommand: cd interface/backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 4000
+      - key: DATABASE_PATH
+        value: model/pipeline b/csrs_pipeline_b.db
+      - key: ARTIFACT_ROOT
+        value: model
+      - key: CACHE_TTL_SECONDS
+        value: 120
+      - key: CORS_ORIGIN
+        value: http://localhost:5173,https://csrs-project.onrender.com
+    healthCheckPath: /health
+
+  - type: static
+    name: csrs-frontend
+    env: static
+    region: ohio
+    plan: free
+    staticPublishPath: interface/frontend/dist
+    buildCommand: cd interface/frontend && npm install && npm run build
+    envVars:
+      - key: VITE_API_URL
+        value: https://csrs-project.onrender.com
+    routes:
+      - path: /CSRS
+        destination: /CSRS/index.html

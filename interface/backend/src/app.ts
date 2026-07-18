@@ -48,6 +48,21 @@ app.use(
   }),
 );
 
+// Serve frontend static files from dist/
+const frontendDistPath = path.resolve(__dirname, "..", "..", "frontend", "dist");
+app.use(
+  "/CSRS",
+  express.static(frontendDistPath, {
+    maxAge: "1h",
+  }),
+);
+
+// Fallback to index.html for client-side routing
+app.get("/CSRS/*", (_req, res) => {
+  const indexPath = path.resolve(frontendDistPath, "index.html");
+  res.sendFile(indexPath);
+});
+
 app.use(router);
 app.use(notFoundHandler);
 app.use(errorHandler);
