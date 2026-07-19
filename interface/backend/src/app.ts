@@ -75,11 +75,18 @@ app.use(
 );
 
 // Fallback to index.html for client-side routing
-app.get("/CSRS/*", (_req, res) => {
+app.get("/CSRS/*", (req, res, next) => {
   const indexPath = path.resolve(frontendDistPath, "index.html");
-  res.sendFile(indexPath);
-});
 
+  console.log("Fallback hit:", req.originalUrl);
+
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      console.error("sendFile error:", err);
+      next(err);
+    }
+  });
+});
 app.use(router);
 app.use(notFoundHandler);
 app.use(errorHandler);
