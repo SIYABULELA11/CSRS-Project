@@ -13,7 +13,17 @@ export const apiRouter = Router();
  *       200:
  *         description: Overview payload
  */
-apiRouter.get("/overview", controller.dashboardOverview.bind(controller));
+apiRouter.get("/overview", async (req, res) => {
+  console.log(">>> /api/overview HIT");
+
+  try {
+    await controller.dashboardOverview(req, res);
+    console.log(">>> dashboardOverview completed");
+  } catch (err) {
+    console.error(">>> dashboardOverview threw:", err);
+    res.status(500).json(err);
+  }
+});
 apiRouter.get("/dashboard/overview", controller.dashboardOverview.bind(controller));
 
 /**
