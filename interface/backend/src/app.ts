@@ -3,6 +3,10 @@ import path from "path";
 
 export const app = express();
 
+app.get("/health", (_req, res) => {
+  res.status(200).send("OK");
+});
+
 const frontendDistPath = path.resolve(__dirname, "..", "..", "frontend", "dist");
 
 app.use("/CSRS", express.static(frontendDistPath));
