@@ -67,13 +67,18 @@ if (fs.existsSync(frontendFolder)) {
 
 console.log("==========================");
 
-app.use(
-  "/CSRS",
-  express.static(frontendDistPath, {
-    maxAge: "1h",
-  }),
-);
+app.use("/CSRS", (req, res, next) => {
+  const requested = req.path;
+  const fullPath = path.join(frontendDistPath, requested);
 
+  console.log("STATIC REQUEST:", requested);
+  console.log("FULL PATH:", fullPath);
+  console.log("FILE EXISTS:", fs.existsSync(fullPath));
+
+  next();
+});
+
+app.use("/CSRS", express.static(frontendDistPath));
 // Fallback to index.html for client-side routing
 app.get("/CSRS/*", (req, res, next) => {
   const indexPath = path.resolve(frontendDistPath, "index.html");
