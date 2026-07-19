@@ -46,13 +46,10 @@ export const fetchOverviewData = () =>
 export const fetchSegmentsData = () =>
   getCached('dashboard:segments', async () => {
     const segments = await apiGet('/api/segments');
-    const detailedSegments = await Promise.all(
-      segments.map(seg => apiGet(`/api/segments/${seg.segment}`))
-    );
 
     return {
       segments,
-      detailedSegments,
+      detailedSegments: segments,
     };
   });
 
