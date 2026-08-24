@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.vite/
+.env
+.env.*
+!.env.example
+*.log
+*.db-journal
+*.db-shm
+*.db-wal
+.DS_Store
+Thumbs.db

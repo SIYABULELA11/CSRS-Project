@@ -1,36 +1,22 @@
 services:
   - type: web
-    name: csrs-backend
-    env: node
+    name: csrs-project
+    runtime: node
     region: ohio
     plan: free
-    buildCommand: cd interface/backend && npm install && npm run build
-    startCommand: cd interface/backend && npm start
+    buildCommand: npm ci --include=dev --prefix interface/backend && npm run build --prefix interface/backend && npm ci --include=dev --prefix interface/frontend && npm run build --prefix interface/frontend
+    startCommand: npm start --prefix interface/backend
     envVars:
-      - key: NODE_ENV
-        value: production
-      - key: PORT
-        value: 4000
+      - key: NODE_VERSION
+        value: 22.22.0
       - key: DATABASE_PATH
-        value: model/pipeline b/csrs_pipeline_b.db
+        value: "model/pipeline b/csrs_pipeline_b.db"
       - key: ARTIFACT_ROOT
         value: model
       - key: CACHE_TTL_SECONDS
         value: 120
       - key: CORS_ORIGIN
-        value: http://localhost:5173,https://csrs-project.onrender.com
-    healthCheckPath: /health
-
-  - type: static
-    name: csrs-frontend
-    env: static
-    region: ohio
-    plan: free
-    staticPublishPath: interface/frontend/dist
-    buildCommand: cd interface/frontend && npm install && npm run build
-    envVars:
+        value: https://csrs-project.onrender.com,https://siyabulela11.github.io
       - key: VITE_API_URL
         value: https://csrs-project.onrender.com
-    routes:
-      - path: /CSRS
-        destination: /CSRS/index.html
+    healthCheckPath: /health

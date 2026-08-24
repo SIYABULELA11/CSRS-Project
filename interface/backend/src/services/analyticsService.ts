@@ -11,63 +11,83 @@ interface TableQuery {
   filters: Record<string, string>;
 }
 
-const repo = new DataRepository();
-const schemaRepo = new SchemaRepository();
+const repository = new DataRepository();
+const schemaRepository = new SchemaRepository();
 
 const toNumber = (value: unknown): number => {
-  const num = Number(value);
-  return Number.isFinite(num) ? num : 0;
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) ? numericValue : 0;
 };
 
-const mean = (arr: number[]): number => arr.reduce((a, b) => a + b, 0) / (arr.length || 1);
+const mean = (values: number[]): number =>
+  values.reduce((total, value) => total + value, 0) / (values.length || 1);
 
-const variance = (arr: number[]): number => {
-  if (arr.length < 2) return 0;
-  const m = mean(arr);
-  return arr.reduce((sum, v) => sum + (v - m) ** 2, 0) / (arr.length - 1);
+const standardDeviation = (values: number[]): number => {
+  if (values.length < 2) return 0;
+  const average = mean(values);
+  const variance = values.reduce(
+    (total, value) => total + (value - average) ** 2,
+    0,
+  ) / (values.length - 1);
+  return Math.sqrt(variance);
 };
 
-const stdDev = (arr: number[]): number => Math.sqrt(variance(arr));
+const pearson = (left: number[], right: number[]): number => {
+  if (left.length !== right.length || left.length < 2) return 0;
+  const leftMean = mean(left);
+  const rightMean = mean(right);
+  let numerator = 0;
+  let leftDenominator = 0;
+  let rightDenominator = 0;
 
-const pearson = (x: number[], y: number[]): number => {
-  if (x.length !== y.length || x.length < 2) return 0;
-
-  const mx = mean(x);
-  const my = mean(y);
-
-  let num = 0;
-  let denX = 0;
-  let denY = 0;
-
-  for (let i = 0; i < x.length; i += 1) {
-    const dx = x[i] - mx;
-    const dy = y[i] - my;
-    num += dx * dy;
-    denX += dx * dx;
-    denY += dy * dy;
+  for (let index = 0; index < left.length; index += 1) {
+    const leftDelta = left[index] - leftMean;
+    const rightDelta = right[index] - rightMean;
+    numerator += leftDelta * rightDelta;
+    leftDenominator += leftDelta ** 2;
+    rightDenominator += rightDelta ** 2;
   }
 
-  const den = Math.sqrt(denX * denY);
-  if (!den) return 0;
-  return num / den;
+  const denominator = Math.sqrt(leftDenominator * rightDenominator);
+  return denominator ? numerator / denominator : 0;
+};
+
+const getLatestCycle = (): string => {
+  const row = repository.runAggregate(`
+    SELECT CycleID
+    FROM Dynamic_Cycle_Summary
+    ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER) DESC
+    LIMIT 1
+  `);
+  return String(row.CycleID ?? "Cycle_9");
 };
 
 export class AnalyticsService {
   getSchema(): Array<{ table: string; columns: string[]; rowCount: number }> {
-    const schemas = schemaRepo.getAllSchemas();
-
-    return schemas.map((s) => ({
-      ...s,
-      rowCount: repo.countRows(s.table),
+    return schemaRepository.getAllSchemas().map((schema) => ({
+      ...schema,
+      rowCount: repository.countRows(schema.table),
     }));
   }
 
   getFilterOptions(): Record<string, unknown> {
     return {
-      cycles: repo.runMany("SELECT DISTINCT CycleID as value FROM Data_Preprocessing_Results ORDER BY CycleID"),
-      segments: repo.runMany("SELECT DISTINCT Segment_Name as value FROM Dynamic_Segmentation_Results ORDER BY Segment_Name"),
-      countries: repo.runMany("SELECT DISTINCT Country as value FROM Customer WHERE Country IS NOT NULL ORDER BY Country"),
-      customers: repo.runMany("SELECT DISTINCT CustomerID as value FROM Customer ORDER BY CustomerID LIMIT 2000"),
+      cycles: repository.runMany(`
+        SELECT DISTINCT CycleID AS value
+        FROM Dynamic_Customer_Summary
+        ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER)
+      `),
+      segments: repository.runMany(`
+        SELECT DISTINCT Segment_Name AS value
+        FROM Dynamic_Customer_Summary
+        ORDER BY Segment_Name
+      `),
+      countries: repository.runMany(`
+        SELECT DISTINCT Country AS value
+        FROM Customer
+        WHERE Country IS NOT NULL
+        ORDER BY Country
+      `),
     };
   }
 
@@ -76,18 +96,16 @@ export class AnalyticsService {
     const pageSize = Math.min(500, Math.max(1, Number(query.pageSize ?? 50)));
     const sortBy = String(query.sortBy ?? columns[0] ?? "");
     const sortOrder = String(query.sortOrder ?? "asc").toLowerCase() === "desc" ? "desc" : "asc";
-
     const filters: Record<string, string> = {};
+
     if (typeof query.filters === "string" && query.filters.trim()) {
       try {
         const parsed = JSON.parse(query.filters) as Record<string, string>;
         Object.entries(parsed).forEach(([key, value]) => {
-          if (value != null && String(value).trim()) {
-            filters[key] = String(value).trim();
-          }
+          if (value != null && String(value).trim()) filters[key] = String(value).trim();
         });
       } catch {
-        // Ignore malformed filters and continue with no filters.
+        return { page, pageSize, sortBy, sortOrder, filters };
       }
     }
 
@@ -95,25 +113,23 @@ export class AnalyticsService {
   }
 
   getTableRows(table: string, queryRaw: Record<string, unknown>): Record<string, unknown> {
-    const columns = schemaRepo.getTableColumns(table);
-    if (!columns.length) {
-      throw new Error(`Table not found: ${table}`);
-    }
+    const columns = schemaRepository.getTableColumns(table);
+    if (!columns.length) throw new Error(`Table not found: ${table}`);
 
     const query = this.parseTableQuery(queryRaw, columns);
-
     const where: string[] = [];
     const params: Record<string, unknown> = {};
-    Object.entries(query.filters).forEach(([key, value], idx) => {
+
+    Object.entries(query.filters).forEach(([key, value], index) => {
       if (!columns.includes(key)) return;
-      const paramKey = `f${idx}`;
-      where.push(`${key} LIKE @${paramKey}`);
+      const paramKey = `filter${index}`;
+      where.push(`CAST(${key} AS TEXT) LIKE @${paramKey}`);
       params[paramKey] = `%${value}%`;
     });
 
     const safeSortBy = columns.includes(query.sortBy) ? query.sortBy : columns[0];
-    const total = repo.countRows(table, { where, params });
-    const data = repo.queryRows(table, {
+    const total = repository.countRows(table, { where, params });
+    const data = repository.queryRows(table, {
       where,
       params,
       orderBy: `${safeSortBy} ${query.sortOrder.toUpperCase()}`,
@@ -135,251 +151,323 @@ export class AnalyticsService {
   }
 
   getCycleOverview(cycleId: string): Record<string, unknown> {
-    const kpis = repo.runAggregate(
-      `
+    if (cycleId === "Cycle_0") {
+      const kpis = repository.runAggregate(`
+        SELECT
+          COUNT(DISTINCT CustomerID) AS customers,
+          SUM(Monetary) AS revenue,
+          AVG(Recency) AS avgRecency,
+          AVG(Frequency) AS avgFrequency,
+          AVG(Monetary) AS avgMonetary
+        FROM Data_Preprocessing_Results
+        WHERE CycleID = 'Cycle_0'
+      `);
+      const segments = repository.runMany(`
+        SELECT Segment_Name AS segment, COUNT(*) AS customerCount
+        FROM Time_Cycle_0_Segmentation
+        GROUP BY Segment_Name
+        ORDER BY customerCount DESC
+      `);
+      return { cycleId, kpis, segments, model: null };
+    }
+
+    const kpis = repository.runAggregate(`
       SELECT
-        COUNT(DISTINCT d.CustomerID) as customers,
-        SUM(d.Monetary) as revenue,
-        AVG(d.Recency) as avgRecency,
-        AVG(d.Frequency) as avgFrequency,
-        AVG(d.Monetary) as avgMonetary,
-        AVG(s.Membership_Confidence) as avgMembership
-      FROM Data_Preprocessing_Results d
-      LEFT JOIN Dynamic_Segmentation_Results s
-        ON s.CustomerID = d.CustomerID AND s.CycleID = d.CycleID
-      WHERE d.CycleID = @cycleId
-      `,
-      { cycleId },
-    );
-
-    const segments = cycleId === "Cycle_0"
-      ? repo.runMany(
-          `
-          SELECT
-            COALESCE(Baseline_Segment_Name, 'Baseline Cluster') as segment,
-            COUNT(*) as customerCount
-          FROM Time_Cycle_0_Segmentation
-          GROUP BY COALESCE(Baseline_Segment_Name, 'Baseline Cluster')
-          ORDER BY customerCount DESC
-          `,
-        )
-      : repo.runMany(
-          `
-          SELECT Segment_Name as segment, COUNT(*) as customerCount
-          FROM Dynamic_Segmentation_Results
-          WHERE CycleID = @cycleId
-          GROUP BY Segment_Name
-          ORDER BY customerCount DESC
-          `,
-          { cycleId },
-        );
-
-    return {
-      cycleId,
-      kpis,
-      segments,
-    };
+        COUNT(DISTINCT CustomerID) AS customers,
+        SUM(Revenue) AS revenue,
+        AVG(Orders) AS avgOrders,
+        AVG(Products) AS avgProducts,
+        AVG(Average_Basket_Value) AS avgBasketValue,
+        AVG(Average_Membership) AS avgMembership
+      FROM Dynamic_Customer_Summary
+      WHERE CycleID = @cycleId
+    `, { cycleId });
+    const segments = repository.runMany(`
+      SELECT
+        Segment_Name AS segment,
+        Customers AS customerCount,
+        Revenue AS revenue,
+        Average_Membership AS averageMembership
+      FROM Dynamic_Segment_Summary
+      WHERE CycleID = @cycleId
+      ORDER BY Revenue DESC
+    `, { cycleId });
+    const model = repository.runAggregate(`
+      SELECT *
+      FROM Dynamic_Cycle_Summary
+      WHERE CycleID = @cycleId
+    `, { cycleId });
+    return { cycleId, kpis, segments, model };
   }
 
   getFeatureSummary(cycleId?: string): Record<string, unknown> {
-    const where = cycleId ? "WHERE CycleID = @cycleId" : "";
+    const whereClause = cycleId ? "WHERE CycleID = @cycleId" : "";
     const params = cycleId ? { cycleId } : {};
-
-    const rows = repo.runMany(
-      `SELECT Recency, Frequency, Monetary, RF_Score, RM_Score, FM_Score FROM Data_Preprocessing_Results ${where}`,
-      params,
-    );
-
-    const fields = ["Recency", "Frequency", "Monetary", "RF_Score", "RM_Score", "FM_Score"] as const;
+    const rows = repository.runMany(`
+      SELECT Recency, Frequency, Monetary, RF_Score, RM_Score, FM_Score
+      FROM Data_Preprocessing_Results
+      ${whereClause}
+    `, params);
+    const fields = ["Recency", "Frequency", "Monetary", "RF_Score", "RM_Score", "FM_Score"];
 
     const summary = fields.map((field) => {
-      const values = rows.map((r) => toNumber(r[field])).filter((v) => Number.isFinite(v));
-      const sorted = [...values].sort((a, b) => a - b);
-
-      const q = (p: number): number => {
-        if (!sorted.length) return 0;
-        const idx = Math.floor((sorted.length - 1) * p);
-        return sorted[idx];
+      const values = rows.map((row) => toNumber(row[field])).sort((left, right) => left - right);
+      const quantile = (position: number): number => {
+        if (!values.length) return 0;
+        return values[Math.floor((values.length - 1) * position)];
       };
-
       return {
         field,
         count: values.length,
-        min: sorted[0] ?? 0,
-        max: sorted[sorted.length - 1] ?? 0,
+        min: values[0] ?? 0,
+        max: values[values.length - 1] ?? 0,
         mean: mean(values),
-        stdDev: stdDev(values),
-        median: q(0.5),
-        q1: q(0.25),
-        q3: q(0.75),
+        stdDev: standardDeviation(values),
+        median: quantile(0.5),
+        q1: quantile(0.25),
+        q3: quantile(0.75),
       };
     });
 
-    const missing = repo.runAggregate(
-      `
-      SELECT
-        SUM(CASE WHEN Recency IS NULL THEN 1 ELSE 0 END) as Recency,
-        SUM(CASE WHEN Frequency IS NULL THEN 1 ELSE 0 END) as Frequency,
-        SUM(CASE WHEN Monetary IS NULL THEN 1 ELSE 0 END) as Monetary,
-        SUM(CASE WHEN RF_Score IS NULL THEN 1 ELSE 0 END) as RF_Score,
-        SUM(CASE WHEN RM_Score IS NULL THEN 1 ELSE 0 END) as RM_Score,
-        SUM(CASE WHEN FM_Score IS NULL THEN 1 ELSE 0 END) as FM_Score
-      FROM Data_Preprocessing_Results ${where}
-      `,
-      params,
-    );
-
-    return {
-      cycleId: cycleId ?? null,
-      summary,
-      missing,
-      sampleSize: rows.length,
-    };
+    return { cycleId: cycleId ?? null, summary, sampleSize: rows.length };
   }
 
   getFeatureCorrelation(cycleId?: string): Record<string, unknown> {
-    const where = cycleId ? "WHERE CycleID = @cycleId" : "";
+    const whereClause = cycleId ? "WHERE CycleID = @cycleId" : "";
     const params = cycleId ? { cycleId } : {};
-    const rows = repo.runMany(
-      `SELECT Recency, Frequency, Monetary, RF_Score, RM_Score, FM_Score FROM Data_Preprocessing_Results ${where}`,
-      params,
+    const rows = repository.runMany(`
+      SELECT Recency, Frequency, Monetary, RF_Score, RM_Score, FM_Score
+      FROM Data_Preprocessing_Results
+      ${whereClause}
+    `, params);
+    const fields = ["Recency", "Frequency", "Monetary", "RF_Score", "RM_Score", "FM_Score"];
+    const vectors = Object.fromEntries(
+      fields.map((field) => [field, rows.map((row) => toNumber(row[field]))]),
+    ) as Record<string, number[]>;
+    const matrix = fields.map((leftField) =>
+      fields.map((rightField) =>
+        Number(pearson(vectors[leftField], vectors[rightField]).toFixed(4)),
+      ),
     );
-
-    const fields = ["Recency", "Frequency", "Monetary", "RF_Score", "RM_Score", "FM_Score"] as const;
-    const vectors = fields.reduce<Record<string, number[]>>((acc, field) => {
-      acc[field] = rows.map((r) => toNumber(r[field]));
-      return acc;
-    }, {});
-
-    const matrix = fields.map((f1) =>
-      fields.map((f2) => Number(pearson(vectors[f1], vectors[f2]).toFixed(4))),
-    );
-
-    return {
-      cycleId: cycleId ?? null,
-      fields,
-      matrix,
-      sampleSize: rows.length,
-    };
+    return { cycleId: cycleId ?? null, fields, matrix, sampleSize: rows.length };
   }
 
-  getModelEvaluationDetailed(includePoints = false): Record<string, unknown> {
-    const rows = repo.runMany(
-      `
+  getModelEvaluationDetailed(): Record<string, unknown> {
+    const baseline = repository.runAggregate(`
       SELECT
-        PC1,
-        PC2,
-        PC3,
-        KMeans_Cluster_Number as label,
-        Elbow_Inertia_Value as elbow,
-        Silhouette_Score as silhouette
+        COUNT(*) AS sampleSize,
+        COUNT(DISTINCT KMeans_Cluster_Number) AS clusterCount,
+        AVG(Silhouette_Score) AS silhouette,
+        AVG(Elbow_Inertia_Value) AS elbowInertia
       FROM Time_Cycle_0_Segmentation
-      WHERE PC1 IS NOT NULL AND PC2 IS NOT NULL AND PC3 IS NOT NULL
-      `,
-    );
+    `);
+    const cycles = repository.runMany(`
+      SELECT
+        CycleID,
+        CustomersProcessed,
+        StableCustomers,
+        MigratedCustomers,
+        MigrationRate,
+        CentroidShift,
+        Iterations,
+        SilhouetteScore,
+        DaviesBouldinScore,
+        CalinskiHarabaszScore,
+        AverageMembership,
+        ProcessingTime,
+        Converged
+      FROM Dynamic_Cycle_Summary
+      ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER)
+    `);
+    const averages = repository.runAggregate(`
+      SELECT
+        AVG(SilhouetteScore) AS silhouette,
+        AVG(DaviesBouldinScore) AS daviesBouldin,
+        AVG(CalinskiHarabaszScore) AS calinskiHarabasz,
+        AVG(AverageMembership) AS averageMembership,
+        AVG(MigrationRate) AS migrationRate,
+        AVG(Iterations) AS iterations,
+        SUM(Converged) AS convergedCycles,
+        COUNT(*) AS dynamicCycles
+      FROM Dynamic_Cycle_Summary
+    `);
+    return { baseline, cycles, averages, latest: cycles.at(-1) ?? null };
+  }
 
-    const points = rows.map((r) => ({
-      x: toNumber(r.PC1),
-      y: toNumber(r.PC2),
-      z: toNumber(r.PC3),
-      label: toNumber(r.label),
-    }));
+  getCustomerAnalytics(): Record<string, unknown> {
+    const latestCycle = getLatestCycle();
+    const summary = repository.runAggregate(`
+      SELECT
+        COUNT(*) AS customers,
+        AVG(Orders) AS averageOrders,
+        AVG(Products) AS averageProducts,
+        AVG(Quantity) AS averageQuantity,
+        AVG(Revenue) AS averageRevenue,
+        AVG(Average_Basket_Value) AS averageBasketValue,
+        AVG(Average_Membership) AS averageMembership,
+        MAX(Revenue) AS highestRevenue
+      FROM Dynamic_Customer_Summary
+      WHERE CycleID = @latestCycle
+    `, { latestCycle });
+    const valueBands = repository.runMany(`
+      SELECT
+        CASE
+          WHEN Revenue < 250 THEN 'Under £250'
+          WHEN Revenue < 750 THEN '£250–£749'
+          WHEN Revenue < 2000 THEN '£750–£1,999'
+          ELSE '£2,000+'
+        END AS band,
+        COUNT(*) AS customers,
+        SUM(Revenue) AS revenue
+      FROM Dynamic_Customer_Summary
+      WHERE CycleID = @latestCycle
+      GROUP BY band
+      ORDER BY MIN(Revenue)
+    `, { latestCycle });
+    const confidenceBands = repository.runMany(`
+      SELECT
+        CASE
+          WHEN Average_Membership < 0.55 THEN 'Low confidence'
+          WHEN Average_Membership < 0.75 THEN 'Moderate confidence'
+          ELSE 'High confidence'
+        END AS band,
+        COUNT(*) AS customers
+      FROM Dynamic_Customer_Summary
+      WHERE CycleID = @latestCycle
+      GROUP BY band
+      ORDER BY MIN(Average_Membership)
+    `, { latestCycle });
+    const topCustomers = repository.runMany(`
+      SELECT
+        summary.CustomerID,
+        customer.Country,
+        summary.Segment_Name,
+        summary.Orders,
+        summary.Products,
+        summary.Revenue,
+        summary.Average_Basket_Value,
+        summary.Average_Membership,
+        summary.Migration_Status
+      FROM Dynamic_Customer_Summary summary
+      LEFT JOIN Customer customer ON customer.CustomerID = summary.CustomerID
+      WHERE summary.CycleID = @latestCycle
+      ORDER BY summary.Revenue DESC
+      LIMIT 12
+    `, { latestCycle });
+    const segmentValue = repository.runMany(`
+      SELECT
+        Segment_Name AS segment,
+        COUNT(*) AS customers,
+        AVG(Revenue) AS averageRevenue,
+        AVG(Orders) AS averageOrders,
+        AVG(Products) AS averageProducts,
+        AVG(Average_Basket_Value) AS averageBasketValue,
+        AVG(Average_Membership) AS averageMembership
+      FROM Dynamic_Customer_Summary
+      WHERE CycleID = @latestCycle
+      GROUP BY Segment_Name
+      ORDER BY averageRevenue DESC
+    `, { latestCycle });
+    return { latestCycle, summary, valueBands, confidenceBands, topCustomers, segmentValue };
+  }
 
-    const byCluster = new Map<number, Array<{ x: number; y: number; z: number }>>();
-    points.forEach((p) => {
-      if (!byCluster.has(p.label)) byCluster.set(p.label, []);
-      byCluster.get(p.label)?.push({ x: p.x, y: p.y, z: p.z });
-    });
+  getProductAnalytics(): Record<string, unknown> {
+    const topProducts = repository.runMany(`
+      SELECT
+        Description AS product,
+        SUM(Revenue) AS revenue,
+        SUM(Quantity_Sold) AS quantity,
+        SUM(Orders) AS orders,
+        SUM(Customer_Count) AS customerInteractions,
+        AVG(Average_Price) AS averagePrice
+      FROM Dynamic_Product_Summary
+      GROUP BY Description
+      ORDER BY revenue DESC
+      LIMIT 20
+    `);
+    const portfolio = repository.runMany(`
+      SELECT
+        Segment_Name AS segment,
+        COUNT(DISTINCT Description) AS products,
+        SUM(Revenue) AS revenue,
+        SUM(Quantity_Sold) AS quantity,
+        SUM(Orders) AS orders
+      FROM Dynamic_Product_Summary
+      GROUP BY Segment_Name
+      ORDER BY revenue DESC
+    `);
+    const segmentProducts = repository.runMany(`
+      WITH ranked AS (
+        SELECT
+          Segment_Name AS segment,
+          Description AS product,
+          SUM(Revenue) AS revenue,
+          SUM(Quantity_Sold) AS quantity,
+          ROW_NUMBER() OVER (
+            PARTITION BY Segment_Name
+            ORDER BY SUM(Revenue) DESC
+          ) AS rank
+        FROM Dynamic_Product_Summary
+        GROUP BY Segment_Name, Description
+      )
+      SELECT segment, product, revenue, quantity, rank
+      FROM ranked
+      WHERE rank <= 5
+      ORDER BY segment, rank
+    `);
+    const revenueByCycle = repository.runMany(`
+      SELECT CycleID, SUM(Revenue) AS revenue, SUM(Quantity_Sold) AS quantity
+      FROM Dynamic_Product_Summary
+      GROUP BY CycleID
+      ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER)
+    `);
+    return { topProducts, portfolio, segmentProducts, revenueByCycle };
+  }
 
-    const clusters = [...byCluster.entries()].map(([label, pts]) => {
-      const cx = mean(pts.map((p) => p.x));
-      const cy = mean(pts.map((p) => p.y));
-      const cz = mean(pts.map((p) => p.z));
-      return { label, pts, centroid: { x: cx, y: cy, z: cz } };
-    });
-
-    const distance = (
-      a: { x: number; y: number; z: number },
-      b: { x: number; y: number; z: number },
-    ): number => Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2 + (a.z - b.z) ** 2);
-
-    // Calinski-Harabasz
-    const overallCentroid = {
-      x: mean(points.map((p) => p.x)),
-      y: mean(points.map((p) => p.y)),
-      z: mean(points.map((p) => p.z)),
-    };
-
-    let between = 0;
-    let within = 0;
-
-    clusters.forEach((c) => {
-      between += c.pts.length * distance(c.centroid, overallCentroid) ** 2;
-      within += c.pts.reduce((sum, p) => sum + distance(p, c.centroid) ** 2, 0);
-    });
-
-    const n = points.length;
-    const k = clusters.length;
-    const calinskiHarabasz = k > 1 && n > k ? (between / (k - 1)) / (within / (n - k)) : 0;
-
-    // Davies-Bouldin
-    const s = clusters.map((c) =>
-      c.pts.length ? c.pts.reduce((sum, p) => sum + distance(p, c.centroid), 0) / c.pts.length : 0,
-    );
-    const dbTerms = clusters.map((ci, i) => {
-      let maxR = 0;
-      clusters.forEach((cj, j) => {
-        if (i === j) return;
-        const d = distance(ci.centroid, cj.centroid);
-        if (!d) return;
-        const r = (s[i] + s[j]) / d;
-        if (r > maxR) maxR = r;
-      });
-      return maxR;
-    });
-    const daviesBouldin = dbTerms.length ? mean(dbTerms) : 0;
-
-    // Xie-Beni (crisp approximation)
-    const minCentroidDistSq = (() => {
-      let minVal = Number.POSITIVE_INFINITY;
-      clusters.forEach((ci, i) => {
-        clusters.forEach((cj, j) => {
-          if (i >= j) return;
-          const d2 = distance(ci.centroid, cj.centroid) ** 2;
-          if (d2 > 0 && d2 < minVal) minVal = d2;
-        });
-      });
-      return Number.isFinite(minVal) ? minVal : 0;
-    })();
-
-    const compactness = clusters.reduce(
-      (sum, c) => sum + c.pts.reduce((acc, p) => acc + distance(p, c.centroid) ** 2, 0),
-      0,
-    );
-    const xbIndex = n > 0 && minCentroidDistSq > 0 ? compactness / (n * minCentroidDistSq) : 0;
-
-    const silhouetteAvg = mean(rows.map((r) => toNumber(r.silhouette)).filter((v) => v !== 0));
-    const elbow = mean(rows.map((r) => toNumber(r.elbow)).filter((v) => v !== 0));
-
-    const clusterStats = clusters
-      .map((c) => ({
-        cluster: c.label,
-        size: c.pts.length,
-        centroid: c.centroid,
-      }))
-      .sort((a, b) => b.size - a.size);
-
-    return {
-      sampleSize: n,
-      clusterCount: k,
-      silhouette: Number(silhouetteAvg.toFixed(4)),
-      daviesBouldin: Number(daviesBouldin.toFixed(4)),
-      calinskiHarabasz: Number(calinskiHarabasz.toFixed(4)),
-      xbIndex: Number(xbIndex.toFixed(6)),
-      wcss: Number(within.toFixed(4)),
-      elbowInertia: Number(elbow.toFixed(4)),
-      clusterStats,
-      pcaPoints: includePoints ? points : undefined,
-    };
+  getGeographicAnalytics(): Record<string, unknown> {
+    const latestCycle = getLatestCycle();
+    const countries = repository.runMany(`
+      SELECT
+        Country AS country,
+        COUNT(DISTINCT CustomerID) AS customers,
+        COUNT(DISTINCT InvoiceNo) AS orders,
+        COUNT(DISTINCT Description) AS products,
+        SUM(Quantity) AS quantity,
+        SUM(Revenue) AS revenue,
+        SUM(Revenue) / NULLIF(COUNT(DISTINCT CustomerID), 0) AS revenuePerCustomer
+      FROM Dynamic_Business_Analytics
+      GROUP BY Country
+      ORDER BY revenue DESC
+    `);
+    const segmentComposition = repository.runMany(`
+      SELECT
+        Country AS country,
+        Segment_Name AS segment,
+        COUNT(DISTINCT CustomerID) AS customers,
+        SUM(Revenue) AS revenue
+      FROM Dynamic_Business_Analytics
+      WHERE CycleID = @latestCycle
+      GROUP BY Country, Segment_Name
+      ORDER BY revenue DESC
+    `, { latestCycle });
+    const countryTrends = repository.runMany(`
+      WITH top_countries AS (
+        SELECT Country
+        FROM Dynamic_Business_Analytics
+        GROUP BY Country
+        ORDER BY SUM(Revenue) DESC
+        LIMIT 8
+      )
+      SELECT
+        CycleID,
+        Country AS country,
+        COUNT(DISTINCT CustomerID) AS customers,
+        SUM(Revenue) AS revenue
+      FROM Dynamic_Business_Analytics
+      WHERE Country IN (SELECT Country FROM top_countries)
+      GROUP BY CycleID, Country
+      ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), revenue DESC
+    `);
+    return { latestCycle, countries, segmentComposition, countryTrends };
   }
 }

@@ -1,91 +1,89 @@
-/**
- * Dashboard Service
- * 
- * Fetches and aggregates data from backend APIs for the simulation dashboards.
- * Handles caching, error handling, and data combination.
- */
-
 import { apiGet } from '../config/api';
 
-const CACHE_TTL = 120000; // 2 minutes
+const CACHE_TTL = 120000;
 const cache = new Map();
 
-/**
- * Get cached data or fetch if expired
- */
 const getCached = (key, fetcher) => {
   const cached = cache.get(key);
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
     return Promise.resolve(cached.data);
   }
-  return fetcher().then(data => {
+  return fetcher().then((data) => {
     cache.set(key, { data, timestamp: Date.now() });
     return data;
   });
 };
 
-/**
- * Fetch overview data (KPIs, segments, RFM)
- */
-export const fetchOverviewData = () =>
-  getCached('dashboard:overview', async () => {
-    const overview = await apiGet('/api/overview');
-    const segments = await apiGet('/api/segments');
-    const modelEval = await apiGet('/api/model/evaluation');
+export const fetchDashboardBundle = () =>
+  getCached('dashboard:bundle:v2', async () => {
+    const [
+      overview,
+      segments,
+      cycles,
+      migration,
+      customerAnalytics,
+      productAnalytics,
+      geographicAnalytics,
+      modelEvaluation,
+      artifacts,
+      schema,
+      filters,
+    ] = await Promise.all([
+      apiGet('/api/overview'),
+      apiGet('/api/segments'),
+      apiGet('/api/cycles'),
+      apiGet('/api/migration'),
+      apiGet('/api/analytics/customers'),
+      apiGet('/api/analytics/products'),
+      apiGet('/api/analytics/geography'),
+      apiGet('/api/model/evaluation/detailed'),
+      apiGet('/api/artifacts'),
+      apiGet('/api/schema'),
+      apiGet('/api/filters'),
+    ]);
 
     return {
       overview,
       segments,
-      modelEval,
+      cycles,
+      migration,
+      customerAnalytics,
+      productAnalytics,
+      geographicAnalytics,
+      modelEvaluation,
+      artifacts,
+      schema,
+      filters,
     };
   });
 
-/**
- * Fetch detailed segment data
- */
-export const fetchSegmentsData = () =>
-  getCached('dashboard:segments', async () => {
-    const segments = await apiGet('/api/segments');
-
-    return {
-      segments,
-      detailedSegments: segments,
-    };
+export const fetchCustomers = ({
+  page = 1,
+  pageSize = 20,
+  query = '',
+  segment = '',
+  country = '',
+  cycle = '',
+} = {}) => {
+  const params = new URLSearchParams({
+    page: String(page),
+    pageSize: String(pageSize),
+    sortBy: 'Revenue',
+    sortOrder: 'desc',
   });
+  if (query) params.set('q', query);
+  if (segment) params.set('segment', segment);
+  if (country) params.set('country', country);
+  if (cycle) params.set('cycle', cycle);
+  return apiGet(`/api/customers?${params.toString()}`);
+};
 
-/**
- * Fetch customer data (paginated)
- */
-export const fetchCustomersData = (page = 1, pageSize = 10) =>
-  apiGet(`/api/customers?page=${page}&pageSize=${pageSize}`);
-
-/**
- * Fetch individual customer profile
- */
 export const fetchCustomerProfile = (customerId) =>
-  apiGet(`/api/customers/${customerId}`);
+  apiGet(`/api/customers/${encodeURIComponent(customerId)}`);
 
-/**
- * Fetch model evaluation metrics
- */
-export const fetchModelEvaluation = () =>
-  getCached('dashboard:modeleval', async () => {
-    const modelEval = await apiGet('/api/model/evaluation');
-    return modelEval;
-  });
-
-/**
- * Clear cache (useful for manual refresh)
- */
-export const clearDashboardCache = () => {
-  cache.clear();
+export const fetchTableRows = (table, page = 1, pageSize = 25) => {
+  const params = new URLSearchParams({ page: String(page), pageSize: String(pageSize) });
+  return apiGet(`/api/tables/${encodeURIComponent(table)}?${params.toString()}`);
 };
 
-export default {
-  fetchOverviewData,
-  fetchSegmentsData,
-  fetchCustomersData,
-  fetchCustomerProfile,
-  fetchModelEvaluation,
-  clearDashboardCache,
-};
+export const clearDashboardCache = () => cache.clear();

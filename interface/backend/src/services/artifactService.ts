@@ -4,12 +4,16 @@ import { env } from "../config/env";
 import { scanArtifacts } from "../utils/artifactScanner";
 import { ArtifactMeta } from "../types/common";
 
+type PublicArtifactMeta = Omit<ArtifactMeta, "absolutePath">;
+
+const toPublicArtifact = ({ absolutePath: _absolutePath, ...artifact }: ArtifactMeta): PublicArtifactMeta => artifact;
+
 export class ArtifactService {
-  getAll(): ArtifactMeta[] {
-    return scanArtifacts();
+  getAll(): PublicArtifactMeta[] {
+    return scanArtifacts().map(toPublicArtifact);
   }
 
-  getByCategory(category: string): ArtifactMeta[] {
+  getByCategory(category: string): PublicArtifactMeta[] {
     const kind = category.toLowerCase();
     const artifacts = this.getAll();
 
@@ -34,7 +38,7 @@ export class ArtifactService {
     });
   }
 
-  getReports(): ArtifactMeta[] {
+  getReports(): PublicArtifactMeta[] {
     const reportExts = new Set([".pdf", ".csv", ".json", ".html"]);
     const denyNames = new Set(["package.json", "package-lock.json", "tsconfig.json"]);
 
@@ -65,8 +69,9 @@ export class ArtifactService {
   resolveRelativePath(relativePath: string): string {
     const decoded = decodeURIComponent(relativePath);
     const abs = path.resolve(path.join(env.artifactRoot, decoded));
+    const relative = path.relative(env.artifactRoot, abs);
 
-    if (!abs.startsWith(env.artifactRoot)) {
+    if (relative.startsWith("..") || path.isAbsolute(relative)) {
       throw new Error("Invalid file path");
     }
 

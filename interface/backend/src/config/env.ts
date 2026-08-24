@@ -30,7 +30,7 @@ const toAbsolute = (value: string): string => {
  * Validates that a file exists and is readable.
  * Logs helpful error messages if validation fails.
  */
-const validatePath = (filePath: string, description: string): void => {
+const validatePath = (filePath: string, description: string, expectedType: "file" | "directory"): void => {
   try {
     if (!fs.existsSync(filePath)) {
       console.warn(
@@ -38,8 +38,9 @@ const validatePath = (filePath: string, description: string): void => {
       );
     } else {
       const stats = fs.statSync(filePath);
-      if (!stats.isFile()) {
-        console.warn(`⚠️ Warning: ${description} exists but is not a file: ${filePath}`);
+      const validType = expectedType === "file" ? stats.isFile() : stats.isDirectory();
+      if (!validType) {
+        console.warn(`⚠️ Warning: ${description} exists but is not a ${expectedType}: ${filePath}`);
       } else {
         console.log(`✓ ${description} resolved to: ${filePath}`);
       }
@@ -59,8 +60,8 @@ const resolvedDatabasePath = toAbsolute(process.env.DATABASE_PATH ?? "model/pipe
 const resolvedArtifactRoot = toAbsolute(process.env.ARTIFACT_ROOT ?? "model");
 
 // Validate paths on startup
-validatePath(resolvedDatabasePath, "Database");
-validatePath(resolvedArtifactRoot, "Artifact root");
+validatePath(resolvedDatabasePath, "Database", "file");
+validatePath(resolvedArtifactRoot, "Artifact root", "directory");
 
 export const env = {
   port: Number(process.env.PORT ?? 4000),

@@ -5,7 +5,8 @@
  * Uses VITE_API_URL environment variable from .env.local or production .env
  */
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://csrs-project.onrender.com';
+export const API_URL = import.meta.env.VITE_API_URL
+  || (import.meta.env.DEV ? 'http://localhost:4000' : 'https://csrs-project.onrender.com');
 
 /**
  * Create headers for API requests
@@ -44,6 +45,12 @@ export const apiCall = async (endpoint, options = {}) => {
  * GET request helper
  */
 export const apiGet = (endpoint) => apiCall(endpoint, { method: 'GET' });
+
+export const apiAssetUrl = (path) => {
+  if (!path) return '';
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${API_URL}${path.startsWith('/') ? path : `/${path}`}`;
+};
 
 /**
  * POST request helper

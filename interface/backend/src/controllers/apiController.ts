@@ -27,8 +27,7 @@ export class ApiController {
   }
 
   modelEvaluationDetailed(_req: Request, res: Response): void {
-    const includePoints = String(_req.query.includePoints ?? "false").toLowerCase() === "true";
-    res.json(analyticsService.getModelEvaluationDetailed(includePoints));
+    res.json(analyticsService.getModelEvaluationDetailed());
   }
 
   async segments(_req: Request, res: Response): Promise<void> {
@@ -98,6 +97,18 @@ export class ApiController {
   featureCorrelation(req: Request, res: Response): void {
     const cycleId = typeof req.query.cycleId === "string" ? req.query.cycleId : undefined;
     res.json(analyticsService.getFeatureCorrelation(cycleId));
+  }
+
+  customerAnalytics(_req: Request, res: Response): void {
+    res.json(analyticsService.getCustomerAnalytics());
+  }
+
+  productAnalytics(_req: Request, res: Response): void {
+    res.json(analyticsService.getProductAnalytics());
+  }
+
+  geographicAnalytics(_req: Request, res: Response): void {
+    res.json(analyticsService.getGeographicAnalytics());
   }
 
   artifacts(req: Request, res: Response): void {

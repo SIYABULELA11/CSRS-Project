@@ -15,7 +15,11 @@ export class SchemaRepository {
   }
 
   getTableColumns(table: string): string[] {
-    const rows = db.prepare(`PRAGMA table_info(${table})`).all() as Array<{ name: string }>;
+    if (!this.getTables().includes(table)) {
+      return [];
+    }
+    const escapedTable = table.replace(/"/g, '""');
+    const rows = db.prepare(`PRAGMA table_info("${escapedTable}")`).all() as Array<{ name: string }>;
     return rows.map((r) => r.name);
   }
 

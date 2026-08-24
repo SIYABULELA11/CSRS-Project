@@ -8,17 +8,20 @@ const IGNORE_DIRS = new Set(["node_modules", ".git", ".venv", "dist", "build"]);
 
 const getCategory = (fullPath: string, ext: string): string => {
   const normalized = fullPath.replace(/\\/g, "/").toLowerCase();
-  if ([".png", ".jpg", ".jpeg", ".svg"].includes(ext)) return "images";
+  if (normalized.includes("research_figures/business_intelligence")) return "business intelligence";
+  if (normalized.includes("research_figures/dynamic_analytics")) return "dynamic analytics";
+  if (normalized.includes("research_figures/geographic segmentation")) return "geography";
+  if (normalized.includes("research_figures/performance")) return "performance";
+  if (normalized.includes("research_figures/baseline")) return "baseline";
+  if (normalized.includes("research_figures/dynamic")) return "dynamic segmentation";
+  if (normalized.includes("radar") || normalized.includes("pca") || normalized.includes("cycle0")) {
+    return "model diagnostics";
+  }
   if (ext === ".html") return "html";
   if (ext === ".pdf") return "reports";
   if (ext === ".csv") return "csv";
   if (ext === ".json") return "json";
-
-  if (normalized.includes("sankey")) return "sankey";
-  if (normalized.includes("radar")) return "radar";
-  if (normalized.includes("pca")) return "pca";
-  if (normalized.includes("trend")) return "trend";
-  if (normalized.includes("segment")) return "segments";
+  if ([".png", ".jpg", ".jpeg", ".svg"].includes(ext)) return "model visuals";
   return "other";
 };
 

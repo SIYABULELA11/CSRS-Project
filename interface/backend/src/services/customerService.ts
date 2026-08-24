@@ -2,13 +2,13 @@ import { z } from "zod";
 import { DataRepository } from "../repositories/dataRepository";
 import { Paginated } from "../types/common";
 
-const repo = new DataRepository();
+const repository = new DataRepository();
 
 const customerQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(1).max(200).default(25),
-  sortBy: z.string().default("CustomerID"),
-  sortOrder: z.enum(["asc", "desc"]).default("asc"),
+  sortBy: z.string().default("Revenue"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
   q: z.string().optional(),
   segment: z.string().optional(),
   cycle: z.string().optional(),
@@ -23,91 +23,82 @@ export class CustomerService {
     return customerQuerySchema.parse(input);
   }
 
-  getCustomers(queryRaw: unknown): Paginated<Record<string, unknown>> {
+  getCustomers(queryRaw: unknown): Paginated<Record<string, unknown>> & { cycle: string } {
     const query = this.parseQuery(queryRaw);
-
-    const where: string[] = [];
-    const params: Record<string, unknown> = {};
+    const latestCycleRow = repository.runAggregate(`
+      SELECT CycleID
+      FROM Dynamic_Cycle_Summary
+      ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER) DESC
+      LIMIT 1
+    `);
+    const cycle = query.cycle ?? String(latestCycleRow.CycleID ?? "Cycle_9");
+    const where = ["summary.CycleID = @cycle"];
+    const params: Record<string, unknown> = { cycle };
 
     if (query.q) {
-      where.push("c.CustomerID LIKE @q");
+      where.push("(CAST(summary.CustomerID AS TEXT) LIKE @q OR customer.Country LIKE @q)");
       params.q = `%${query.q}%`;
     }
-
     if (query.customerId) {
-      where.push("c.CustomerID = @customerId");
+      where.push("CAST(summary.CustomerID AS TEXT) = @customerId");
       params.customerId = query.customerId;
     }
-
     if (query.country) {
-      where.push("c.Country = @country");
+      where.push("customer.Country = @country");
       params.country = query.country;
     }
-
     if (query.segment) {
-      where.push("d.Segment_Name = @segment");
+      where.push("summary.Segment_Name = @segment");
       params.segment = query.segment;
     }
 
-    if (query.cycle) {
-      where.push("d.CycleID = @cycle");
-      params.cycle = query.cycle;
-    }
-
-    const whereClause = where.length ? `WHERE ${where.join(" AND ")}` : "";
-
+    const whereClause = `WHERE ${where.join(" AND ")}`;
     const sortMap: Record<string, string> = {
-      CustomerID: "c.CustomerID",
-      Country: "c.Country",
-      CycleID: "d.CycleID",
-      Segment_Name: "d.Segment_Name",
-      Membership_Confidence: "d.Membership_Confidence",
-      Recency: "d.Recency",
-      Frequency: "d.Frequency",
-      Monetary: "d.Monetary",
+      CustomerID: "summary.CustomerID",
+      Country: "customer.Country",
+      CycleID: "summary.CycleID",
+      Segment_Name: "summary.Segment_Name",
+      Orders: "summary.Orders",
+      Products: "summary.Products",
+      Quantity: "summary.Quantity",
+      Revenue: "summary.Revenue",
+      Average_Membership: "summary.Average_Membership",
+      Average_Basket_Value: "summary.Average_Basket_Value",
     };
-
-    const sortBy = sortMap[query.sortBy] ?? "c.CustomerID";
+    const sortBy = sortMap[query.sortBy] ?? "summary.Revenue";
     const sortOrder = query.sortOrder.toUpperCase();
 
-    const totalRow = repo.runAggregate(
-      `
-      SELECT COUNT(*) as total
-      FROM Customer c
-      LEFT JOIN Dynamic_Segmentation_Results d ON d.CustomerID = c.CustomerID
+    const totalRow = repository.runAggregate(`
+      SELECT COUNT(*) AS total
+      FROM Dynamic_Customer_Summary summary
+      LEFT JOIN Customer customer ON customer.CustomerID = summary.CustomerID
       ${whereClause}
-      `,
-      params,
-    );
-
+    `, params);
     const total = Number(totalRow.total ?? 0);
     const offset = (query.page - 1) * query.pageSize;
 
-    const data = repo.runMany(
-      `
+    const data = repository.runMany(`
       SELECT
-        c.CustomerID,
-        c.Country,
-        d.CycleID,
-        d.Segment_Name,
-        d.Membership_Confidence,
-        d.Recency,
-        d.Frequency,
-        d.Monetary
-      FROM Customer c
-      LEFT JOIN Dynamic_Segmentation_Results d ON d.CustomerID = c.CustomerID
+        summary.CustomerID,
+        customer.Country,
+        summary.CycleID,
+        summary.Segment_Name,
+        summary.Orders,
+        summary.Products,
+        summary.Quantity,
+        summary.Revenue,
+        summary.Average_Membership,
+        summary.Migration_Status,
+        summary.Average_Basket_Value
+      FROM Dynamic_Customer_Summary summary
+      LEFT JOIN Customer customer ON customer.CustomerID = summary.CustomerID
       ${whereClause}
       ORDER BY ${sortBy} ${sortOrder}
       LIMIT @limit OFFSET @offset
-      `,
-      {
-        ...params,
-        limit: query.pageSize,
-        offset,
-      },
-    );
+    `, { ...params, limit: query.pageSize, offset });
 
     return {
+      cycle,
       data,
       meta: {
         page: query.page,
@@ -119,41 +110,36 @@ export class CustomerService {
   }
 
   getCustomerProfile(customerId: string): Record<string, unknown> | null {
-    const customer = repo.findById("Customer", "CustomerID", customerId);
-    if (!customer) {
-      return null;
-    }
+    const customer = repository.findById("Customer", "CustomerID", customerId);
+    if (!customer) return null;
 
-    const rfmHistory = repo.runMany(
-      "SELECT * FROM Data_Preprocessing_Results WHERE CustomerID = @id ORDER BY CycleID",
-      { id: customerId },
-    );
+    const history = repository.runMany(`
+      SELECT
+        summary.*,
+        features.Recency,
+        features.Frequency,
+        features.Monetary
+      FROM Dynamic_Customer_Summary summary
+      LEFT JOIN Data_Preprocessing_Results features
+        ON features.CustomerID = summary.CustomerID
+        AND features.CycleID = summary.CycleID
+      WHERE summary.CustomerID = @customerId
+      ORDER BY CAST(REPLACE(summary.CycleID, 'Cycle_', '') AS INTEGER)
+    `, { customerId });
 
-    const segmentHistory = repo.runMany(
-      "SELECT * FROM Dynamic_Segmentation_Results WHERE CustomerID = @id ORDER BY CycleID",
-      { id: customerId },
-    );
+    const topProducts = repository.runMany(`
+      SELECT
+        Description AS product,
+        SUM(Quantity) AS quantity,
+        SUM(Revenue) AS revenue,
+        COUNT(DISTINCT InvoiceNo) AS orders
+      FROM Dynamic_Business_Analytics
+      WHERE CustomerID = @customerId
+      GROUP BY Description
+      ORDER BY revenue DESC
+      LIMIT 10
+    `, { customerId });
 
-    const migrationHistory = repo.runMany(
-      "SELECT * FROM Segment_Transitions WHERE CustomerID = @id ORDER BY Transition_ID",
-      { id: customerId },
-    );
-
-    return {
-      customer,
-      rfmHistory,
-      segmentHistory,
-      migrationHistory,
-      membershipScores: segmentHistory.map((row) => ({
-        cycle: row.CycleID,
-        confidence: row.Membership_Confidence,
-      })),
-      availableFields: {
-        customer: Object.keys(customer),
-        rfmHistory: rfmHistory[0] ? Object.keys(rfmHistory[0]) : [],
-        segmentHistory: segmentHistory[0] ? Object.keys(segmentHistory[0]) : [],
-        migrationHistory: migrationHistory[0] ? Object.keys(migrationHistory[0]) : [],
-      },
-    };
+    return { customer, history, topProducts };
   }
 }

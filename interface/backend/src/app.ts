@@ -4,16 +4,18 @@ import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
 import path from "path";
-import swaggerUi from "swagger-ui-express";
 import { env } from "./config/env";
 import { router } from "./routes";
 import { notFoundHandler } from "./middleware/notFound";
 import { errorHandler } from "./middleware/errorHandler";
-import { swaggerSpec } from "./config/swagger";
 
 export const app = express();
 
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+  }),
+);
 
 app.use(
   cors({
@@ -47,7 +49,9 @@ app.use(compression());
 app.use(morgan("combined"));
 app.use(express.json({ limit: "2mb" }));
 
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.get("/", (_req, res) => {
+  res.redirect(302, "/CSRS/");
+});
 
 app.use(
   "/public",
