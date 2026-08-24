@@ -263,11 +263,11 @@ button:disabled {
 
 .home-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.03fr) minmax(440px, 0.97fr);
+  grid-template-columns: minmax(0, 0.96fr) minmax(520px, 1.04fr);
   align-items: center;
-  gap: 4.4rem;
-  min-height: 610px;
-  padding: 4.8rem 2rem 4rem;
+  gap: 2.8rem;
+  min-height: 680px;
+  padding: 4.8rem 1rem 4.6rem;
 }
 
 .hero-kicker,
@@ -368,59 +368,57 @@ button:disabled {
 
 .home-visual {
   position: relative;
-  height: 540px;
-  overflow: hidden;
+  height: 645px;
+  overflow: visible;
   border: 0;
-  border-radius: 40px;
-  background: var(--canvas);
-  box-shadow: 0 24px 70px rgba(7, 59, 45, 0.09);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .home-visual::after {
   position: absolute;
   z-index: 1;
-  inset: 0;
-  content: "";
+  top: -5%;
+  left: -6%;
+  width: 112%;
+  height: 110%;
+  content: none;
   pointer-events: none;
   background:
     linear-gradient(
       90deg,
       var(--canvas) 0%,
-      color-mix(in srgb, var(--canvas) 68%, transparent) 7%,
-      transparent 19%,
-      transparent 74%,
-      color-mix(in srgb, var(--canvas) 48%, transparent) 89%,
+      color-mix(in srgb, var(--canvas) 78%, transparent) 8%,
+      transparent 22%,
+      transparent 78%,
+      color-mix(in srgb, var(--canvas) 78%, transparent) 92%,
       var(--canvas) 100%
     ),
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--canvas) 35%, transparent) 0%,
-      transparent 13%,
-      transparent 82%,
-      color-mix(in srgb, var(--canvas) 52%, transparent) 100%
+      var(--canvas) 0%,
+      color-mix(in srgb, var(--canvas) 74%, transparent) 7%,
+      transparent 19%,
+      transparent 74%,
+      color-mix(in srgb, var(--canvas) 78%, transparent) 91%,
+      var(--canvas) 100%
     );
 }
 
 .home-visual > img {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.home-visual-backdrop {
-  object-fit: cover;
-  object-position: center;
-  filter: blur(18px) saturate(0.8) contrast(0.94);
-  opacity: 0.26;
-  transform: scale(1.14);
+  top: -5%;
+  left: -6%;
+  width: 112%;
+  height: 110%;
 }
 
 .home-visual-subject {
-  object-fit: contain;
-  object-position: center;
-  filter: saturate(0.94) contrast(0.98);
-  transform: scale(1.015);
+  object-fit: cover;
+  object-position: 57% center;
+  filter: saturate(0.96) contrast(1.02);
+  transform: none;
 }
 
 .visual-card {
@@ -645,23 +643,29 @@ button:disabled {
 
 .capability-intro {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
-  align-items: end;
-  gap: 3rem;
-  margin-bottom: 2rem;
+  grid-template-columns: minmax(0, 0.95fr) minmax(460px, 1.05fr);
+  align-items: center;
+  gap: 0;
+  min-height: 230px;
+  margin-bottom: 1.5rem;
 }
 
 .capability-heading {
+  position: relative;
+  z-index: 2;
   max-width: 700px;
 }
 
 .capability-visual {
   position: relative;
-  height: 170px;
+  z-index: 1;
+  width: calc(100% + 150px);
+  height: 230px;
+  margin-left: -150px;
   overflow: hidden;
-  border-radius: 26px;
-  background: var(--canvas);
-  box-shadow: 0 18px 48px rgba(7, 59, 45, 0.1);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
 .capability-visual::after {
@@ -670,16 +674,30 @@ button:disabled {
   content: "";
   pointer-events: none;
   background:
-    linear-gradient(90deg, var(--canvas) 0%, transparent 18%, transparent 82%, var(--canvas) 100%),
-    linear-gradient(180deg, color-mix(in srgb, var(--canvas) 28%, transparent) 0%, transparent 30%, transparent 72%, var(--canvas) 100%);
+    linear-gradient(
+      90deg,
+      var(--canvas) 0%,
+      color-mix(in srgb, var(--canvas) 78%, transparent) 14%,
+      transparent 38%,
+      transparent 84%,
+      var(--canvas) 100%
+    ),
+    linear-gradient(
+      180deg,
+      var(--canvas) 0%,
+      transparent 22%,
+      transparent 72%,
+      var(--canvas) 100%
+    );
 }
 
 .capability-visual img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 45%;
-  filter: saturate(0.88) contrast(0.98);
+  object-position: center 43%;
+  filter: saturate(0.9) contrast(1.01);
+  transform: scale(1.04);
 }
 
 .capability-grid {
@@ -2113,7 +2131,7 @@ tr:last-child td {
   }
 
   .home-visual {
-    height: 500px;
+    height: 560px;
   }
 
   .home-metrics {
@@ -2240,12 +2258,13 @@ tr:last-child td {
   }
 
   .capability-visual {
-    width: min(100%, 560px);
-    height: 180px;
+    width: 100%;
+    height: 210px;
+    margin-left: 0;
   }
 
   .home-visual {
-    height: 390px;
+    height: 430px;
   }
 
   .home-visual::after {

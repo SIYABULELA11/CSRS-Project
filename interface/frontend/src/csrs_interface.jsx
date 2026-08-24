@@ -21,7 +21,7 @@ import {
   YAxis,
 } from 'recharts';
 import IconOnly from './assets/iconOnly.png';
-import HomeVisual from './assets/oneHero.png';
+import HomeVisual from './assets/oneHero-wide.png';
 import ResearchWorkspaceVisual from './assets/customer-consultation.jpg';
 import './App.css';
 import { apiAssetUrl } from './config/api';
@@ -309,8 +309,13 @@ function HomePage({ data, setPage }) {
           </div>
         </div>
         <div className="home-visual">
-          <img className="home-visual-backdrop" src={HomeVisual} alt="" aria-hidden="true" />
-          <img className="home-visual-subject" src={HomeVisual} alt="Customer celebrating a retail insight on a tablet" />
+          <img
+            className="home-visual-subject"
+            src={HomeVisual}
+            alt="Customer celebrating a retail insight on a tablet"
+            loading="eager"
+            fetchPriority="high"
+          />
           <div className="visual-card visual-card-top">
             <span>Latest cycle</span>
             <strong>{cycleLabel(overview.latestCycle?.CycleID)}</strong>
