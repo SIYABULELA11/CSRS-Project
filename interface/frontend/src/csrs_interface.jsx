@@ -21,7 +21,7 @@ import {
   YAxis,
 } from 'recharts';
 import IconOnly from './assets/iconOnly.png';
-import HomeVisual from './assets/homeSimplier.png';
+import HomeVisual from './assets/customer-consultation.jpg';
 import './App.css';
 import { apiAssetUrl } from './config/api';
 import {
@@ -308,7 +308,7 @@ function HomePage({ data, setPage }) {
           </div>
         </div>
         <div className="home-visual">
-          <img src={HomeVisual} alt="Retail professionals reviewing customer insights" />
+          <img src={HomeVisual} alt="Business professionals discussing customer insights" />
           <div className="visual-card visual-card-top">
             <span>Latest cycle</span>
             <strong>{cycleLabel(overview.latestCycle?.CycleID)}</strong>
