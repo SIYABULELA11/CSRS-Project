@@ -248,7 +248,7 @@ function DataTable({ columns, rows, onRowClick, compact = false }) {
             >
               {columns.map((column) => (
                 <td key={column.key}>
-                  {column.render ? column.render(row[column.key], row) : String(row[column.key] ?? '—')}
+                  {column.render ? column.render(row[column.key], row) : String(row[column.key] ?? '-')}
                 </td>
               ))}
             </tr>
@@ -343,8 +343,8 @@ function HomePage({ data, setPage }) {
           <span className="eyebrow">Firmographic framework</span>
           <h2>Behavioural segmentation + geographic segmentation</h2>
           <p>
-            In this research, firmographic segmentation combines how customers behave—using dynamic
-            RFM and fuzzy membership—with where they purchase across geographic markets. The result
+            In this research, firmographic segmentation combines dynamic RFM and fuzzy membership
+            patterns with the geographic markets where customers make purchases. The result
             is a location-aware view of customer value, movement, and commercial opportunity.
           </p>
           <button className="text-link" onClick={() => setPage('segments')}>Explore segment profiles <span>→</span></button>
@@ -1118,8 +1118,8 @@ function GeographyPage({ data }) {
       />
       <div className="metric-grid metric-grid-four">
         <MetricCard label="Countries" value={formatNumber(data.overview.countries)} detail="Geographic markets represented" icon="⌖" />
-        <MetricCard label="Largest market" value={topCountries[0]?.country || '—'} detail={`${formatNumber(topCountries[0]?.customers)} customers`} tone="green" icon="◎" />
-        <MetricCard label="Highest revenue" value={formatCurrency(topCountries[0]?.revenue, true)} detail={topCountries[0]?.country || '—'} tone="gold" icon="£" />
+        <MetricCard label="Largest market" value={topCountries[0]?.country || '-'} detail={`${formatNumber(topCountries[0]?.customers)} customers`} tone="green" icon="◎" />
+        <MetricCard label="Highest revenue" value={formatCurrency(topCountries[0]?.revenue, true)} detail={topCountries[0]?.country || '-'} tone="gold" icon="£" />
         <MetricCard label="Latest composition" value={cycleLabel(analytics.latestCycle)} detail="Segment mix shown below" tone="blue" icon="◉" />
       </div>
 
@@ -1417,7 +1417,7 @@ function DataExplorerPage({ data }) {
                   label: titleFromName(column),
                   render: (value) => {
                     if (typeof value === 'number') return number.format(value);
-                    const text = String(value ?? '—');
+                    const text = String(value ?? '-');
                     return text.length > 90 ? `${text.slice(0, 90)}…` : text;
                   },
                 }))}
