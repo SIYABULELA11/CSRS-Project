@@ -1,4 +1,4 @@
-# Frontend API Configuration — Updated for Render Backend
+# Frontend API Configuration - Updated for Render Backend
 
 ## Summary of Changes
 
@@ -120,12 +120,12 @@ const segments = await apiGet('/api/segments');
 ---
 
 ## Files Checked (No API Calls Found)
-- ✓ `src/main.jsx` — Entry point, no API calls
-- ✓ `src/App.jsx` — Router/wrapper, no API calls  
-- ✓ `src/csrs_interface.jsx` — Main component, uses hardcoded data only
-- ✓ `src/config/api.js` — **NEW** — API client (ready for use)
-- ✓ `vite.config.js` — Build config, no API references
-- ✓ `package.json` — Dependencies list, no secrets
+- ✓ `src/main.jsx` - Entry point, no API calls
+- ✓ `src/App.jsx` - Router/wrapper, no API calls
+- ✓ `src/csrs_interface.jsx` - Main component, uses hardcoded data only
+- ✓ `src/config/api.js` - **NEW** - API client (ready for use)
+- ✓ `vite.config.js` - Build config, no API references
+- ✓ `package.json` - Dependencies list, no secrets
 
 ---
 

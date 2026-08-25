@@ -17,8 +17,8 @@
 - `SIM_B`: UK Online Retail data (hardcoded in `csrs_interface.jsx`)
 
 **Infrastructure in place:**
-- ✅ `src/config/api.js` — API client configured and ready
-- ✅ `.env.local` — Environment variable set to `https://csrs-project.onrender.com`
+- ✅ `src/config/api.js` - API client configured and ready
+- ✅ `.env.local` - Environment variable set to `https://csrs-project.onrender.com`
 - ✅ No localhost references found (verified)
 
 ---
@@ -234,7 +234,7 @@ fetch('https://csrs-project.onrender.com/api/overview')
 3. Should have same fields/format
 
 **Current Status:**
-- ❌ **NOT INTEGRATED** — Frontend uses hardcoded `SIM_A`
+- ❌ **NOT INTEGRATED** - Frontend uses hardcoded `SIM_A`
 - ⚠️ Response structure may differ slightly
 
 **Integration Steps:**
@@ -279,8 +279,8 @@ fetch('https://csrs-project.onrender.com/api/overview')
 **Frontend Component:** `Segments` component
 
 **API Endpoints:**
-- `GET /api/segments` — All segments
-- `GET /api/segments/:segment` — Specific segment (e.g., `/api/segments/High Value Loyal`)
+- `GET /api/segments` - All segments
+- `GET /api/segments/:segment` - Specific segment (e.g., `/api/segments/High Value Loyal`)
 
 **Expected Response Structure:**
 ```json
@@ -318,9 +318,9 @@ const specificSegment = await apiGet('/api/segments/High Value Loyal');
 **API Endpoint:** `GET /api/customers`
 
 **Query Parameters (if supported):**
-- `segment` — Filter by segment
-- `limit` — Limit results
-- `offset` — Pagination offset
+- `segment` - Filter by segment
+- `limit` - Limit results
+- `offset` - Pagination offset
 
 **Expected Response:**
 ```json
@@ -391,8 +391,8 @@ const paginated = await apiGet('/api/customers?limit=10&offset=0');
 **Frontend Component:** Model tabs/filters
 
 **API Endpoints:**
-- `GET /api/cycles` — All cycles
-- `GET /api/cycles/:cycleId/overview` — Specific cycle overview
+- `GET /api/cycles` - All cycles
+- `GET /api/cycles/:cycleId/overview` - Specific cycle overview
 
 **Expected Response:**
 ```json
@@ -415,8 +415,8 @@ const paginated = await apiGet('/api/customers?limit=10&offset=0');
 **Frontend Component:** Admin/debug view (if implemented)
 
 **API Endpoints:**
-- `GET /api/schema` — Database structure
-- `GET /api/tables/:table` — Table rows
+- `GET /api/schema` - Database structure
+- `GET /api/tables/:table` - Table rows
 
 **Example:**
 ```javascript
@@ -435,8 +435,8 @@ const filtered = await apiGet('/api/tables/customers?segment=High Value Loyal');
 **Frontend Component:** Feature analysis section (if implemented)
 
 **API Endpoints:**
-- `GET /api/features/summary` — Feature summary
-- `GET /api/features/correlation` — Correlation data
+- `GET /api/features/summary` - Feature summary
+- `GET /api/features/correlation` - Correlation data
 
 **Expected Response:**
 ```json
@@ -460,11 +460,11 @@ const filtered = await apiGet('/api/tables/customers?segment=High Value Loyal');
 **Frontend Component:** Image display, report links
 
 **API Endpoints:**
-- `GET /api/artifacts` — All artifacts
-- `GET /api/images` — Image list
-- `GET /api/images/:kind` — Images by type
-- `GET /api/html/:kind` — HTML reports
-- `GET /api/files/:path` — File download
+- `GET /api/artifacts` - All artifacts
+- `GET /api/images` - Image list
+- `GET /api/images/:kind` - Images by type
+- `GET /api/html/:kind` - HTML reports
+- `GET /api/files/:path` - File download
 
 **How to use:**
 ```javascript
