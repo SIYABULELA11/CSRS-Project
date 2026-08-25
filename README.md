@@ -5,7 +5,7 @@
 <h1 align="center">Customer Segmentation in the Retail Sector</h1>
 
 <p align="center">
-  A full-stack research platform for firmographic customer segmentation in UK online retail.
+  A full-stack research platform for firmographic customer segmentation in online retail.
 </p>
 
 <p align="center">
