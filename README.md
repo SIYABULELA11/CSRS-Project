@@ -32,13 +32,13 @@ In this project, **firmographic segmentation means the integration of customer b
 
 ## Analytical Approach
 
-1. **Data preparation** — cleans retail transactions, derives revenue, and creates ordered time cycles.
-2. **Cascaded RFM** — calculates Recency, Frequency, and Monetary features together with structural RF, RM, and FM combinations.
-3. **Baseline segmentation** — establishes the initial customer clusters and evaluates their quality.
-4. **Dynamic MDFCM** — updates fuzzy memberships and centroids across cycles while retaining information from the previous state.
-5. **Migration analysis** — measures stable customers, movement between segments, transition flows, and migration rates.
-6. **Geographic segmentation** — compares market size, revenue, products, customer value, and behavioural composition by country.
-7. **Firmographic integration** — combines behavioural and geographic evidence into one strategic customer view.
+1. **Data preparation** - cleans retail transactions, derives revenue, and creates ordered time cycles.
+2. **Cascaded RFM** - calculates Recency, Frequency, and Monetary features together with structural RF, RM, and FM combinations.
+3. **Baseline segmentation** - establishes the initial customer clusters and evaluates their quality.
+4. **Dynamic MDFCM** - updates fuzzy memberships and centroids across cycles while retaining information from the previous state.
+5. **Migration analysis** - measures stable customers, movement between segments, transition flows, and migration rates.
+6. **Geographic segmentation** - compares market size, revenue, products, customer value, and behavioural composition by country.
+7. **Firmographic integration** - combines behavioural and geographic evidence into one strategic customer view.
 
 The current behavioural segment labels are:
 
