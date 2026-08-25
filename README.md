@@ -20,11 +20,10 @@ Customer Segmentation in the Retail Sector (CSRS) is an academic research projec
 
 The analytical pipeline uses transaction history from the UK Online Retail dataset to calculate Cascaded RFM features, establish a baseline segmentation, and track customer movement through time with Modified Dynamic Fuzzy C-Means (MDFCM). Geographic market information is then connected to the behavioural results to support location-aware customer analytics and strategic decision-making.
 
-In this project, **firmographic segmentation means the integration of customer behaviour and geographic market context**. It does not use synthetic demographic attributes such as age, gender, persona, or registration date.
-
+In this project, **firmographic segmentation means the integration of customer behaviour and geographic market context**.
 ## Research Objectives
 
-- Identify meaningful customer groups from recency, frequency, and monetary behaviour.
+- Identify meaningful customer groups from recency, frequency, and monetary behaviour as well as their pairs (recency-frequency, frequency-monetary, recency-monetory).
 - Preserve uncertainty through fuzzy membership scores instead of relying only on hard cluster labels.
 - Track customer migration, segment stability, centroid movement, and model confidence over time.
 - Compare customer value, products, revenue, and behavioural composition across geographic markets.
