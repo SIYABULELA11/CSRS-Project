@@ -1,0 +1,14 @@
+{
+  "clean_transactions": 397884,
+  "customers": 4338,
+  "cycles": 11,
+  "cycle_10_customers": 4338,
+  "maximum_recency_days": 374,
+  "inactive_records": 10943,
+  "geographic_markets_cycle_10": 37,
+  "firmographic_segments_cycle_10": 12,
+  "mean_migration_rate": 52.848439466864775,
+  "mean_xie_beni": 0.17544726087573692,
+  "database_path": "C:\\Users\\siyam\\OneDrive - University of the Western Cape\\Desktop\\Desktop stuff\\Hon project\\CSRS\\model\\pipeline b\\csrs_pipeline_b.db",
+  "figure_directory": "C:\\Users\\siyam\\OneDrive - University of the Western Cape\\Desktop\\Desktop stuff\\Hon project\\CSRS\\model\\pipeline b\\Research_Figures"
+}

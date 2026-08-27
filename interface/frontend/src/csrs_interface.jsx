@@ -110,6 +110,15 @@ const pivotSeries = (rows, valueKey, labelKey = 'segment') => {
 const getFigureMeta = (artifact) => {
   const path = String(artifact.relativePath || '').replace(/\\/g, '/').toLowerCase();
   const exact = [
+    ['baseline/cycle0_pca_clusters.png', 'Cycle 0 behavioural clusters', 'Shows the baseline behavioural customer groups in the fitted PCA feature space.'],
+    ['baseline/rfm_log_transformation.png', 'RFM log transformation', 'Compares raw and log-transformed recency, frequency, and monetary distributions.'],
+    ['dynamic/customer_transition_states.png', 'Corrected customer transition states', 'Separates new, stable, migrated, inactive, and reactivated customers across cycles.'],
+    ['dynamic/segment_evolution_cycles_0_10.png', 'Behavioural segment evolution', 'Tracks the cumulative behavioural segment population from Cycle 0 to Cycle 10.'],
+    ['validation/xie_beni_index.png', 'Xie-Beni fuzzy validity', 'Tracks fuzzy cluster compactness and separation, where lower values indicate stronger validity.'],
+    ['validation/dynamic_model_quality.png', 'Dynamic model quality', 'Compares silhouette score, membership confidence, and corrected migration rate across cycles.'],
+    ['geographic/cycle10_market_segments.png', 'Cycle 10 geographic market segments', 'Shows the geographic segment assigned to each country market using commercial and behavioural composition features.'],
+    ['geographic/market_segment_evolution.png', 'Geographic market segment evolution', 'Tracks the country-level market segmentation from Cycle 0 to Cycle 10.'],
+    ['firmographic/cycle10_firmographic_segments.png', 'Cycle 10 firmographic segments', 'Combines behavioural customer segments with geographic market segments.'],
     ['geographic segmentation/output.png', 'Market size vs product diversity', 'Compares customer scale with product breadth across countries.'],
     ['geographic segmentation/output2.png', 'Revenue per customer by market', 'Highlights smaller markets with unusually high customer value.'],
     ['geographic segmentation/output3.png', 'Product diversity by market', 'Ranks markets by the number of distinct products purchased.'],
@@ -498,7 +507,7 @@ function OverviewPage({ data }) {
         <Panel title="Latest model health" eyebrow={cycleLabel(latestCycle.CycleID)}>
           <div className="quality-grid">
             <div><span>Silhouette score</span><strong>{number.format(latestCycle.SilhouetteScore)}</strong><small>Cluster separation</small></div>
-            <div><span>Davies–Bouldin</span><strong>{number.format(latestCycle.DaviesBouldinScore)}</strong><small>Lower is better</small></div>
+            <div><span>Davies-Bouldin</span><strong>{number.format(latestCycle.DaviesBouldinScore)}</strong><small>Lower is better</small></div>
             <div><span>Average confidence</span><strong>{formatPercent(latestCycle.AverageMembership)}</strong><small>Fuzzy membership</small></div>
             <div><span>Convergence</span><strong>{latestCycle.Converged ? 'Achieved' : 'Review'}</strong><small>{formatNumber(latestCycle.Iterations)} iterations</small></div>
           </div>
@@ -1265,13 +1274,13 @@ function ModelPage({ data }) {
 
       <div className="metric-grid metric-grid-four">
         <MetricCard label="Average silhouette" value={number.format(averages.silhouette)} detail="Dynamic cluster separation" icon="◉" />
-        <MetricCard label="Davies–Bouldin" value={number.format(averages.daviesBouldin)} detail="Average cluster similarity" tone="blue" icon="◇" />
-        <MetricCard label="Calinski–Harabasz" value={formatNumber(averages.calinskiHarabasz)} detail="Separation vs compactness" tone="gold" icon="△" />
+        <MetricCard label="Davies-Bouldin" value={number.format(averages.daviesBouldin)} detail="Average cluster similarity" tone="blue" icon="◇" />
+        <MetricCard label="Calinski-Harabasz" value={formatNumber(averages.calinskiHarabasz)} detail="Separation vs compactness" tone="gold" icon="△" />
         <MetricCard label="Average confidence" value={formatPercent(averages.averageMembership)} detail="Fuzzy membership certainty" tone="purple" icon="◎" />
       </div>
 
       <div className="content-grid equal">
-        <Panel title="Cluster quality across cycles" eyebrow="Silhouette and Davies–Bouldin">
+        <Panel title="Cluster quality across cycles" eyebrow="Silhouette and Davies-Bouldin">
           <div className="chart-large">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={cycles}>
@@ -1282,7 +1291,7 @@ function ModelPage({ data }) {
                 <Tooltip content={<ChartTooltip />} />
                 <Legend />
                 <Line yAxisId="left" dataKey="SilhouetteScore" name="Silhouette" stroke="#168a58" strokeWidth={3} />
-                <Line yAxisId="right" dataKey="DaviesBouldinScore" name="Davies–Bouldin" stroke="#e59a38" strokeWidth={3} />
+                <Line yAxisId="right" dataKey="DaviesBouldinScore" name="Davies-Bouldin" stroke="#e59a38" strokeWidth={3} />
               </LineChart>
             </ResponsiveContainer>
           </div>
