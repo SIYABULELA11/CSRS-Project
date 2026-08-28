@@ -40,6 +40,10 @@ apiRouter.get("/features/correlation", controller.featureCorrelation.bind(contro
 apiRouter.get("/analytics/customers", controller.customerAnalytics.bind(controller));
 apiRouter.get("/analytics/products", controller.productAnalytics.bind(controller));
 apiRouter.get("/analytics/geography", controller.geographicAnalytics.bind(controller));
+apiRouter.get("/analytics/firmographic", controller.firmographicAnalytics.bind(controller));
+apiRouter.get("/analytics/cycle-comparison", controller.cycleComparisonAnalytics.bind(controller));
+apiRouter.get("/analytics/pca", controller.pcaAnalytics.bind(controller));
+apiRouter.get("/simulation/cycle-10", controller.cycle10Simulation.bind(controller));
 apiRouter.get("/artifacts", controller.artifacts.bind(controller));
 apiRouter.get("/charts", controller.charts.bind(controller));
 apiRouter.get("/images", controller.images.bind(controller));

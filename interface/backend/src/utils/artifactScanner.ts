@@ -14,6 +14,9 @@ const getCategory = (fullPath: string, ext: string): string => {
   if (normalized.includes("research_figures/performance")) return "performance";
   if (normalized.includes("research_figures/baseline")) return "baseline";
   if (normalized.includes("research_figures/dynamic")) return "dynamic segmentation";
+  if (normalized.includes("research_figures/validation")) return "validation";
+  if (normalized.includes("research_figures/geographic")) return "geographic segmentation";
+  if (normalized.includes("research_figures/firmographic")) return "firmographic segmentation";
   if (normalized.includes("radar") || normalized.includes("pca") || normalized.includes("cycle0")) {
     return "model diagnostics";
   }

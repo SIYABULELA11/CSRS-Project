@@ -4,6 +4,44 @@ import { Paginated } from "../types/common";
 
 const repository = new DataRepository();
 
+const customerSummaryCte = `
+  WITH customer_summary AS (
+    SELECT
+      CycleID,
+      CustomerID,
+      Segment_Name,
+      Orders,
+      Products,
+      Quantity,
+      Revenue,
+      Average_Membership,
+      Migration_Status,
+      Transition_Status,
+      Average_Basket_Value
+    FROM Dynamic_Customer_Summary
+    UNION ALL
+    SELECT
+      'Cycle_0' AS CycleID,
+      baseline.CustomerID,
+      baseline.Segment_Name,
+      features.Frequency AS Orders,
+      features.Products,
+      features.Quantity,
+      features.Monetary AS Revenue,
+      1.0 AS Average_Membership,
+      'Baseline' AS Migration_Status,
+      'Baseline' AS Transition_Status,
+      CASE
+        WHEN features.Frequency > 0 THEN features.Monetary / features.Frequency
+        ELSE 0
+      END AS Average_Basket_Value
+    FROM Time_Cycle_0_Segmentation baseline
+    JOIN Data_Preprocessing_Results features
+      ON features.CustomerID = baseline.CustomerID
+      AND features.CycleID = 'Cycle_0'
+  )
+`;
+
 const customerQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(1).max(200).default(25),
@@ -69,8 +107,9 @@ export class CustomerService {
     const sortOrder = query.sortOrder.toUpperCase();
 
     const totalRow = repository.runAggregate(`
+      ${customerSummaryCte}
       SELECT COUNT(*) AS total
-      FROM Dynamic_Customer_Summary summary
+      FROM customer_summary summary
       LEFT JOIN Customer customer ON customer.CustomerID = summary.CustomerID
       ${whereClause}
     `, params);
@@ -78,6 +117,7 @@ export class CustomerService {
     const offset = (query.page - 1) * query.pageSize;
 
     const data = repository.runMany(`
+      ${customerSummaryCte}
       SELECT
         summary.CustomerID,
         customer.Country,
@@ -90,7 +130,7 @@ export class CustomerService {
         summary.Average_Membership,
         summary.Migration_Status,
         summary.Average_Basket_Value
-      FROM Dynamic_Customer_Summary summary
+      FROM customer_summary summary
       LEFT JOIN Customer customer ON customer.CustomerID = summary.CustomerID
       ${whereClause}
       ORDER BY ${sortBy} ${sortOrder}
@@ -114,12 +154,13 @@ export class CustomerService {
     if (!customer) return null;
 
     const history = repository.runMany(`
+      ${customerSummaryCte}
       SELECT
         summary.*,
         features.Recency,
         features.Frequency,
         features.Monetary
-      FROM Dynamic_Customer_Summary summary
+      FROM customer_summary summary
       LEFT JOIN Data_Preprocessing_Results features
         ON features.CustomerID = summary.CustomerID
         AND features.CycleID = summary.CycleID

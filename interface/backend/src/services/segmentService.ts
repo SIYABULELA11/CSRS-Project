@@ -35,7 +35,7 @@ const segmentRecommendations: Record<string, string[]> = {
 
 export class SegmentService {
   async getSegments(): Promise<Record<string, unknown>> {
-    return getCached("segments:all:v2", async () => {
+    return getCached("segments:all:v3", async () => {
       const latestCycleRow = repository.runAggregate(`
         SELECT CycleID
         FROM Dynamic_Cycle_Summary
@@ -90,18 +90,70 @@ export class SegmentService {
       }));
 
       const trends = repository.runMany(`
-        SELECT
-          CycleID,
-          Segment_Name AS segment,
-          Customers AS customers,
-          Revenue AS revenue,
-          Average_Membership AS averageMembership,
-          Revenue_Per_Customer AS revenuePerCustomer
-        FROM Dynamic_Segment_Summary
-        ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), Segment_Name
+        SELECT * FROM (
+          SELECT
+            'Cycle_0' AS CycleID,
+            baseline.Segment_Name AS segment,
+            COUNT(*) AS customers,
+            SUM(features.Monetary) AS revenue,
+            1.0 AS averageMembership,
+            AVG(features.Monetary) AS revenuePerCustomer
+          FROM Time_Cycle_0_Segmentation baseline
+          JOIN Data_Preprocessing_Results features
+            ON features.CustomerID = baseline.CustomerID
+            AND features.CycleID = 'Cycle_0'
+          GROUP BY baseline.Segment_Name
+          UNION ALL
+          SELECT
+            CycleID,
+            Segment_Name AS segment,
+            Customers AS customers,
+            Revenue AS revenue,
+            Average_Membership AS averageMembership,
+            Revenue_Per_Customer AS revenuePerCustomer
+          FROM Dynamic_Segment_Summary
+        )
+        ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), segment
       `);
 
-      return { latestCycle, segments, trends };
+      const profiles = repository.runMany(`
+        WITH labels AS (
+          SELECT
+            CycleID,
+            CustomerID,
+            Segment_Name AS segment,
+            Highest_Membership_Score AS membership
+          FROM Dynamic_Loop_Results
+          UNION ALL
+          SELECT
+            'Cycle_0' AS CycleID,
+            CustomerID,
+            Segment_Name AS segment,
+            1.0 AS membership
+          FROM Time_Cycle_0_Segmentation
+        )
+        SELECT
+          labels.CycleID,
+          labels.segment,
+          COUNT(*) AS customerCount,
+          AVG(features.Recency) AS avgRecency,
+          AVG(features.Frequency) AS avgFrequency,
+          AVG(features.Monetary) AS avgMonetary,
+          AVG(features.RF_Score) AS avgRF,
+          AVG(features.RM_Score) AS avgRM,
+          AVG(features.FM_Score) AS avgFM,
+          SUM(features.Monetary) AS revenue,
+          AVG(features.Monetary) AS revenuePerCustomer,
+          AVG(labels.membership) AS averageMembership
+        FROM labels
+        JOIN Data_Preprocessing_Results features
+          ON features.CustomerID = labels.CustomerID
+          AND features.CycleID = labels.CycleID
+        GROUP BY labels.CycleID, labels.segment
+        ORDER BY CAST(REPLACE(labels.CycleID, 'Cycle_', '') AS INTEGER), labels.segment
+      `);
+
+      return { latestCycle, segments, trends, profiles };
     });
   }
 

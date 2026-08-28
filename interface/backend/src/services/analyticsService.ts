@@ -52,6 +52,103 @@ const pearson = (left: number[], right: number[]): number => {
   return denominator ? numerator / denominator : 0;
 };
 
+const squaredDistance = (left: number[], right: number[]): number =>
+  left.reduce((total, value, index) => total + (value - right[index]) ** 2, 0);
+
+const segmentNameForCluster = (cluster: number): string => [
+  "Champions",
+  "Core Loyalists",
+  "Mid-Tier Occasionals",
+  "Hibernating / Lost",
+][cluster] ?? `Cluster ${cluster}`;
+
+const getBaselineEvaluation = (): Record<string, unknown> => {
+  const points = repository.runMany(`
+    SELECT
+      KMeans_Cluster_Number AS cluster,
+      PC1,
+      PC2,
+      PC3,
+      Silhouette_Score AS silhouette,
+      Elbow_Inertia_Value AS inertia,
+      Initial_Centroids AS centroids
+    FROM Time_Cycle_0_Segmentation
+  `);
+  if (!points.length) return {};
+
+  let centroids: number[][] = [];
+  try {
+    centroids = JSON.parse(String(points[0].centroids ?? "[]")) as number[][];
+  } catch {
+    centroids = [];
+  }
+  if (!centroids.length) return {};
+
+  const vectors = points.map((row) => [toNumber(row.PC1), toNumber(row.PC2), toNumber(row.PC3)]);
+  const labels = points.map((row) => toNumber(row.cluster));
+  const sampleSize = vectors.length;
+  const clusterCount = centroids.length;
+  const overallCentroid = [0, 1, 2].map((dimension) =>
+    mean(vectors.map((vector) => vector[dimension])),
+  );
+  const withinCluster = vectors.reduce(
+    (total, vector, index) => total + squaredDistance(vector, centroids[labels[index]]),
+    0,
+  );
+  const clusterSizes = centroids.map((_, cluster) =>
+    labels.filter((label) => label === cluster).length,
+  );
+  const betweenCluster = centroids.reduce(
+    (total, centroid, cluster) =>
+      total + clusterSizes[cluster] * squaredDistance(centroid, overallCentroid),
+    0,
+  );
+  const clusterScatter = centroids.map((centroid, cluster) => {
+    const clusterVectors = vectors.filter((_, index) => labels[index] === cluster);
+    return mean(clusterVectors.map((vector) => Math.sqrt(squaredDistance(vector, centroid))));
+  });
+  const daviesBouldin = mean(centroids.map((centroid, cluster) =>
+    Math.max(...centroids
+      .map((otherCentroid, otherCluster) => {
+        if (cluster === otherCluster) return 0;
+        const separation = Math.sqrt(squaredDistance(centroid, otherCentroid));
+        return separation ? (clusterScatter[cluster] + clusterScatter[otherCluster]) / separation : 0;
+      })),
+  ));
+  const centroidSeparations = centroids.flatMap((centroid, cluster) =>
+    centroids.slice(cluster + 1).map((otherCentroid) => squaredDistance(centroid, otherCentroid)),
+  );
+  const minimumSeparation = Math.min(...centroidSeparations.filter((value) => value > 0));
+  const calinskiHarabasz = clusterCount > 1 && sampleSize > clusterCount
+    ? (betweenCluster / (clusterCount - 1)) / (withinCluster / (sampleSize - clusterCount))
+    : 0;
+  const xieBeni = minimumSeparation ? withinCluster / (sampleSize * minimumSeparation) : 0;
+
+  return {
+    CycleID: "Cycle_0",
+    CustomersProcessed: sampleSize,
+    ActiveCustomers: sampleSize,
+    InactiveCustomers: 0,
+    NewCustomers: sampleSize,
+    ReactivatedCustomers: 0,
+    StableCustomers: 0,
+    MigratedCustomers: 0,
+    ComparableCustomers: 0,
+    MigrationRate: null,
+    CentroidShift: 0,
+    Iterations: 1,
+    SilhouetteScore: toNumber(points[0].silhouette),
+    DaviesBouldinScore: daviesBouldin,
+    CalinskiHarabaszScore: calinskiHarabasz,
+    XieBeniIndex: xieBeni,
+    FuzzyObjective: toNumber(points[0].inertia) || withinCluster,
+    AverageMembership: 1,
+    ProcessingTime: null,
+    Converged: 1,
+    Method: "K-Means baseline",
+  };
+};
+
 const getLatestCycle = (): string => {
   const row = repository.runAggregate(`
     SELECT CycleID
@@ -74,7 +171,7 @@ export class AnalyticsService {
     return {
       cycles: repository.runMany(`
         SELECT DISTINCT CycleID AS value
-        FROM Dynamic_Customer_Summary
+        FROM Data_Preprocessing_Results
         ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER)
       `),
       segments: repository.runMany(`
@@ -253,7 +350,7 @@ export class AnalyticsService {
   }
 
   getModelEvaluationDetailed(): Record<string, unknown> {
-    const baseline = repository.runAggregate(`
+    const baselineSummary = repository.runAggregate(`
       SELECT
         COUNT(*) AS sampleSize,
         COUNT(DISTINCT KMeans_Cluster_Number) AS clusterCount,
@@ -261,29 +358,40 @@ export class AnalyticsService {
         AVG(Elbow_Inertia_Value) AS elbowInertia
       FROM Time_Cycle_0_Segmentation
     `);
-    const cycles = repository.runMany(`
+    const baselineCycle = getBaselineEvaluation();
+    const dynamicCycles = repository.runMany(`
       SELECT
         CycleID,
         CustomersProcessed,
+        ActiveCustomers,
+        InactiveCustomers,
+        NewCustomers,
+        ReactivatedCustomers,
         StableCustomers,
         MigratedCustomers,
+        ComparableCustomers,
         MigrationRate,
         CentroidShift,
         Iterations,
         SilhouetteScore,
         DaviesBouldinScore,
         CalinskiHarabaszScore,
+        XieBeniIndex,
+        FuzzyObjective,
         AverageMembership,
         ProcessingTime,
         Converged
       FROM Dynamic_Cycle_Summary
       ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER)
     `);
+    const cycles = [baselineCycle, ...dynamicCycles];
     const averages = repository.runAggregate(`
       SELECT
         AVG(SilhouetteScore) AS silhouette,
         AVG(DaviesBouldinScore) AS daviesBouldin,
         AVG(CalinskiHarabaszScore) AS calinskiHarabasz,
+        AVG(XieBeniIndex) AS xieBeni,
+        AVG(FuzzyObjective) AS fuzzyObjective,
         AVG(AverageMembership) AS averageMembership,
         AVG(MigrationRate) AS migrationRate,
         AVG(Iterations) AS iterations,
@@ -291,7 +399,141 @@ export class AnalyticsService {
         COUNT(*) AS dynamicCycles
       FROM Dynamic_Cycle_Summary
     `);
-    return { baseline, cycles, averages, latest: cycles.at(-1) ?? null };
+    const baseline = { ...baselineSummary, ...baselineCycle };
+    return { baseline, cycles, dynamicCycles, averages, latest: cycles.at(-1) ?? null };
+  }
+
+  getCycleComparisonAnalytics(): Record<string, unknown> {
+    const evaluation = this.getModelEvaluationDetailed();
+    const profiles = repository.runMany(`
+      WITH labels AS (
+        SELECT
+          CycleID,
+          CustomerID,
+          Segment_Name AS segment,
+          Highest_Membership_Score AS membership
+        FROM Dynamic_Loop_Results
+        UNION ALL
+        SELECT
+          'Cycle_0' AS CycleID,
+          CustomerID,
+          Segment_Name AS segment,
+          1.0 AS membership
+        FROM Time_Cycle_0_Segmentation
+      )
+      SELECT
+        labels.CycleID,
+        labels.segment,
+        COUNT(*) AS customers,
+        AVG(features.Recency) AS recency,
+        AVG(features.Frequency) AS frequency,
+        AVG(features.Monetary) AS monetary,
+        AVG(features.RF_Score) AS rf,
+        AVG(features.RM_Score) AS rm,
+        AVG(features.FM_Score) AS fm,
+        SUM(features.Monetary) AS revenue,
+        AVG(labels.membership) AS averageMembership
+      FROM labels
+      JOIN Data_Preprocessing_Results features
+        ON features.CustomerID = labels.CustomerID
+        AND features.CycleID = labels.CycleID
+      GROUP BY labels.CycleID, labels.segment
+      ORDER BY CAST(REPLACE(labels.CycleID, 'Cycle_', '') AS INTEGER), labels.segment
+    `);
+    const definitions = repository.runMany(`
+      SELECT CycleID, CycleNumber, PeriodStart, PeriodEnd, WindowStart, SnapshotDate, Phase
+      FROM Cycle_Definitions
+      ORDER BY CycleNumber
+    `);
+    return {
+      cycles: evaluation.cycles,
+      profiles,
+      definitions,
+      defaultFrom: "Cycle_0",
+      defaultTo: String((evaluation.latest as Record<string, unknown> | null)?.CycleID ?? "Cycle_10"),
+    };
+  }
+
+  getPcaAnalytics(): Record<string, unknown> {
+    const points = repository.runMany(`
+      WITH labels AS (
+        SELECT CycleID, CustomerID, Segment_Name AS segment
+        FROM Dynamic_Loop_Results
+        UNION ALL
+        SELECT 'Cycle_0' AS CycleID, CustomerID, Segment_Name AS segment
+        FROM Time_Cycle_0_Segmentation
+      ), ranked AS (
+        SELECT
+          features.CycleID,
+          features.CustomerID,
+          labels.segment,
+          features.PC1,
+          features.PC2,
+          features.PC3,
+          ROW_NUMBER() OVER (
+            PARTITION BY features.CycleID, labels.segment
+            ORDER BY features.CustomerID
+          ) AS sampleRank
+        FROM Data_Preprocessing_Results features
+        JOIN labels
+          ON labels.CycleID = features.CycleID
+          AND labels.CustomerID = features.CustomerID
+      )
+      SELECT CycleID, CustomerID, segment, PC1, PC2, PC3
+      FROM ranked
+      WHERE sampleRank <= 90
+      ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), segment, CustomerID
+    `);
+
+    const baselineRow = repository.runAggregate(`
+      SELECT Initial_Centroids AS centroids
+      FROM Time_Cycle_0_Segmentation
+      LIMIT 1
+    `);
+    let baselineCentroids: number[][] = [];
+    try {
+      baselineCentroids = JSON.parse(String(baselineRow.centroids ?? "[]")) as number[][];
+    } catch {
+      baselineCentroids = [];
+    }
+    const centroids = [
+      ...baselineCentroids.map((centroid, cluster) => ({
+        CycleID: "Cycle_0",
+        cluster,
+        segment: segmentNameForCluster(cluster),
+        PC1: centroid[0],
+        PC2: centroid[1],
+        PC3: centroid[2],
+      })),
+      ...repository.runMany(`
+        SELECT
+          CycleID,
+          ClusterID AS cluster,
+          CASE ClusterID
+            WHEN 0 THEN 'Champions'
+            WHEN 1 THEN 'Core Loyalists'
+            WHEN 2 THEN 'Mid-Tier Occasionals'
+            WHEN 3 THEN 'Hibernating / Lost'
+          END AS segment,
+          PC1,
+          PC2,
+          PC3
+        FROM Dynamic_Centroids
+        ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), ClusterID
+      `),
+    ];
+    const featureProfiles = (this.getCycleComparisonAnalytics().profiles ?? []) as Record<string, unknown>[];
+    return {
+      points,
+      centroids,
+      featureProfiles,
+      explainedVariance: [
+        { component: "PC1", percentage: 64.30 },
+        { component: "PC2", percentage: 29.85 },
+        { component: "PC3", percentage: 4.98 },
+      ],
+      method: "Cycle 0 PCA transformation reused for every cycle",
+    };
   }
 
   getCustomerAnalytics(): Record<string, unknown> {
@@ -313,8 +555,8 @@ export class AnalyticsService {
       SELECT
         CASE
           WHEN Revenue < 250 THEN 'Under £250'
-          WHEN Revenue < 750 THEN '£250–£749'
-          WHEN Revenue < 2000 THEN '£750–£1,999'
+          WHEN Revenue < 750 THEN '£250-£749'
+          WHEN Revenue < 2000 THEN '£750-£1,999'
           ELSE '£2,000+'
         END AS band,
         COUNT(*) AS customers,
@@ -421,53 +663,267 @@ export class AnalyticsService {
       GROUP BY CycleID
       ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER)
     `);
-    return { topProducts, portfolio, segmentProducts, revenueByCycle };
+    const productQuadrant = repository.runMany(`
+      SELECT
+        Description AS product,
+        SUM(Revenue) AS revenue,
+        SUM(Quantity_Sold) AS quantity,
+        SUM(Orders) AS orders,
+        SUM(Customer_Count) AS customerInteractions
+      FROM Dynamic_Product_Summary
+      GROUP BY Description
+      ORDER BY revenue DESC
+      LIMIT 40
+    `);
+    return { topProducts, portfolio, segmentProducts, revenueByCycle, productQuadrant };
   }
 
   getGeographicAnalytics(): Record<string, unknown> {
     const latestCycle = getLatestCycle();
-    const countries = repository.runMany(`
+    const markets = repository.runMany(`
       SELECT
         Country AS country,
-        COUNT(DISTINCT CustomerID) AS customers,
-        COUNT(DISTINCT InvoiceNo) AS orders,
-        COUNT(DISTINCT Description) AS products,
-        SUM(Quantity) AS quantity,
-        SUM(Revenue) AS revenue,
-        SUM(Revenue) / NULLIF(COUNT(DISTINCT CustomerID), 0) AS revenuePerCustomer
-      FROM Dynamic_Business_Analytics
-      GROUP BY Country
-      ORDER BY revenue DESC
-    `);
-    const segmentComposition = repository.runMany(`
-      SELECT
-        Country AS country,
-        Segment_Name AS segment,
-        COUNT(DISTINCT CustomerID) AS customers,
-        SUM(Revenue) AS revenue
-      FROM Dynamic_Business_Analytics
+        Geographic_Cluster_Number AS clusterNumber,
+        Geographic_Segment_Name AS geographicSegment,
+        Customer_Count AS customers,
+        Active_Customer_Count AS activeCustomers,
+        Revenue AS revenue,
+        Orders AS orders,
+        Product_Diversity AS products,
+        Orders_Per_Customer AS ordersPerCustomer,
+        Revenue_Per_Customer AS revenuePerCustomer,
+        Repeat_Purchase_Rate AS repeatPurchaseRate,
+        Champions_Share AS championsShare,
+        Core_Loyalists_Share AS coreLoyalistsShare,
+        Mid_Tier_Occasionals_Share AS midTierOccasionalsShare,
+        Hibernating_Lost_Share AS hibernatingLostShare
+      FROM Geographic_Segmentation
       WHERE CycleID = @latestCycle
-      GROUP BY Country, Segment_Name
+      ORDER BY Revenue DESC, Country
+    `, { latestCycle });
+    const segmentSummary = repository.runMany(`
+      SELECT
+        Geographic_Segment_Name AS segment,
+        COUNT(*) AS markets,
+        SUM(Customer_Count) AS customers,
+        SUM(Active_Customer_Count) AS activeCustomers,
+        SUM(Revenue) AS revenue,
+        AVG(Revenue_Per_Customer) AS averageRevenuePerCustomer,
+        AVG(Repeat_Purchase_Rate) AS repeatPurchaseRate
+      FROM Geographic_Segmentation
+      WHERE CycleID = @latestCycle
+      GROUP BY Geographic_Segment_Name
       ORDER BY revenue DESC
     `, { latestCycle });
-    const countryTrends = repository.runMany(`
-      WITH top_countries AS (
-        SELECT Country
-        FROM Dynamic_Business_Analytics
-        GROUP BY Country
-        ORDER BY SUM(Revenue) DESC
-        LIMIT 8
-      )
+    const evolution = repository.runMany(`
+      SELECT
+        CycleID,
+        Geographic_Segment_Name AS segment,
+        COUNT(*) AS markets,
+        SUM(Customer_Count) AS customers,
+        SUM(Revenue) AS revenue
+      FROM Geographic_Segmentation
+      GROUP BY CycleID, Geographic_Segment_Name
+      ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), Geographic_Segment_Name
+    `);
+    const quality = repository.runMany(`
+      SELECT CycleID, Markets, SilhouetteScore, DaviesBouldinScore, CalinskiHarabaszScore
+      FROM Geographic_Cycle_Summary
+      ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER)
+    `);
+    const behaviouralEvolution = repository.runMany(`
       SELECT
         CycleID,
         Country AS country,
-        COUNT(DISTINCT CustomerID) AS customers,
-        SUM(Revenue) AS revenue
-      FROM Dynamic_Business_Analytics
-      WHERE Country IN (SELECT Country FROM top_countries)
-      GROUP BY CycleID, Country
-      ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), revenue DESC
+        Customer_Count AS customers,
+        Champions_Share * 100 AS Champions,
+        Core_Loyalists_Share * 100 AS 'Core Loyalists',
+        Mid_Tier_Occasionals_Share * 100 AS 'Mid-Tier Occasionals',
+        Hibernating_Lost_Share * 100 AS 'Hibernating / Lost'
+      FROM Geographic_Segmentation
+      ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), Revenue DESC, Country
     `);
-    return { latestCycle, countries, segmentComposition, countryTrends };
+    return {
+      latestCycle,
+      markets,
+      countries: markets,
+      segmentSummary,
+      evolution,
+      quality,
+      behaviouralEvolution,
+    };
+  }
+
+  getFirmographicAnalytics(): Record<string, unknown> {
+    const latestCycle = getLatestCycle();
+    const summary = repository.runAggregate(`
+      SELECT
+        COUNT(*) AS customers,
+        COUNT(DISTINCT Country) AS markets,
+        COUNT(DISTINCT Geographic_Segment_Name) AS geographicSegments,
+        COUNT(DISTINCT Segment_Name) AS behaviouralSegments,
+        COUNT(DISTINCT Firmographic_Segment_Name) AS firmographicSegments,
+        AVG(Highest_Membership_Score) AS averageMembership,
+        SUM(CASE WHEN Activity_Status = 'Active' THEN 1 ELSE 0 END) AS activeCustomers,
+        SUM(CASE WHEN Activity_Status = 'Inactive' THEN 1 ELSE 0 END) AS inactiveCustomers
+      FROM Firmographic_Customer_Segmentation
+      WHERE CycleID = @latestCycle
+    `, { latestCycle });
+    const combinations = repository.runMany(`
+      SELECT
+        Firmographic_Segment_Name AS firmographicSegment,
+        Geographic_Segment_Name AS geographicSegment,
+        Segment_Name AS behaviouralSegment,
+        COUNT(*) AS customers,
+        SUM(CASE WHEN Activity_Status = 'Active' THEN 1 ELSE 0 END) AS activeCustomers,
+        SUM(CASE WHEN Activity_Status = 'Inactive' THEN 1 ELSE 0 END) AS inactiveCustomers,
+        AVG(Highest_Membership_Score) AS averageMembership,
+        COUNT(DISTINCT Country) AS markets
+      FROM Firmographic_Customer_Segmentation
+      WHERE CycleID = @latestCycle
+      GROUP BY Firmographic_Segment_Name, Geographic_Segment_Name, Segment_Name
+      ORDER BY customers DESC
+    `, { latestCycle });
+    const matrix = repository.runMany(`
+      SELECT
+        Geographic_Segment_Name AS geographicSegment,
+        Segment_Name AS behaviouralSegment,
+        COUNT(*) AS customers
+      FROM Firmographic_Customer_Segmentation
+      WHERE CycleID = @latestCycle
+      GROUP BY Geographic_Segment_Name, Segment_Name
+      ORDER BY Geographic_Segment_Name, Segment_Name
+    `, { latestCycle });
+    const evolution = repository.runMany(`
+      SELECT
+        CycleID,
+        Geographic_Segment_Name AS geographicSegment,
+        COUNT(*) AS customers
+      FROM Firmographic_Customer_Segmentation
+      GROUP BY CycleID, Geographic_Segment_Name
+      ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), Geographic_Segment_Name
+    `);
+    const marketMix = repository.runMany(`
+      SELECT
+        Country AS country,
+        Geographic_Segment_Name AS geographicSegment,
+        COUNT(*) AS customers,
+        COUNT(DISTINCT Firmographic_Segment_Name) AS firmographicSegments
+      FROM Firmographic_Customer_Segmentation
+      WHERE CycleID = @latestCycle
+      GROUP BY Country, Geographic_Segment_Name
+      ORDER BY customers DESC, Country
+    `, { latestCycle });
+    return { latestCycle, summary, combinations, matrix, evolution, marketMix };
+  }
+
+  getCycle10Simulation(): Record<string, unknown> {
+    const cycleId = "Cycle_10";
+    const previousCycleId = "Cycle_9";
+    const definition = repository.runAggregate(`
+      SELECT * FROM Cycle_Definitions WHERE CycleID = @cycleId
+    `, { cycleId });
+    const model = repository.runAggregate(`
+      SELECT * FROM Dynamic_Cycle_Summary WHERE CycleID = @cycleId
+    `, { cycleId });
+    const previousModel = repository.runAggregate(`
+      SELECT * FROM Dynamic_Cycle_Summary WHERE CycleID = @previousCycleId
+    `, { previousCycleId });
+    const transitionStates = repository.runMany(`
+      SELECT Transition_Status AS state, COUNT(*) AS customers
+      FROM Customer_Transitions
+      WHERE CycleID = @cycleId
+      GROUP BY Transition_Status
+      ORDER BY customers DESC
+    `, { cycleId });
+    const transitionMatrix = repository.runMany(`
+      SELECT
+        Previous_Segment_Name AS fromSegment,
+        Segment_Name AS toSegment,
+        COUNT(*) AS customers
+      FROM Customer_Transitions
+      WHERE CycleID = @cycleId
+        AND Transition_Status IN ('Existing Stable', 'Existing Migrated')
+      GROUP BY Previous_Segment_Name, Segment_Name
+      ORDER BY customers DESC
+    `, { cycleId });
+    const segmentComparison = repository.runMany(`
+      WITH current_cycle AS (
+        SELECT Segment_Name, Customers, Revenue, Average_Membership
+        FROM Dynamic_Segment_Summary
+        WHERE CycleID = @cycleId
+      ), previous_cycle AS (
+        SELECT Segment_Name, Customers, Revenue, Average_Membership
+        FROM Dynamic_Segment_Summary
+        WHERE CycleID = @previousCycleId
+      )
+      SELECT
+        current_cycle.Segment_Name AS segment,
+        previous_cycle.Customers AS previousCustomers,
+        current_cycle.Customers AS currentCustomers,
+        current_cycle.Customers - previous_cycle.Customers AS customerChange,
+        previous_cycle.Revenue AS previousRevenue,
+        current_cycle.Revenue AS currentRevenue,
+        current_cycle.Revenue - previous_cycle.Revenue AS revenueChange,
+        current_cycle.Average_Membership AS averageMembership
+      FROM current_cycle
+      JOIN previous_cycle USING (Segment_Name)
+      ORDER BY currentCustomers DESC
+    `, { cycleId, previousCycleId });
+    const geographicSegments = repository.runMany(`
+      SELECT
+        Geographic_Segment_Name AS segment,
+        COUNT(*) AS markets,
+        SUM(Customer_Count) AS customers,
+        SUM(Revenue) AS revenue
+      FROM Geographic_Segmentation
+      WHERE CycleID = @cycleId
+      GROUP BY Geographic_Segment_Name
+      ORDER BY revenue DESC
+    `, { cycleId });
+    const firmographicSegments = repository.runMany(`
+      SELECT
+        Firmographic_Segment_Name AS segment,
+        COUNT(*) AS customers,
+        AVG(Highest_Membership_Score) AS averageMembership
+      FROM Firmographic_Customer_Segmentation
+      WHERE CycleID = @cycleId
+      GROUP BY Firmographic_Segment_Name
+      ORDER BY customers DESC
+    `, { cycleId });
+    const topCustomers = repository.runMany(`
+      SELECT
+        summary.CustomerID,
+        customer.Country,
+        firmographic.Firmographic_Segment_Name AS firmographicSegment,
+        summary.Segment_Name AS behaviouralSegment,
+        summary.Revenue,
+        summary.Orders,
+        summary.Average_Membership AS averageMembership,
+        summary.Transition_Status AS transitionState
+      FROM Dynamic_Customer_Summary summary
+      LEFT JOIN Customer customer ON customer.CustomerID = summary.CustomerID
+      LEFT JOIN Firmographic_Customer_Segmentation firmographic
+        ON firmographic.CustomerID = summary.CustomerID
+        AND firmographic.CycleID = summary.CycleID
+      WHERE summary.CycleID = @cycleId
+      ORDER BY summary.Revenue DESC, summary.CustomerID
+      LIMIT 12
+    `, { cycleId });
+    return {
+      mode: "precomputed",
+      status: "ready",
+      cycleId,
+      previousCycleId,
+      definition,
+      model,
+      previousModel,
+      transitionStates,
+      transitionMatrix,
+      segmentComparison,
+      geographicSegments,
+      firmographicSegments,
+      topCustomers,
+    };
   }
 }

@@ -111,6 +111,22 @@ export class ApiController {
     res.json(analyticsService.getGeographicAnalytics());
   }
 
+  firmographicAnalytics(_req: Request, res: Response): void {
+    res.json(analyticsService.getFirmographicAnalytics());
+  }
+
+  cycleComparisonAnalytics(_req: Request, res: Response): void {
+    res.json(analyticsService.getCycleComparisonAnalytics());
+  }
+
+  pcaAnalytics(_req: Request, res: Response): void {
+    res.json(analyticsService.getPcaAnalytics());
+  }
+
+  cycle10Simulation(_req: Request, res: Response): void {
+    res.json(analyticsService.getCycle10Simulation());
+  }
+
   artifacts(req: Request, res: Response): void {
     const category = typeof req.query.category === "string" ? req.query.category : "";
     if (!category) {

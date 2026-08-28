@@ -15,7 +15,7 @@ const getCached = (key, fetcher) => {
 };
 
 export const fetchDashboardBundle = () =>
-  getCached('dashboard:bundle:v2', async () => {
+  getCached('dashboard:bundle:v4', async () => {
     const [
       overview,
       segments,
@@ -24,7 +24,11 @@ export const fetchDashboardBundle = () =>
       customerAnalytics,
       productAnalytics,
       geographicAnalytics,
+      firmographicAnalytics,
+      cycleComparisonAnalytics,
+      pcaAnalytics,
       modelEvaluation,
+      cycle10Simulation,
       artifacts,
       schema,
       filters,
@@ -36,7 +40,11 @@ export const fetchDashboardBundle = () =>
       apiGet('/api/analytics/customers'),
       apiGet('/api/analytics/products'),
       apiGet('/api/analytics/geography'),
+      apiGet('/api/analytics/firmographic'),
+      apiGet('/api/analytics/cycle-comparison'),
+      apiGet('/api/analytics/pca'),
       apiGet('/api/model/evaluation/detailed'),
+      apiGet('/api/simulation/cycle-10'),
       apiGet('/api/artifacts'),
       apiGet('/api/schema'),
       apiGet('/api/filters'),
@@ -50,7 +58,11 @@ export const fetchDashboardBundle = () =>
       customerAnalytics,
       productAnalytics,
       geographicAnalytics,
+      firmographicAnalytics,
+      cycleComparisonAnalytics,
+      pcaAnalytics,
       modelEvaluation,
+      cycle10Simulation,
       artifacts,
       schema,
       filters,

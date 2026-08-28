@@ -13,31 +13,48 @@ const segmentRank = (segment: string): number => {
 
 export class MigrationService {
   async getMigration(): Promise<Record<string, unknown>> {
-    return getCached("migration:summary:v2", async () => {
+    return getCached("migration:summary:v4", async () => {
       const transitionMatrix = repository.runMany(`
         SELECT
-          CASE CAST(Previous_Cluster AS INTEGER)
-            WHEN 0 THEN 'Champions'
-            WHEN 1 THEN 'Core Loyalists'
-            WHEN 2 THEN 'Mid-Tier Occasionals'
-            WHEN 3 THEN 'Hibernating / Lost'
-            ELSE 'New / Unclassified'
-          END AS fromSegment,
+          Previous_Segment_Name AS fromSegment,
           Segment_Name AS toSegment,
           COUNT(*) AS count
-        FROM Dynamic_Loop_Results
-        GROUP BY fromSegment, Segment_Name
+        FROM Customer_Transitions
+        WHERE Transition_Status IN ('Existing Stable', 'Existing Migrated')
+        GROUP BY Previous_Segment_Name, Segment_Name
         ORDER BY count DESC
       `);
 
       const migrationStatistics = repository.runAggregate(`
         SELECT
-          SUM(CASE WHEN Migration_Status = 'Migrated' THEN 1 ELSE 0 END) AS migrated,
-          SUM(CASE WHEN Migration_Status = 'Stable' THEN 1 ELSE 0 END) AS stable,
+          SUM(CASE WHEN Transition_Status = 'Existing Migrated' THEN 1 ELSE 0 END) AS migrated,
+          SUM(CASE WHEN Transition_Status = 'Existing Stable' THEN 1 ELSE 0 END) AS stable,
           COUNT(*) AS total,
-          AVG(CASE WHEN Migration_Status = 'Migrated' THEN 1.0 ELSE 0.0 END) AS migrationRate
-        FROM Dynamic_Loop_Results
+          AVG(CASE WHEN Transition_Status = 'Existing Migrated' THEN 1.0 ELSE 0.0 END) AS migrationRate
+        FROM Customer_Transitions
+        WHERE Transition_Status IN ('Existing Stable', 'Existing Migrated')
       `);
+
+      const transitionStateTotals = repository.runMany(`
+        SELECT Transition_Status AS state, COUNT(*) AS customers
+        FROM Customer_Transitions
+        GROUP BY Transition_Status
+        ORDER BY customers DESC
+      `);
+
+      const dynamicTransitionStateEvolution = repository.runMany(`
+        SELECT CycleID, Transition_Status AS state, COUNT(*) AS customers
+        FROM Customer_Transitions
+        GROUP BY CycleID, Transition_Status
+        ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), Transition_Status
+      `);
+      const baselineCount = Number(repository.runAggregate(`
+        SELECT COUNT(*) AS customers FROM Time_Cycle_0_Segmentation
+      `).customers ?? 0);
+      const transitionStateEvolution = [
+        { CycleID: "Cycle_0", state: "New", customers: baselineCount },
+        ...dynamicTransitionStateEvolution,
+      ];
 
       const directional = transitionMatrix.reduce<{ positive: number; negative: number }>(
         (totals, row) => {
@@ -53,22 +70,45 @@ export class MigrationService {
         { positive: 0, negative: 0 },
       );
 
-      const cycleMigration = repository.runMany(`
+      const dynamicCycleMigration = repository.runMany(`
         SELECT
           CycleID,
           CustomersProcessed,
+          ActiveCustomers,
+          InactiveCustomers,
+          NewCustomers,
+          ReactivatedCustomers,
           StableCustomers,
           MigratedCustomers,
+          ComparableCustomers,
           MigrationRate,
           AverageMembership
         FROM Dynamic_Cycle_Summary
         ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER)
       `);
+      const cycleMigration = [
+        {
+          CycleID: "Cycle_0",
+          CustomersProcessed: baselineCount,
+          ActiveCustomers: baselineCount,
+          InactiveCustomers: 0,
+          NewCustomers: baselineCount,
+          ReactivatedCustomers: 0,
+          StableCustomers: 0,
+          MigratedCustomers: 0,
+          ComparableCustomers: 0,
+          MigrationRate: null,
+          AverageMembership: 1,
+        },
+        ...dynamicCycleMigration,
+      ];
 
       return {
         transitionMatrix,
         topFlows: transitionMatrix.slice(0, 10),
         migrationStatistics,
+        transitionStateTotals,
+        transitionStateEvolution,
         positiveMigrationCount: directional.positive,
         negativeMigrationCount: directional.negative,
         cycleMigration,
