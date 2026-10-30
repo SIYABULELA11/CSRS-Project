@@ -10,9 +10,9 @@ services:
       - key: NODE_VERSION
         value: 22.22.0
       - key: DATABASE_PATH
-        value: "model/pipeline b/csrs_pipeline_b.db"
+        value: deployment/current/csrs_pipeline_b_repaired.db
       - key: ARTIFACT_ROOT
-        value: model
+        value: deployment/current/Research_Figures
       - key: CACHE_TTL_SECONDS
         value: 120
       - key: CORS_ORIGIN

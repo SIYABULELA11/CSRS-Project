@@ -5,8 +5,17 @@
  * Uses VITE_API_URL environment variable from .env.local or production .env
  */
 
-export const API_URL = import.meta.env.VITE_API_URL
-  || (import.meta.env.DEV ? 'http://localhost:4000' : 'https://csrs-project.onrender.com');
+const isLocalBackendOrigin = typeof window !== 'undefined'
+  && ['localhost', '127.0.0.1'].includes(window.location.hostname)
+  && window.location.port === '4000';
+
+// A production bundle can also be served locally by the Express backend. In
+// that case, keep API and artifact requests on the page's origin even when the
+// build environment contains the hosted Render API URL.
+export const API_URL = isLocalBackendOrigin
+  ? window.location.origin
+  : import.meta.env.VITE_API_URL
+    || (import.meta.env.DEV ? 'http://localhost:4000' : window.location.origin);
 
 /**
  * Create headers for API requests

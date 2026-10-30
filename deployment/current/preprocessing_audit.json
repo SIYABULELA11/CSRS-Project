@@ -1,0 +1,291 @@
+{
+  "status": "passed",
+  "run_directory": "C:\\Users\\siyam\\OneDrive - University of the Western Cape\\Desktop\\Desktop stuff\\Hon project\\CSRS\\model\\pipeline b\\repair_outputs_2026-10-23\\named_20261025_214151",
+  "database_sha256": "d35c49ea2e8038b4fbb9fbc44cdea14d77c9998666195565cef908c5f09bd45f",
+  "source_path": "C:\\Users\\siyam\\OneDrive - University of the Western Cape\\Desktop\\Desktop stuff\\Hon project\\CSRS\\model\\pipeline b\\Online UK_Retail.xlsx",
+  "source_sha256": "bd51132d2f8beff417c3c829fa523bbec4b90ddce7e48d5c15626fc9282a18e9",
+  "audit_seconds": 31.09,
+  "independence": "No imports of production csrs_model and no calls to its cleaning, snapshot, feature or transformation functions. Raw source reconstructed directly; fitted parameter attributes independently checked against baseline raw features; all stored rows compared.",
+  "cleaning": {
+    "raw_rows": 541909,
+    "exact_duplicates_removed_all_source_dates": 5268,
+    "deduplicated_rows_all_source_dates": 536641,
+    "qualifying_rows": 375666,
+    "qualifying_customers": 4297,
+    "qualifying_paid_sales": 8370018.454,
+    "invalid_or_out_of_period_rows_after_deduplication": 160975,
+    "policy": "Exact source-row deduplication; valid integer CustomerID, nonblank invoice, valid date in [2010-12-01,2011-12-01), finite positive quantity and unit price, non-cancellation invoices. Missing product description/country use explicit placeholders."
+  },
+  "source_storage": {
+    "customer_master_rows": 4297,
+    "dynamic_source_transaction_rows_matched": 309302,
+    "entire_source_row_multiset_matches": true,
+    "stored_total_price_maximum_absolute_residual": 0.0
+  },
+  "snapshots": {
+    "rows_checked": 30280,
+    "cycles": [
+      {
+        "cycle": 0,
+        "customers": 1682,
+        "active": 1682,
+        "hibernating": 0,
+        "maximum_absolute_residuals": {
+          "Recency": 0.0,
+          "Frequency": 0.0,
+          "Monetary": 0.0,
+          "Products": 0.0,
+          "Quantity": 0.0,
+          "Has_Purchase_In_Recency_Window": 0.0,
+          "Is_New": 0.0,
+          "Is_Model_Fit": 0.0,
+          "Current_Period_Orders": 0.0,
+          "Current_Period_Revenue": 0.0,
+          "Current_Period_Products": 0.0,
+          "Current_Period_Quantity": 0.0
+        }
+      },
+      {
+        "cycle": 1,
+        "customers": 2134,
+        "active": 974,
+        "hibernating": 358,
+        "maximum_absolute_residuals": {
+          "Recency": 0.0,
+          "Frequency": 0.0,
+          "Monetary": 0.0,
+          "Products": 0.0,
+          "Quantity": 0.0,
+          "Has_Purchase_In_Recency_Window": 0.0,
+          "Is_New": 0.0,
+          "Is_Model_Fit": 0.0,
+          "Current_Period_Orders": 0.0,
+          "Current_Period_Revenue": 0.0,
+          "Current_Period_Products": 0.0,
+          "Current_Period_Quantity": 0.0
+        }
+      },
+      {
+        "cycle": 2,
+        "customers": 2434,
+        "active": 856,
+        "hibernating": 543,
+        "maximum_absolute_residuals": {
+          "Recency": 0.0,
+          "Frequency": 0.0,
+          "Monetary": 0.0,
+          "Products": 0.0,
+          "Quantity": 0.0,
+          "Has_Purchase_In_Recency_Window": 0.0,
+          "Is_New": 0.0,
+          "Is_Model_Fit": 0.0,
+          "Current_Period_Orders": 0.0,
+          "Current_Period_Revenue": 0.0,
+          "Current_Period_Products": 0.0,
+          "Current_Period_Quantity": 0.0
+        }
+      },
+      {
+        "cycle": 3,
+        "customers": 2718,
+        "active": 1056,
+        "hibernating": 759,
+        "maximum_absolute_residuals": {
+          "Recency": 0.0,
+          "Frequency": 0.0,
+          "Monetary": 0.0,
+          "Products": 0.0,
+          "Quantity": 0.0,
+          "Has_Purchase_In_Recency_Window": 0.0,
+          "Is_New": 0.0,
+          "Is_Model_Fit": 0.0,
+          "Current_Period_Orders": 0.0,
+          "Current_Period_Revenue": 0.0,
+          "Current_Period_Products": 0.0,
+          "Current_Period_Quantity": 0.0
+        }
+      },
+      {
+        "cycle": 4,
+        "customers": 2960,
+        "active": 991,
+        "hibernating": 991,
+        "maximum_absolute_residuals": {
+          "Recency": 0.0,
+          "Frequency": 0.0,
+          "Monetary": 0.0,
+          "Products": 0.0,
+          "Quantity": 0.0,
+          "Has_Purchase_In_Recency_Window": 0.0,
+          "Is_New": 0.0,
+          "Is_Model_Fit": 0.0,
+          "Current_Period_Orders": 0.0,
+          "Current_Period_Revenue": 0.0,
+          "Current_Period_Products": 0.0,
+          "Current_Period_Quantity": 0.0
+        }
+      },
+      {
+        "cycle": 5,
+        "customers": 3148,
+        "active": 949,
+        "hibernating": 1123,
+        "maximum_absolute_residuals": {
+          "Recency": 0.0,
+          "Frequency": 0.0,
+          "Monetary": 0.0,
+          "Products": 0.0,
+          "Quantity": 0.0,
+          "Has_Purchase_In_Recency_Window": 0.0,
+          "Is_New": 0.0,
+          "Is_Model_Fit": 0.0,
+          "Current_Period_Orders": 0.0,
+          "Current_Period_Revenue": 0.0,
+          "Current_Period_Products": 0.0,
+          "Current_Period_Quantity": 0.0
+        }
+      },
+      {
+        "cycle": 6,
+        "customers": 3317,
+        "active": 935,
+        "hibernating": 1394,
+        "maximum_absolute_residuals": {
+          "Recency": 0.0,
+          "Frequency": 0.0,
+          "Monetary": 0.0,
+          "Products": 0.0,
+          "Quantity": 0.0,
+          "Has_Purchase_In_Recency_Window": 0.0,
+          "Is_New": 0.0,
+          "Is_Model_Fit": 0.0,
+          "Current_Period_Orders": 0.0,
+          "Current_Period_Revenue": 0.0,
+          "Current_Period_Products": 0.0,
+          "Current_Period_Quantity": 0.0
+        }
+      },
+      {
+        "cycle": 7,
+        "customers": 3616,
+        "active": 1266,
+        "hibernating": 1465,
+        "maximum_absolute_residuals": {
+          "Recency": 0.0,
+          "Frequency": 0.0,
+          "Monetary": 0.0,
+          "Products": 0.0,
+          "Quantity": 0.0,
+          "Has_Purchase_In_Recency_Window": 0.0,
+          "Is_New": 0.0,
+          "Is_Model_Fit": 0.0,
+          "Current_Period_Orders": 0.0,
+          "Current_Period_Revenue": 0.0,
+          "Current_Period_Products": 0.0,
+          "Current_Period_Quantity": 0.0
+        }
+      },
+      {
+        "cycle": 8,
+        "customers": 3974,
+        "active": 1364,
+        "hibernating": 1513,
+        "maximum_absolute_residuals": {
+          "Recency": 0.0,
+          "Frequency": 0.0,
+          "Monetary": 0.0,
+          "Products": 0.0,
+          "Quantity": 0.0,
+          "Has_Purchase_In_Recency_Window": 0.0,
+          "Is_New": 0.0,
+          "Is_Model_Fit": 0.0,
+          "Current_Period_Orders": 0.0,
+          "Current_Period_Revenue": 0.0,
+          "Current_Period_Products": 0.0,
+          "Current_Period_Quantity": 0.0
+        }
+      },
+      {
+        "cycle": 9,
+        "customers": 4297,
+        "active": 1664,
+        "hibernating": 1457,
+        "maximum_absolute_residuals": {
+          "Recency": 0.0,
+          "Frequency": 0.0,
+          "Monetary": 0.0,
+          "Products": 0.0,
+          "Quantity": 0.0,
+          "Has_Purchase_In_Recency_Window": 0.0,
+          "Is_New": 0.0,
+          "Is_Model_Fit": 0.0,
+          "Current_Period_Orders": 0.0,
+          "Current_Period_Revenue": 0.0,
+          "Current_Period_Products": 0.0,
+          "Current_Period_Quantity": 0.0
+        }
+      }
+    ],
+    "all_snapshot_fields_match": true,
+    "definition_note": "Exact Recency is uncapped. F/M use exact trailing90-day totals dividedby3 in every cycle. Current_Period commercialfields use only nonoverlapping currentperiod transactions. Every customer observed before the snapshot enters fitting exactlyonce."
+  },
+  "transforms": {
+    "features_checked": [
+      "Log_R",
+      "Log_F",
+      "Log_M",
+      "RF_Score",
+      "RM_Score",
+      "FM_Score"
+    ],
+    "feature_maximum_absolute_residuals": {
+      "Log_R": 0.0,
+      "Log_F": 0.0,
+      "Log_M": 0.0,
+      "RF_Score": 0.0,
+      "RM_Score": 0.0,
+      "FM_Score": 0.0
+    },
+    "scaler_fit_rows": 1682,
+    "scaler_maximum_absolute_residuals": {
+      "data_min": 0.0,
+      "data_max": 0.0,
+      "data_range": 0.0,
+      "scale": 0.0,
+      "all_stored_scaled_features": 2.220446049250313e-16
+    },
+    "pca_fit_rows": 1682,
+    "pca_maximum_absolute_residuals": {
+      "baseline_mean": 6.661338147750939e-16,
+      "orthonormality": 1.3322676295501878e-15,
+      "explained_variance": 6.938893903907228e-17,
+      "principal_subspace_projector": 5.440092820663267e-15,
+      "all_stored_PC_coordinates": 9.992007221626409e-16
+    },
+    "pca_explained_variance_ratio": [
+      0.6555909634240369,
+      0.2766883136408616,
+      0.05822356638350471
+    ],
+    "dynamic_scaled_cells_outside_baseline_0_1_range": 57657,
+    "feature_definition": "log1p(R), log1p(F), log1p(M), then products of the corresponding logged values for RF/RM/FM. Scaler and PCA are fitted only on Cycle 0 and reused without clipping dynamic values."
+  },
+  "geography": {
+    "rows_checked": 346,
+    "baseline_fit_markets": 29,
+    "k": 3,
+    "label_mismatches": 0,
+    "raw_to_descriptive_number": {
+      "0": 2,
+      "1": 0,
+      "2": 1
+    },
+    "maximum_absolute_residuals": {
+      "robust_baseline_median": 0.0,
+      "robust_baseline_interquartile_range": 0.0,
+      "all_stored_scaled_values": 0.0,
+      "business_profile_share_sum": 0.0
+    },
+    "method": "Cycle 0 RobustScaler median/IQR and K-means K=3 with n_init=50, seed42; frozen scaler and nearest fitted centre in all later cycles. Aggregate At_Risk_Share is excluded from the feature matrix."
+  }
+}

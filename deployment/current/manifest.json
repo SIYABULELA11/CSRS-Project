@@ -1,0 +1,427 @@
+{
+  "sourceRun": "named_20261025_214151",
+  "database": {
+    "file": "csrs_pipeline_b_repaired.db",
+    "archive": "csrs_pipeline_b_repaired.db.gz",
+    "sha256": "d35c49ea2e8038b4fbb9fbc44cdea14d77c9998666195565cef908c5f09bd45f",
+    "uncompressedBytes": 194596864,
+    "archiveBytes": 26050034
+  },
+  "artifactRoot": "Research_Figures",
+  "customers": 4297,
+  "customerCycleRows": 30280,
+  "cycles": [
+    {
+      "cycle": "Cycle_0",
+      "customers": 1682,
+      "k": 5,
+      "silhouette": 0.3651888174347971
+    },
+    {
+      "cycle": "Cycle_1",
+      "customers": 2134,
+      "k": 5,
+      "silhouette": 0.40710606611284855
+    },
+    {
+      "cycle": "Cycle_2",
+      "customers": 2434,
+      "k": 5,
+      "silhouette": 0.4479105773243908
+    },
+    {
+      "cycle": "Cycle_3",
+      "customers": 2718,
+      "k": 5,
+      "silhouette": 0.5053978798228277
+    },
+    {
+      "cycle": "Cycle_4",
+      "customers": 2960,
+      "k": 5,
+      "silhouette": 0.5257281498234283
+    },
+    {
+      "cycle": "Cycle_5",
+      "customers": 3148,
+      "k": 6,
+      "silhouette": 0.530119058173338
+    },
+    {
+      "cycle": "Cycle_6",
+      "customers": 3317,
+      "k": 6,
+      "silhouette": 0.551141011262616
+    },
+    {
+      "cycle": "Cycle_7",
+      "customers": 3616,
+      "k": 7,
+      "silhouette": 0.5300851689688757
+    },
+    {
+      "cycle": "Cycle_8",
+      "customers": 3974,
+      "k": 8,
+      "silhouette": 0.5110513571567499
+    },
+    {
+      "cycle": "Cycle_9",
+      "customers": 4297,
+      "k": 9,
+      "silhouette": 0.4755391437138394
+    }
+  ],
+  "files": [
+    {
+      "path": "APPROVED_CLUSTER_NAMES.md",
+      "sha256": "d4a7c1aacee6ec5a49bcb93f7a624f608269f09b6fb507fce400d986b9bd7f94",
+      "bytes": 1882
+    },
+    {
+      "path": "centroid_update_audit.json",
+      "sha256": "2d7c0b5954250bac30ee2b68d1690fa380485e7e6908a30386b5b9da7fb36116",
+      "bytes": 27881
+    },
+    {
+      "path": "cluster_count_display_audit.json",
+      "sha256": "cac4785584b7db314b28e2ac3af64950319351b2eb7718125b926f35485a49fa",
+      "bytes": 1656
+    },
+    {
+      "path": "CLUSTER_IDENTITY_AND_MIGRATION.md",
+      "sha256": "ec059f67c98754e3edb5eb0bf59cbcea45b64c1e1fcc94e60c3a00b112fbcdcd",
+      "bytes": 3262
+    },
+    {
+      "path": "cluster_identity_profile_history.csv",
+      "sha256": "407486933f30f7ab6bf0b95c8b00ce809414ee42d5e1f3cabbc672c782007c7a",
+      "bytes": 6027
+    },
+    {
+      "path": "csrs_pipeline_b_repaired.db.gz",
+      "sha256": "85a18c73a400ff664a7715d7e90af9dae9d3f4c1007206d4fecdd94bff4c5d25",
+      "bytes": 26050034
+    },
+    {
+      "path": "current_cluster_profiles.csv",
+      "sha256": "7d55d49ba6db4c0c39d2efc9ec097e7b425622a8383d15be4e36be3ab9c7337a",
+      "bytes": 83902
+    },
+    {
+      "path": "current_model_quality.csv",
+      "sha256": "40ef821dcb90d8f30811a5ca42fd048239c44cd577c84ea1cdda1e15c5911620",
+      "bytes": 3496
+    },
+    {
+      "path": "customer_risk_audit.json",
+      "sha256": "d21437ab7ab5ed874075ce4fcd5b7fd4a91c0a3a4c5a9d73ea4a977bbe2aa45a",
+      "bytes": 2313
+    },
+    {
+      "path": "cycle0_feature_scaler.pkl",
+      "sha256": "4ac28e7af285fc0c0ec502a7797f0a3eab2e0c1af2d3a9ca9766e9546969a96c",
+      "bytes": 1207
+    },
+    {
+      "path": "cycle0_geographic_kmeans.pkl",
+      "sha256": "58dafce36687d0d6969ae439155ba31474e7c337925c6db314f15020286c22a6",
+      "bytes": 1131
+    },
+    {
+      "path": "cycle0_geographic_scaler.pkl",
+      "sha256": "533dfb76c3f37d53ca4eb34285b81e1cb04ad0beb0c834a5e81fd66b75f5888d",
+      "bytes": 1223
+    },
+    {
+      "path": "cycle0_kmeans_model.pkl",
+      "sha256": "6d4ea319bdc1483c63469c4a132c58aa2e3952b9040e17d2e938d1149e0ba826",
+      "bytes": 7583
+    },
+    {
+      "path": "cycle0_pca_model.pkl",
+      "sha256": "338a2c5a7dac15bd39a37740886402b33198f3be1530eae36af7e26fa95b7255",
+      "bytes": 1215
+    },
+    {
+      "path": "evaluation_page_audit.json",
+      "sha256": "183f431ae9ab97b5c5c1899e581c6cf18ab5d3acf59e0edc4d98658837a9d991",
+      "bytes": 725
+    },
+    {
+      "path": "evaluation_report.json",
+      "sha256": "b4a2c3222ccad56b0545b495667dea56555836369982bd04ab54872e380ea4fd",
+      "bytes": 25627
+    },
+    {
+      "path": "independent_mdfcm_audit.json",
+      "sha256": "4586c4d87c8106e5c1a08aea54e9006120cee3ede638b91d0c80430e327f51b6",
+      "bytes": 3665
+    },
+    {
+      "path": "naming_update_audit.json",
+      "sha256": "7a4fb81e0803b4213830689cd62f9c7cbbf512a658c8f86a00ec8f121b474cea",
+      "bytes": 3885
+    },
+    {
+      "path": "pca_summary_card_update_audit.json",
+      "sha256": "8fc709bc887c0c4dc125dc843efef8dbd7e0f52f474ec13594b5b1acd38f4d3c",
+      "bytes": 576
+    },
+    {
+      "path": "per_cluster_centroids.csv",
+      "sha256": "52138d7b54604735f72961ed4740593b8217cd7ab7c5317b0ca16650aa20e28a",
+      "bytes": 5991
+    },
+    {
+      "path": "per_cluster_quality.csv",
+      "sha256": "042cb1e7ecf7fae7a10faaf7062a9b001cd5a61fa3604f2054baff0e63ff88a3",
+      "bytes": 11521
+    },
+    {
+      "path": "per_cluster_quality_audit.json",
+      "sha256": "6f7219a774f74b6038afb1165887ed348d632ba79b29ec2342727d02717c92e9",
+      "bytes": 2585
+    },
+    {
+      "path": "population_quality_diagnostics.csv",
+      "sha256": "75579f5975b1d63cb290e3a9b5ae4cab4a83e8645063dab103b0ed5677615e2c",
+      "bytes": 2539
+    },
+    {
+      "path": "population_quality_diagnostics.json",
+      "sha256": "98f5c03a775ab2e40bd9b2e20ff6c7420215d5d79325a72f6716c9e68fd70a63",
+      "bytes": 9309
+    },
+    {
+      "path": "population_scope_audit.json",
+      "sha256": "e23e14d5ebf7cf2b48d6d8966ea00b32fd79be2729ca553dcb2c2d29e7204ee3",
+      "bytes": 2652
+    },
+    {
+      "path": "preprocessing_audit.json",
+      "sha256": "baa6220c15cbfe723f5bc8712e9f9a332bac5d25b06bc7f84543f8a59f8fb391",
+      "bytes": 9943
+    },
+    {
+      "path": "Research_Figures/Baseline/cycle0_elbow_wcss.png",
+      "sha256": "3380d1f5828c2bac317b780ae8d75d543906eba3f7fc3129667b3163a642a623",
+      "bytes": 106324
+    },
+    {
+      "path": "Research_Figures/Baseline/cycle0_pca_3d_unlabelled.png",
+      "sha256": "379a7f58b8d480c505196b30b8f4991a18b65f48189150dc3a64c384b96f8a2d",
+      "bytes": 359352
+    },
+    {
+      "path": "Research_Figures/Baseline/cycle0_pca_clusters.png",
+      "sha256": "ed44316d0d0926499a21e28d5efe5f61193d80042fd59bd9d4abcfaf205ec08b",
+      "bytes": 347062
+    },
+    {
+      "path": "Research_Figures/Baseline/cycle0_pca_unlabelled.png",
+      "sha256": "2b848ede8b882ff17f1abf86ac004ccf2da098e5495414416110f274cd9fad20",
+      "bytes": 224719
+    },
+    {
+      "path": "Research_Figures/Baseline/cycle0_silhouette_by_k.png",
+      "sha256": "4d87c3a385682a1bef14ee8c3015cd3b3d43f634aec902e7e48ef5e1d1ee2149",
+      "bytes": 107331
+    },
+    {
+      "path": "Research_Figures/Baseline/rfm_log_transformation.png",
+      "sha256": "aef3755d1e10068c679c252dcc39bed152403e560c909865d3d4913a9015f104",
+      "bytes": 218486
+    },
+    {
+      "path": "Research_Figures/Dynamic/centroid_movement_cycles_0_9.csv",
+      "sha256": "e98f256d75048ab60125ad09650af79cf30258fa9c0de01e0206d4eda3b4399d",
+      "bytes": 5635
+    },
+    {
+      "path": "Research_Figures/Dynamic/centroid_movement_cycles_0_9.png",
+      "sha256": "b409100c7a261fe5e2c695cf7bea9a65823ec0ea8cecaabf4d7434d8fd1e7001",
+      "bytes": 435949
+    },
+    {
+      "path": "Research_Figures/Dynamic/centroid_movement_cycles_0_9.svg",
+      "sha256": "8c00bd963110a529b5edf3741df3e3f4f9dd89c565349f3e32d18172b120c7ef",
+      "bytes": 244781
+    },
+    {
+      "path": "Research_Figures/Dynamic/customer_transition_states.png",
+      "sha256": "1239b74c926ed3358c7c4d7918ca5985547afb31fa1bf5673dad97d91bf6cee5",
+      "bytes": 62436
+    },
+    {
+      "path": "Research_Figures/Dynamic/fitted_centroid_movement_cycles_0_9.csv",
+      "sha256": "e98f256d75048ab60125ad09650af79cf30258fa9c0de01e0206d4eda3b4399d",
+      "bytes": 5635
+    },
+    {
+      "path": "Research_Figures/Dynamic/fitted_centroid_movement_cycles_0_9.png",
+      "sha256": "e27f6b1118db960264a37a7ce3ed08917fe2dbe5e41b9bb062febd47ef89d7d1",
+      "bytes": 626520
+    },
+    {
+      "path": "Research_Figures/Dynamic/fitted_centroid_movement_cycles_0_9.svg",
+      "sha256": "bd29e5f02fa75ec730bfc1ccf8761b717078819169863fe5d6547d564d35c6bf",
+      "bytes": 299536
+    },
+    {
+      "path": "Research_Figures/Dynamic/Per_Cluster_Centroids/champions.csv",
+      "sha256": "301e627151af0906be59ccb1e5b551388d1b0d56ff441b566337b429a0b3fdd2",
+      "bytes": 904
+    },
+    {
+      "path": "Research_Figures/Dynamic/Per_Cluster_Centroids/hibernating___lost.csv",
+      "sha256": "a57cce0d5b0081ddf45894fe353748193d3484756e1fde88c8db84fe163460a4",
+      "bytes": 887
+    },
+    {
+      "path": "Research_Figures/Dynamic/Per_Cluster_Centroids/high_value_regulars.csv",
+      "sha256": "dec9b642d8ed10920a4ff35e1a4ccacefd32fafbfebc52d4b86ffcf987ff986b",
+      "bytes": 166
+    },
+    {
+      "path": "Research_Figures/Dynamic/Per_Cluster_Centroids/light_buyers.csv",
+      "sha256": "75f0e0b4ad49ef508870a841009809278972b16f71f6b008a50c2a908606ea86",
+      "bytes": 332
+    },
+    {
+      "path": "Research_Figures/Dynamic/Per_Cluster_Centroids/light_buyers_at_risk.csv",
+      "sha256": "3694ec665a1176f47958a73e58bf31ff45fee143a6318845ab3b4bd87741b0a3",
+      "bytes": 836
+    },
+    {
+      "path": "Research_Figures/Dynamic/Per_Cluster_Centroids/loyalists.csv",
+      "sha256": "d9acc31c53a614c0b40a2b44f522febdc23f4f8969496ed8b32f3dcc078dae79",
+      "bytes": 903
+    },
+    {
+      "path": "Research_Figures/Dynamic/Per_Cluster_Centroids/mid_tier_occasionals.csv",
+      "sha256": "b6e824d78000343b88fdd5063c68f580a738bb9cf1a8126ba9c368462d4225f9",
+      "bytes": 1036
+    },
+    {
+      "path": "Research_Figures/Dynamic/Per_Cluster_Centroids/occasional_buyers_at_risk.csv",
+      "sha256": "7eef3f65c97e504a2d81646cfcf91800b6f7b69777e3dcd96082253bf93477e9",
+      "bytes": 473
+    },
+    {
+      "path": "Research_Figures/Dynamic/Per_Cluster_Centroids/valuable_customers_at_risk.csv",
+      "sha256": "7e0cf4ffb33c64412f3eb9ed0203ed2c3ec53df0fd90269be1db84dee9577aa8",
+      "bytes": 666
+    },
+    {
+      "path": "Research_Figures/Dynamic/segment_evolution_cycles_0_9.png",
+      "sha256": "7b8739a01ff74438f09d05458761650ddc1debf8dad4c3c9aadb23073bb17f46",
+      "bytes": 237900
+    },
+    {
+      "path": "Research_Figures/Firmographic/cycle9_firmographic_segments.png",
+      "sha256": "a0d6a842f405a58fd45674e337819df5bc135afbea3e27a5cd77e33ee6bd7baa",
+      "bytes": 183242
+    },
+    {
+      "path": "Research_Figures/Geographic/cycle9_market_segments.png",
+      "sha256": "ece3a293a048ba94148e9854a193f8370e9b50ed16d9f1e8f75a10680dd50255",
+      "bytes": 164956
+    },
+    {
+      "path": "Research_Figures/Geographic/market_segment_evolution.png",
+      "sha256": "677f4da515a7f8ae123d084f77321f298e6111d6ecaa9eda27d86850a8dcf620",
+      "bytes": 125171
+    },
+    {
+      "path": "Research_Figures/Methodology/current_methodology.pdf",
+      "sha256": "f344544013dbba6204a2be7b351618de8cd4988955ffca368f7de9fdd1119975",
+      "bytes": 39241
+    },
+    {
+      "path": "Research_Figures/Methodology/current_methodology.png",
+      "sha256": "28edb9feb10bcc2cb9d080d4a414b3996f58474a0292ad071125c95b2c90fdf0",
+      "bytes": 456406
+    },
+    {
+      "path": "Research_Figures/Methodology/current_methodology.svg",
+      "sha256": "e7770c369aa75bae87254719e4b03781c908efcc2298a62ef82850d9e1363144",
+      "bytes": 213854
+    },
+    {
+      "path": "Research_Figures/Validation/dynamic_model_quality.png",
+      "sha256": "fa5992d1b4e32e8f351dee8a50590ce49be3b67449fc79355e941871ae690156",
+      "bytes": 334328
+    },
+    {
+      "path": "Research_Figures/Validation/evaluation_behavioural_metrics.csv",
+      "sha256": "80c675b30cbb892ba239d98b02bae7a969bd82e3a0a01365e8fe265904fe0d72",
+      "bytes": 3705
+    },
+    {
+      "path": "Research_Figures/Validation/evaluation_cycle0_kmeans.png",
+      "sha256": "321155d9fbfdfb68b5d0b71ac77292fa414f258aa300f1099ff85fa2ed2a1514",
+      "bytes": 262121
+    },
+    {
+      "path": "Research_Figures/Validation/evaluation_cycle0_kmeans.svg",
+      "sha256": "36b1c294d2d8af539be288c5de89a6e9d19f1b35c1851a03542e11f9729f0695",
+      "bytes": 139516
+    },
+    {
+      "path": "Research_Figures/Validation/evaluation_geographic_market.png",
+      "sha256": "9ff2f9aab37283034969a1a16da69597943c203fed033a8bdaf71d50b09dd264",
+      "bytes": 304538
+    },
+    {
+      "path": "Research_Figures/Validation/evaluation_geographic_market.svg",
+      "sha256": "d23d3edceaa569162d138fea3d65ff691f01e22cdc7fea2ec2f5a1318138f473",
+      "bytes": 167357
+    },
+    {
+      "path": "Research_Figures/Validation/evaluation_geographic_metrics.csv",
+      "sha256": "595f83d5692271eeb5aaa4bab873b5cadc309f2ed71d992a02694626317a2ad0",
+      "bytes": 1084
+    },
+    {
+      "path": "Research_Figures/Validation/evaluation_metrics_cycles_0_9.png",
+      "sha256": "99ae859c23f736f828e75772d7ad1eb72966224d3b24067217acb0f368ce71ce",
+      "bytes": 339396
+    },
+    {
+      "path": "Research_Figures/Validation/evaluation_metrics_cycles_0_9.svg",
+      "sha256": "04328f4955d4843d2a486a006326f1f5d12255ff7fbd6e866a36a5a34e81b62b",
+      "bytes": 162941
+    },
+    {
+      "path": "Research_Figures/Validation/evaluation_metrics_cycles_1_9.png",
+      "sha256": "d2ad810e750409a24b7969b1cc594f281db56d3ea9438c0a579d62974e2825bd",
+      "bytes": 343435
+    },
+    {
+      "path": "Research_Figures/Validation/evaluation_metrics_cycles_1_9.svg",
+      "sha256": "cca8828e8399c9c6fbe18010f468d9524a9c816da95fadd3c1831e4852411312",
+      "bytes": 163195
+    },
+    {
+      "path": "Research_Figures/Validation/xie_beni_index.png",
+      "sha256": "7c05ef046e5ecc756ad6297fe7c7cf22a6797a543d1da9d158ed32f847b91d97",
+      "bytes": 105105
+    },
+    {
+      "path": "semantic_cluster_audit.json",
+      "sha256": "d013d59d6f16fb3b84de9820eaa0ec7ac4ca985fd3a4b1f062b0ad14d4de2d54",
+      "bytes": 41681
+    },
+    {
+      "path": "service_audit.json",
+      "sha256": "7cc98267907867530123bbd10ffea1f602da4905ecda199687802a4c065d2c02",
+      "bytes": 2172
+    },
+    {
+      "path": "synthetic_branch_verification.json",
+      "sha256": "822ccb5f61b50272b8db7f83632577e5199cee3bb365d1bbfda893344c78b807",
+      "bytes": 1492
+    }
+  ]
+}

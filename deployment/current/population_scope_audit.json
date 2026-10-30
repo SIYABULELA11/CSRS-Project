@@ -1,0 +1,93 @@
+{
+  "passed": true,
+  "cycle0_maximum_numeric_change": 0.0,
+  "core_function_ast_unchanged": {
+    "safe_cluster_metrics": true,
+    "match_cluster_ids": true,
+    "memberships_from_centroids": true,
+    "fit_fuzzy_c_means": true,
+    "fit_incremental_fuzzy_movement": true,
+    "dynamic_fuzzy_update": true,
+    "previous_membership_mass_by_cluster": true
+  },
+  "fit_policy": "Every observed customer contributes exactly one current replacement snapshot; no historical snapshot is added as another observation.",
+  "historical_membership_mass_used": 0,
+  "customer_cycle_rows": 30280,
+  "distinct_customers": 4297,
+  "disjoint_period_paid_sales": 8370018.454,
+  "disjoint_period_orders": 17754,
+  "cycles": [
+    {
+      "cycle": "Cycle_1",
+      "observed_customers": 2134,
+      "fitted_customers": 2134,
+      "monthly_non_purchasers_fitted": 1160,
+      "fitted_k": 5,
+      "distinct_display_names": 5
+    },
+    {
+      "cycle": "Cycle_2",
+      "observed_customers": 2434,
+      "fitted_customers": 2434,
+      "monthly_non_purchasers_fitted": 1578,
+      "fitted_k": 5,
+      "distinct_display_names": 5
+    },
+    {
+      "cycle": "Cycle_3",
+      "observed_customers": 2718,
+      "fitted_customers": 2718,
+      "monthly_non_purchasers_fitted": 1662,
+      "fitted_k": 5,
+      "distinct_display_names": 5
+    },
+    {
+      "cycle": "Cycle_4",
+      "observed_customers": 2960,
+      "fitted_customers": 2960,
+      "monthly_non_purchasers_fitted": 1969,
+      "fitted_k": 5,
+      "distinct_display_names": 5
+    },
+    {
+      "cycle": "Cycle_5",
+      "observed_customers": 3148,
+      "fitted_customers": 3148,
+      "monthly_non_purchasers_fitted": 2199,
+      "fitted_k": 6,
+      "distinct_display_names": 6
+    },
+    {
+      "cycle": "Cycle_6",
+      "observed_customers": 3317,
+      "fitted_customers": 3317,
+      "monthly_non_purchasers_fitted": 2382,
+      "fitted_k": 6,
+      "distinct_display_names": 6
+    },
+    {
+      "cycle": "Cycle_7",
+      "observed_customers": 3616,
+      "fitted_customers": 3616,
+      "monthly_non_purchasers_fitted": 2350,
+      "fitted_k": 7,
+      "distinct_display_names": 7
+    },
+    {
+      "cycle": "Cycle_8",
+      "observed_customers": 3974,
+      "fitted_customers": 3974,
+      "monthly_non_purchasers_fitted": 2610,
+      "fitted_k": 8,
+      "distinct_display_names": 8
+    },
+    {
+      "cycle": "Cycle_9",
+      "observed_customers": 4297,
+      "fitted_customers": 4297,
+      "monthly_non_purchasers_fitted": 2633,
+      "fitted_k": 9,
+      "distinct_display_names": 9
+    }
+  ]
+}

@@ -1,0 +1,873 @@
+{
+  "status": "passed",
+  "run_directory": "C:\\Users\\siyam\\OneDrive - University of the Western Cape\\Desktop\\Desktop stuff\\Hon project\\CSRS\\model\\pipeline b\\repair_outputs_2026-10-23\\named_20261025_214151",
+  "method": "Independent reconstruction from stored customer vectors, PCA coordinates, saved baseline K-means centres and documented mathematical rules; no csrs_model imports/calls.",
+  "retained_candidates_checked": 9,
+  "selected_retained_updates_checked": 5,
+  "maximum_selected_retained_centre_residual": 5.342948306008566e-15,
+  "maximum_retained_candidate_objective_residual": 7.105427357601002e-15,
+  "split_initializations_replayed": 52,
+  "selected_splits_replayed": 4,
+  "maximum_split_candidate_XB_residual": 2.498001805406602e-16,
+  "maximum_selected_split_centre_residual_after_permutation": 2.220446049250313e-16,
+  "lineage_rows_checked": 285,
+  "maximum_lineage_residuals": {
+    "centroid_distance": 0.0,
+    "weighted_jaccard": 2.220446049250313e-16,
+    "match_cost": 2.220446049250313e-16
+  },
+  "limitations": [
+    "Prior mass applies only to absent customer IDs. In this fullpopulation replacement run every prior ID is present, so mass is zero and previous centres provide initialization without extra historical observationweight.",
+    "Secondary lineage split/merge contribution labels describe membership-overlap topology; they do not independently demonstrate a selected structural split or merge. Structural decisions are reported by the selected MDFCM operation.",
+    "Every inactive customer receives fresh membership to current fitted centres. No retired historical ID is carried forward as a current assignment.",
+    "All production K+1 initializations and FCM iterations are independently replayed; no K-1 candidate is eligible in this dataset, so its actual structural output remains covered by separate synthetic checks rather than a fabricated research event."
+  ],
+  "cycles": [
+    {
+      "cycle": 1,
+      "prior_k": 5,
+      "selected_k": 5,
+      "historical_mass": {
+        "mass_by_fitted_local_cluster": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "inactive_customer_mass_included": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "customers_excluded_because_primary_ID_already_retired": 0,
+        "included_zero_primary_memberships": 0,
+        "definition": "Sum each prior customer's membership in their primary stable ID if that ID still maps to a fitted prior centre. Retained inactive customers can contribute. This primary-assignment mass differs from summing every secondary fuzzy component.",
+        "replacement_snapshot_policy": "Prior mass applies only to IDs absent from incoming snapshot; all previous IDs are replaced here"
+      },
+      "incremental_candidate_present": true,
+      "retained_objective_residual": 7.105427357601002e-15,
+      "retained_iterations": 18,
+      "last_iteration_blend_weights": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "selected_retained_centre_residual": 5.342948306008566e-15,
+      "split_candidate_replay": {
+        "starts_checked": 5,
+        "converged_finite_starts": 5,
+        "recorded_source": 0,
+        "best_source_independent": 0,
+        "recorded_source_XB_gap_above_independent_best": 0.0,
+        "recorded_XB_residual": 1.6653345369377348e-16,
+        "recorded_objective_residual": 0.0,
+        "recorded_iterations": 32,
+        "independent_iterations": 32,
+        "start_scores": [
+          {
+            "source": 0,
+            "iterations": 32,
+            "converged": true,
+            "xie_beni": 0.40438418470329734
+          },
+          {
+            "source": 1,
+            "iterations": 61,
+            "converged": true,
+            "xie_beni": 0.4341777823951618
+          },
+          {
+            "source": 2,
+            "iterations": 12,
+            "converged": true,
+            "xie_beni": 0.5608143593397547
+          },
+          {
+            "source": 3,
+            "iterations": 30,
+            "converged": true,
+            "xie_beni": 0.4335148208692825
+          },
+          {
+            "source": 4,
+            "iterations": 31,
+            "converged": true,
+            "xie_beni": 0.43659239250818493
+          }
+        ]
+      },
+      "lineage": {
+        "fitted_IDs_complete": 5,
+        "continued": 4,
+        "created": 1,
+        "retired": 1,
+        "secondary_overlap_rows": 14,
+        "freshly_fitted_inactive_customers_checked": 1160
+      }
+    },
+    {
+      "cycle": 2,
+      "prior_k": 5,
+      "selected_k": 5,
+      "historical_mass": {
+        "mass_by_fitted_local_cluster": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "inactive_customer_mass_included": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "customers_excluded_because_primary_ID_already_retired": 0,
+        "included_zero_primary_memberships": 0,
+        "definition": "Sum each prior customer's membership in their primary stable ID if that ID still maps to a fitted prior centre. Retained inactive customers can contribute. This primary-assignment mass differs from summing every secondary fuzzy component.",
+        "replacement_snapshot_policy": "Prior mass applies only to IDs absent from incoming snapshot; all previous IDs are replaced here"
+      },
+      "incremental_candidate_present": true,
+      "retained_objective_residual": 0.0,
+      "retained_iterations": 10,
+      "last_iteration_blend_weights": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "selected_retained_centre_residual": 1.1102230246251565e-15,
+      "split_candidate_replay": {
+        "starts_checked": 5,
+        "converged_finite_starts": 5,
+        "recorded_source": 2,
+        "best_source_independent": 2,
+        "recorded_source_XB_gap_above_independent_best": 0.0,
+        "recorded_XB_residual": 1.1102230246251565e-16,
+        "recorded_objective_residual": 0.0,
+        "recorded_iterations": 28,
+        "independent_iterations": 28,
+        "start_scores": [
+          {
+            "source": 0,
+            "iterations": 10,
+            "converged": true,
+            "xie_beni": 0.39919347391575527
+          },
+          {
+            "source": 1,
+            "iterations": 20,
+            "converged": true,
+            "xie_beni": 0.41004595600720944
+          },
+          {
+            "source": 2,
+            "iterations": 28,
+            "converged": true,
+            "xie_beni": 0.31154701296334175
+          },
+          {
+            "source": 3,
+            "iterations": 10,
+            "converged": true,
+            "xie_beni": 1.8220711288550533
+          },
+          {
+            "source": 4,
+            "iterations": 12,
+            "converged": true,
+            "xie_beni": 0.4106126015053777
+          }
+        ]
+      },
+      "lineage": {
+        "fitted_IDs_complete": 5,
+        "continued": 5,
+        "created": 0,
+        "retired": 0,
+        "secondary_overlap_rows": 18,
+        "freshly_fitted_inactive_customers_checked": 1578
+      }
+    },
+    {
+      "cycle": 3,
+      "prior_k": 5,
+      "selected_k": 5,
+      "historical_mass": {
+        "mass_by_fitted_local_cluster": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "inactive_customer_mass_included": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "customers_excluded_because_primary_ID_already_retired": 0,
+        "included_zero_primary_memberships": 0,
+        "definition": "Sum each prior customer's membership in their primary stable ID if that ID still maps to a fitted prior centre. Retained inactive customers can contribute. This primary-assignment mass differs from summing every secondary fuzzy component.",
+        "replacement_snapshot_policy": "Prior mass applies only to IDs absent from incoming snapshot; all previous IDs are replaced here"
+      },
+      "incremental_candidate_present": true,
+      "retained_objective_residual": 7.105427357601002e-15,
+      "retained_iterations": 14,
+      "last_iteration_blend_weights": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "selected_retained_centre_residual": 2.9976021664879227e-15,
+      "split_candidate_replay": {
+        "starts_checked": 5,
+        "converged_finite_starts": 5,
+        "recorded_source": 2,
+        "best_source_independent": 2,
+        "recorded_source_XB_gap_above_independent_best": 0.0,
+        "recorded_XB_residual": 5.551115123125783e-17,
+        "recorded_objective_residual": 0.0,
+        "recorded_iterations": 22,
+        "independent_iterations": 22,
+        "start_scores": [
+          {
+            "source": 0,
+            "iterations": 10,
+            "converged": true,
+            "xie_beni": 0.32770839426321946
+          },
+          {
+            "source": 1,
+            "iterations": 13,
+            "converged": true,
+            "xie_beni": 0.5289611574310463
+          },
+          {
+            "source": 2,
+            "iterations": 22,
+            "converged": true,
+            "xie_beni": 0.28080379217135293
+          },
+          {
+            "source": 3,
+            "iterations": 13,
+            "converged": true,
+            "xie_beni": 1.1720416827426836
+          },
+          {
+            "source": 4,
+            "iterations": 15,
+            "converged": true,
+            "xie_beni": 0.5337001025540571
+          }
+        ]
+      },
+      "lineage": {
+        "fitted_IDs_complete": 5,
+        "continued": 5,
+        "created": 0,
+        "retired": 0,
+        "secondary_overlap_rows": 17,
+        "freshly_fitted_inactive_customers_checked": 1662
+      }
+    },
+    {
+      "cycle": 4,
+      "prior_k": 5,
+      "selected_k": 5,
+      "historical_mass": {
+        "mass_by_fitted_local_cluster": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "inactive_customer_mass_included": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "customers_excluded_because_primary_ID_already_retired": 0,
+        "included_zero_primary_memberships": 0,
+        "definition": "Sum each prior customer's membership in their primary stable ID if that ID still maps to a fitted prior centre. Retained inactive customers can contribute. This primary-assignment mass differs from summing every secondary fuzzy component.",
+        "replacement_snapshot_policy": "Prior mass applies only to IDs absent from incoming snapshot; all previous IDs are replaced here"
+      },
+      "incremental_candidate_present": true,
+      "retained_objective_residual": 0.0,
+      "retained_iterations": 14,
+      "last_iteration_blend_weights": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "selected_retained_centre_residual": 1.4710455076283324e-15,
+      "split_candidate_replay": {
+        "starts_checked": 5,
+        "converged_finite_starts": 5,
+        "recorded_source": 0,
+        "best_source_independent": 0,
+        "recorded_source_XB_gap_above_independent_best": 0.0,
+        "recorded_XB_residual": 2.498001805406602e-16,
+        "recorded_objective_residual": 0.0,
+        "recorded_iterations": 27,
+        "independent_iterations": 27,
+        "start_scores": [
+          {
+            "source": 0,
+            "iterations": 27,
+            "converged": true,
+            "xie_beni": 0.24123761252448223
+          },
+          {
+            "source": 1,
+            "iterations": 19,
+            "converged": true,
+            "xie_beni": 0.36312294431594777
+          },
+          {
+            "source": 2,
+            "iterations": 7,
+            "converged": true,
+            "xie_beni": 0.3096290920211214
+          },
+          {
+            "source": 3,
+            "iterations": 14,
+            "converged": true,
+            "xie_beni": 0.8554234411319588
+          },
+          {
+            "source": 4,
+            "iterations": 16,
+            "converged": true,
+            "xie_beni": 0.24350640260730336
+          }
+        ]
+      },
+      "lineage": {
+        "fitted_IDs_complete": 5,
+        "continued": 5,
+        "created": 0,
+        "retired": 0,
+        "secondary_overlap_rows": 16,
+        "freshly_fitted_inactive_customers_checked": 1969
+      }
+    },
+    {
+      "cycle": 5,
+      "prior_k": 5,
+      "selected_k": 6,
+      "historical_mass": {
+        "mass_by_fitted_local_cluster": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "inactive_customer_mass_included": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "customers_excluded_because_primary_ID_already_retired": 0,
+        "included_zero_primary_memberships": 0,
+        "definition": "Sum each prior customer's membership in their primary stable ID if that ID still maps to a fitted prior centre. Retained inactive customers can contribute. This primary-assignment mass differs from summing every secondary fuzzy component.",
+        "replacement_snapshot_policy": "Prior mass applies only to IDs absent from incoming snapshot; all previous IDs are replaced here"
+      },
+      "incremental_candidate_present": true,
+      "retained_objective_residual": 0.0,
+      "retained_iterations": 7,
+      "last_iteration_blend_weights": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "split_candidate_replay": {
+        "starts_checked": 5,
+        "converged_finite_starts": 5,
+        "recorded_source": 0,
+        "best_source_independent": 0,
+        "recorded_source_XB_gap_above_independent_best": 0.0,
+        "recorded_XB_residual": 1.6653345369377348e-16,
+        "recorded_objective_residual": 0.0,
+        "recorded_iterations": 15,
+        "independent_iterations": 15,
+        "start_scores": [
+          {
+            "source": 0,
+            "iterations": 15,
+            "converged": true,
+            "xie_beni": 0.2296622040180873
+          },
+          {
+            "source": 1,
+            "iterations": 9,
+            "converged": true,
+            "xie_beni": 0.4362995695973981
+          },
+          {
+            "source": 2,
+            "iterations": 28,
+            "converged": true,
+            "xie_beni": 0.29872036911868116
+          },
+          {
+            "source": 3,
+            "iterations": 7,
+            "converged": true,
+            "xie_beni": 0.8016299266585026
+          },
+          {
+            "source": 4,
+            "iterations": 13,
+            "converged": true,
+            "xie_beni": 0.2667978452771943
+          }
+        ],
+        "selected_centre_residual_after_permutation": 1.6653345369377348e-16
+      },
+      "lineage": {
+        "fitted_IDs_complete": 6,
+        "continued": 5,
+        "created": 1,
+        "retired": 0,
+        "secondary_overlap_rows": 19,
+        "freshly_fitted_inactive_customers_checked": 2199
+      }
+    },
+    {
+      "cycle": 6,
+      "prior_k": 6,
+      "selected_k": 6,
+      "historical_mass": {
+        "mass_by_fitted_local_cluster": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "inactive_customer_mass_included": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "customers_excluded_because_primary_ID_already_retired": 0,
+        "included_zero_primary_memberships": 0,
+        "definition": "Sum each prior customer's membership in their primary stable ID if that ID still maps to a fitted prior centre. Retained inactive customers can contribute. This primary-assignment mass differs from summing every secondary fuzzy component.",
+        "replacement_snapshot_policy": "Prior mass applies only to IDs absent from incoming snapshot; all previous IDs are replaced here"
+      },
+      "incremental_candidate_present": true,
+      "retained_objective_residual": 0.0,
+      "retained_iterations": 6,
+      "last_iteration_blend_weights": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "selected_retained_centre_residual": 1.7208456881689926e-15,
+      "split_candidate_replay": {
+        "starts_checked": 6,
+        "converged_finite_starts": 6,
+        "recorded_source": 2,
+        "best_source_independent": 2,
+        "recorded_source_XB_gap_above_independent_best": 0.0,
+        "recorded_XB_residual": 2.498001805406602e-16,
+        "recorded_objective_residual": 0.0,
+        "recorded_iterations": 13,
+        "independent_iterations": 13,
+        "start_scores": [
+          {
+            "source": 0,
+            "iterations": 6,
+            "converged": true,
+            "xie_beni": 0.4719608283571938
+          },
+          {
+            "source": 1,
+            "iterations": 6,
+            "converged": true,
+            "xie_beni": 0.3863818441151134
+          },
+          {
+            "source": 2,
+            "iterations": 13,
+            "converged": true,
+            "xie_beni": 0.23616709355015308
+          },
+          {
+            "source": 3,
+            "iterations": 6,
+            "converged": true,
+            "xie_beni": 0.436918741285043
+          },
+          {
+            "source": 4,
+            "iterations": 8,
+            "converged": true,
+            "xie_beni": 0.2649645595729435
+          },
+          {
+            "source": 5,
+            "iterations": 20,
+            "converged": true,
+            "xie_beni": 0.24504874589182293
+          }
+        ]
+      },
+      "lineage": {
+        "fitted_IDs_complete": 6,
+        "continued": 6,
+        "created": 0,
+        "retired": 0,
+        "secondary_overlap_rows": 24,
+        "freshly_fitted_inactive_customers_checked": 2382
+      }
+    },
+    {
+      "cycle": 7,
+      "prior_k": 6,
+      "selected_k": 7,
+      "historical_mass": {
+        "mass_by_fitted_local_cluster": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "inactive_customer_mass_included": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "customers_excluded_because_primary_ID_already_retired": 0,
+        "included_zero_primary_memberships": 0,
+        "definition": "Sum each prior customer's membership in their primary stable ID if that ID still maps to a fitted prior centre. Retained inactive customers can contribute. This primary-assignment mass differs from summing every secondary fuzzy component.",
+        "replacement_snapshot_policy": "Prior mass applies only to IDs absent from incoming snapshot; all previous IDs are replaced here"
+      },
+      "incremental_candidate_present": true,
+      "retained_objective_residual": 0.0,
+      "retained_iterations": 10,
+      "last_iteration_blend_weights": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "split_candidate_replay": {
+        "starts_checked": 6,
+        "converged_finite_starts": 6,
+        "recorded_source": 2,
+        "best_source_independent": 2,
+        "recorded_source_XB_gap_above_independent_best": 0.0,
+        "recorded_XB_residual": 0.0,
+        "recorded_objective_residual": 0.0,
+        "recorded_iterations": 6,
+        "independent_iterations": 6,
+        "start_scores": [
+          {
+            "source": 0,
+            "iterations": 27,
+            "converged": true,
+            "xie_beni": 0.3844435922635047
+          },
+          {
+            "source": 1,
+            "iterations": 13,
+            "converged": true,
+            "xie_beni": 0.3823968099168927
+          },
+          {
+            "source": 2,
+            "iterations": 6,
+            "converged": true,
+            "xie_beni": 0.20992553120200994
+          },
+          {
+            "source": 3,
+            "iterations": 10,
+            "converged": true,
+            "xie_beni": 0.4186719069537753
+          },
+          {
+            "source": 4,
+            "iterations": 14,
+            "converged": true,
+            "xie_beni": 0.22225714151326068
+          },
+          {
+            "source": 5,
+            "iterations": 11,
+            "converged": true,
+            "xie_beni": 0.3013588750652311
+          }
+        ],
+        "selected_centre_residual_after_permutation": 1.1102230246251565e-16
+      },
+      "lineage": {
+        "fitted_IDs_complete": 7,
+        "continued": 6,
+        "created": 1,
+        "retired": 0,
+        "secondary_overlap_rows": 29,
+        "freshly_fitted_inactive_customers_checked": 2350
+      }
+    },
+    {
+      "cycle": 8,
+      "prior_k": 7,
+      "selected_k": 8,
+      "historical_mass": {
+        "mass_by_fitted_local_cluster": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "inactive_customer_mass_included": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "customers_excluded_because_primary_ID_already_retired": 0,
+        "included_zero_primary_memberships": 0,
+        "definition": "Sum each prior customer's membership in their primary stable ID if that ID still maps to a fitted prior centre. Retained inactive customers can contribute. This primary-assignment mass differs from summing every secondary fuzzy component.",
+        "replacement_snapshot_policy": "Prior mass applies only to IDs absent from incoming snapshot; all previous IDs are replaced here"
+      },
+      "incremental_candidate_present": true,
+      "retained_objective_residual": 0.0,
+      "retained_iterations": 7,
+      "last_iteration_blend_weights": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "split_candidate_replay": {
+        "starts_checked": 7,
+        "converged_finite_starts": 7,
+        "recorded_source": 5,
+        "best_source_independent": 5,
+        "recorded_source_XB_gap_above_independent_best": 0.0,
+        "recorded_XB_residual": 1.1102230246251565e-16,
+        "recorded_objective_residual": 0.0,
+        "recorded_iterations": 15,
+        "independent_iterations": 15,
+        "start_scores": [
+          {
+            "source": 0,
+            "iterations": 8,
+            "converged": true,
+            "xie_beni": 0.47316735260161863
+          },
+          {
+            "source": 1,
+            "iterations": 8,
+            "converged": true,
+            "xie_beni": 0.444036815080223
+          },
+          {
+            "source": 2,
+            "iterations": 21,
+            "converged": true,
+            "xie_beni": 0.2715852073862556
+          },
+          {
+            "source": 3,
+            "iterations": 7,
+            "converged": true,
+            "xie_beni": 0.3034760072186624
+          },
+          {
+            "source": 4,
+            "iterations": 13,
+            "converged": true,
+            "xie_beni": 0.2645944099982096
+          },
+          {
+            "source": 5,
+            "iterations": 15,
+            "converged": true,
+            "xie_beni": 0.25395263789406414
+          },
+          {
+            "source": 6,
+            "iterations": 12,
+            "converged": true,
+            "xie_beni": 0.2642616513443389
+          }
+        ],
+        "selected_centre_residual_after_permutation": 1.1102230246251565e-16
+      },
+      "lineage": {
+        "fitted_IDs_complete": 8,
+        "continued": 7,
+        "created": 1,
+        "retired": 0,
+        "secondary_overlap_rows": 39,
+        "freshly_fitted_inactive_customers_checked": 2610
+      }
+    },
+    {
+      "cycle": 9,
+      "prior_k": 8,
+      "selected_k": 9,
+      "historical_mass": {
+        "mass_by_fitted_local_cluster": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "inactive_customer_mass_included": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "customers_excluded_because_primary_ID_already_retired": 0,
+        "included_zero_primary_memberships": 0,
+        "definition": "Sum each prior customer's membership in their primary stable ID if that ID still maps to a fitted prior centre. Retained inactive customers can contribute. This primary-assignment mass differs from summing every secondary fuzzy component.",
+        "replacement_snapshot_policy": "Prior mass applies only to IDs absent from incoming snapshot; all previous IDs are replaced here"
+      },
+      "incremental_candidate_present": true,
+      "retained_objective_residual": 0.0,
+      "retained_iterations": 6,
+      "last_iteration_blend_weights": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "split_candidate_replay": {
+        "starts_checked": 8,
+        "converged_finite_starts": 8,
+        "recorded_source": 6,
+        "best_source_independent": 6,
+        "recorded_source_XB_gap_above_independent_best": 0.0,
+        "recorded_XB_residual": 0.0,
+        "recorded_objective_residual": 0.0,
+        "recorded_iterations": 15,
+        "independent_iterations": 15,
+        "start_scores": [
+          {
+            "source": 0,
+            "iterations": 24,
+            "converged": true,
+            "xie_beni": 0.30080212480986834
+          },
+          {
+            "source": 1,
+            "iterations": 10,
+            "converged": true,
+            "xie_beni": 0.2983726738885174
+          },
+          {
+            "source": 2,
+            "iterations": 10,
+            "converged": true,
+            "xie_beni": 0.2807633404708365
+          },
+          {
+            "source": 3,
+            "iterations": 6,
+            "converged": true,
+            "xie_beni": 0.25866874844004756
+          },
+          {
+            "source": 4,
+            "iterations": 13,
+            "converged": true,
+            "xie_beni": 0.2872072057051671
+          },
+          {
+            "source": 5,
+            "iterations": 8,
+            "converged": true,
+            "xie_beni": 0.3058416050170115
+          },
+          {
+            "source": 6,
+            "iterations": 15,
+            "converged": true,
+            "xie_beni": 0.25234794953987155
+          },
+          {
+            "source": 7,
+            "iterations": 9,
+            "converged": true,
+            "xie_beni": 0.28301332897221615
+          }
+        ],
+        "selected_centre_residual_after_permutation": 2.220446049250313e-16
+      },
+      "lineage": {
+        "fitted_IDs_complete": 9,
+        "continued": 8,
+        "created": 1,
+        "retired": 0,
+        "secondary_overlap_rows": 52,
+        "freshly_fitted_inactive_customers_checked": 2633
+      }
+    }
+  ]
+}

@@ -1,14 +1,11 @@
+import { profileOrder, profileRank, profileOrderSql } from "../utils/clusterProfiles";
 import { getCached } from "../utils/cache";
 import { DataRepository } from "../repositories/dataRepository";
 
 const repository = new DataRepository();
 
 const segmentRank = (segment: string): number => {
-  if (segment === "Champions") return 4;
-  if (segment === "Core Loyalists") return 3;
-  if (segment === "Mid-Tier Occasionals") return 2;
-  if (segment === "Hibernating / Lost") return 1;
-  return 0;
+  return profileOrder.length - profileRank(segment);
 };
 
 export class MigrationService {
@@ -98,7 +95,7 @@ export class MigrationService {
           MigratedCustomers: 0,
           ComparableCustomers: 0,
           MigrationRate: null,
-          AverageMembership: 1,
+          AverageMembership: null,
         },
         ...dynamicCycleMigration,
       ];
@@ -126,7 +123,7 @@ export class MigrationService {
     const segments = repository.runMany(`
       SELECT *
       FROM Dynamic_Segment_Summary
-      ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), Segment_Name
+      ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), ${profileOrderSql("Segment_Name")}
     `);
 
     const baseline = repository.runMany(`
@@ -136,7 +133,7 @@ export class MigrationService {
         COUNT(*) AS Customers
       FROM Time_Cycle_0_Segmentation
       GROUP BY Segment_Name
-      ORDER BY Segment_Name
+      ORDER BY ${profileOrderSql("Segment_Name")}
     `);
 
     return { cycles, segments: [...baseline, ...segments] };

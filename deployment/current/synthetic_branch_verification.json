@@ -1,0 +1,71 @@
+{
+  "scope": "Synthetic verification only; excluded from research database, metrics and plots",
+  "cases": [
+    {
+      "case": "neither",
+      "condition_1": false,
+      "condition_2": false,
+      "evaluated_k": [
+        4
+      ],
+      "selected_k": 4,
+      "candidate_xb": {
+        "4": 0.000942347884834079
+      },
+      "passed": true
+    },
+    {
+      "case": "condition_1_only",
+      "condition_1": true,
+      "condition_2": false,
+      "evaluated_k": [
+        3,
+        5
+      ],
+      "selected_k": 3,
+      "candidate_xb": {
+        "3": 0.09068521277739985,
+        "5": 1.36360545197596
+      },
+      "passed": true
+    },
+    {
+      "case": "condition_2_only",
+      "condition_1": false,
+      "condition_2": true,
+      "evaluated_k": [
+        4,
+        5
+      ],
+      "selected_k": 4,
+      "candidate_xb": {
+        "4": 0.00436896979301931,
+        "5": 3.1770305129504015
+      },
+      "passed": true
+    },
+    {
+      "case": "both",
+      "condition_1": true,
+      "condition_2": true,
+      "evaluated_k": [
+        3,
+        4,
+        5
+      ],
+      "selected_k": 4,
+      "candidate_xb": {
+        "3": 0.09623652193015321,
+        "4": 0.0058355747015077725,
+        "5": 3.9100033798205227
+      },
+      "passed": true
+    }
+  ],
+  "exercised_actions": [
+    "eliminate_one_cluster",
+    "incremental_center_movement",
+    "split_one_cluster"
+  ],
+  "passed": true
+}

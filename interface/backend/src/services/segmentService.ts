@@ -1,13 +1,22 @@
+import { baseProfile, profileOrderSql } from "../utils/clusterProfiles";
 import { getCached } from "../utils/cache";
 import { DataRepository } from "../repositories/dataRepository";
+import { ClusterRegistryService } from "./clusterRegistryService";
+import { commercialFeatureSql } from "./customerService";
 
 const repository = new DataRepository();
+const clusterRegistryService = new ClusterRegistryService();
 
 const segmentDescriptions: Record<string, string> = {
-  Champions: "Highest-value customers with strong purchase frequency and revenue contribution.",
-  "Core Loyalists": "Dependable repeat customers with consistent engagement and strong retention potential.",
-  "Mid-Tier Occasionals": "The largest growth pool: intermittent shoppers with clear cross-sell potential.",
-  "Hibernating / Lost": "Low-engagement customers requiring carefully targeted reactivation journeys.",
+  Champions: "The freshest high-value repeat-purchase profile.",
+  "High-Value Regulars": "Strong repeat purchasing and spending with a slightly longer purchase gap than the freshest Champions profile.",
+  Loyalists: "A recent, moderate-value repeat-purchase profile.",
+  "Valuable Customers at Risk": "Meaningful rolling-window purchasing value with a longer purchase gap. The name does not establish a previous Loyalists assignment.",
+  "Mid-Tier Occasionals": "Recent purchasers with moderate spending and less frequent ordering than the strongest repeat-purchase profiles.",
+  "Occasional Buyers at Risk": "Infrequent purchasing with a substantial purchase gap.",
+  "Light Buyers": "Relatively low-frequency, lower-spending customers who purchased recently. Growth is not assumed.",
+  "Light Buyers at Risk": "A light purchasing profile with a longer purchase gap.",
+  "Hibernating / Lost": "Predominantly customers without purchases for more than 90 days. Individual purchase-gap status remains visible separately.",
 };
 
 const segmentRecommendations: Record<string, string[]> = {
@@ -16,7 +25,7 @@ const segmentRecommendations: Record<string, string[]> = {
     "Use early access and premium bundles instead of broad discounts.",
     "Monitor confidence declines for early signs of migration.",
   ],
-  "Core Loyalists": [
+  Loyalists: [
     "Reward purchase consistency with milestone-based offers.",
     "Cross-sell adjacent products using segment affinity data.",
     "Encourage progression into the Champions segment.",
@@ -25,6 +34,11 @@ const segmentRecommendations: Record<string, string[]> = {
     "Use replenishment reminders and time-sensitive bundles.",
     "Target the most responsive categories by customer history.",
     "Increase order frequency before increasing discount depth.",
+  ],
+  "Light Buyers": [
+    "Help customers establish a repeat purchasing habit with relevant follow-up offers.",
+    "Compare their purchase history before selecting replenishment reminders.",
+    "Review the separate risk label when purchasing activity declines.",
   ],
   "Hibernating / Lost": [
     "Prioritise customers with historically high revenue.",
@@ -46,27 +60,49 @@ export class SegmentService {
 
       const summaries = repository.runMany(`
         SELECT
-          summary.Segment_Name AS segment,
-          summary.Customers AS customerCount,
-          summary.Orders AS orders,
-          summary.Quantity AS quantity,
-          summary.Revenue AS revenue,
-          summary.Average_Order_Value AS averageOrderValue,
-          summary.Average_Membership AS averageMembership,
-          summary.Revenue_Per_Customer AS revenuePerCustomer,
-          AVG(features.Recency) AS avgRecency,
-          AVG(features.Frequency) AS avgFrequency,
-          AVG(features.Monetary) AS avgMonetary
-        FROM Dynamic_Segment_Summary summary
-        LEFT JOIN Dynamic_Loop_Results results
-          ON results.CycleID = summary.CycleID
-          AND results.Segment_Name = summary.Segment_Name
-        LEFT JOIN Data_Preprocessing_Results features
-          ON features.CustomerID = results.CustomerID
-          AND features.CycleID = results.CycleID
-        WHERE summary.CycleID = @latestCycle
-        GROUP BY summary.CycleID, summary.Segment_Name
-        ORDER BY summary.Revenue DESC
+          totals.Segment_Name AS segment,
+          totals.customerCount,
+          totals.orders,
+          totals.quantity,
+          totals.revenue,
+          totals.averageOrderValue,
+          totals.averageMembership,
+          totals.revenuePerCustomer,
+          profiles.avgRecency,
+          profiles.avgFrequency,
+          profiles.avgMonetary
+        FROM (
+          SELECT
+            CycleID,
+            Segment_Name,
+            SUM(Customers) AS customerCount,
+            SUM(Orders) AS orders,
+            SUM(Quantity) AS quantity,
+            SUM(Revenue) AS revenue,
+            SUM(Revenue) / NULLIF(SUM(Orders), 0) AS averageOrderValue,
+            SUM(Average_Membership * Customers) / NULLIF(SUM(Customers), 0) AS averageMembership,
+            SUM(Revenue) / NULLIF(SUM(Customers), 0) AS revenuePerCustomer
+          FROM Dynamic_Segment_Summary
+          WHERE CycleID = @latestCycle
+          GROUP BY CycleID, Segment_Name
+        ) totals
+        LEFT JOIN (
+          SELECT
+            results.CycleID,
+            results.Segment_Name,
+            AVG(features.Recency) AS avgRecency,
+            AVG(features.Frequency) AS avgFrequency,
+            AVG(features.Monetary) AS avgMonetary
+          FROM Dynamic_Loop_Results results
+          JOIN Data_Preprocessing_Results features
+            ON features.CustomerID = results.CustomerID
+            AND features.CycleID = results.CycleID
+          WHERE results.CycleID = @latestCycle
+          GROUP BY results.CycleID, results.Segment_Name
+        ) profiles
+          ON profiles.CycleID = @latestCycle
+          AND profiles.Segment_Name = totals.Segment_Name
+        ORDER BY ${profileOrderSql("totals.Segment_Name")}
       `, { latestCycle });
 
       const lifetimeRows = repository.runMany(`
@@ -85,7 +121,7 @@ export class SegmentService {
       const segments = summaries.map((summary) => ({
         ...summary,
         ...lifetimeBySegment.get(String(summary.segment)),
-        description: segmentDescriptions[String(summary.segment)] ?? "Customer segment derived from dynamic RFM behaviour.",
+        description: segmentDescriptions[String(summary.segment)] ?? "Customer group summarized from its observed recency, purchase frequency, paid-sales value, and fuzzy membership in this cycle.",
         recommendations: segmentRecommendations[String(summary.segment)] ?? [],
       }));
 
@@ -95,9 +131,9 @@ export class SegmentService {
             'Cycle_0' AS CycleID,
             baseline.Segment_Name AS segment,
             COUNT(*) AS customers,
-            SUM(features.Monetary) AS revenue,
-            1.0 AS averageMembership,
-            AVG(features.Monetary) AS revenuePerCustomer
+            SUM(${commercialFeatureSql.revenue}) AS revenue,
+            NULL AS averageMembership,
+            AVG(${commercialFeatureSql.revenue}) AS revenuePerCustomer
           FROM Time_Cycle_0_Segmentation baseline
           JOIN Data_Preprocessing_Results features
             ON features.CustomerID = baseline.CustomerID
@@ -107,13 +143,14 @@ export class SegmentService {
           SELECT
             CycleID,
             Segment_Name AS segment,
-            Customers AS customers,
-            Revenue AS revenue,
-            Average_Membership AS averageMembership,
-            Revenue_Per_Customer AS revenuePerCustomer
+            SUM(Customers) AS customers,
+            SUM(Revenue) AS revenue,
+            SUM(Average_Membership * Customers) / NULLIF(SUM(Customers), 0) AS averageMembership,
+            SUM(Revenue) / NULLIF(SUM(Customers), 0) AS revenuePerCustomer
           FROM Dynamic_Segment_Summary
+          GROUP BY CycleID, Segment_Name
         )
-        ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), segment
+        ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), ${profileOrderSql("segment")}
       `);
 
       const profiles = repository.runMany(`
@@ -142,18 +179,24 @@ export class SegmentService {
           AVG(features.RF_Score) AS avgRF,
           AVG(features.RM_Score) AS avgRM,
           AVG(features.FM_Score) AS avgFM,
-          SUM(features.Monetary) AS revenue,
-          AVG(features.Monetary) AS revenuePerCustomer,
-          AVG(labels.membership) AS averageMembership
+          SUM(${commercialFeatureSql.revenue}) AS revenue,
+          AVG(${commercialFeatureSql.revenue}) AS revenuePerCustomer,
+          AVG(CASE WHEN labels.CycleID <> 'Cycle_0' THEN labels.membership END) AS averageMembership
         FROM labels
         JOIN Data_Preprocessing_Results features
           ON features.CustomerID = labels.CustomerID
           AND features.CycleID = labels.CycleID
         GROUP BY labels.CycleID, labels.segment
-        ORDER BY CAST(REPLACE(labels.CycleID, 'Cycle_', '') AS INTEGER), labels.segment
+        ORDER BY CAST(REPLACE(labels.CycleID, 'Cycle_', '') AS INTEGER), ${profileOrderSql("labels.segment")}
       `);
 
-      return { latestCycle, segments, trends, profiles };
+      return {
+        latestCycle, segments, trends, profiles,
+        clusterRegistry: clusterRegistryService.getRegistry(latestCycle),
+        clusterCounts: clusterRegistryService.getCounts(),
+        fittedClusterCount: clusterRegistryService.getRegistry(latestCycle).length,
+        businessGroupCount: segments.length,
+      };
     });
   }
 

@@ -1,0 +1,87 @@
+{
+  "passed": true,
+  "actualFrontendColourFunctionChecked": true,
+  "approvedNamesApplied": true,
+  "apiAndFrontendCountChecks": [
+    {
+      "cycle": "Cycle_0",
+      "fittedK": 5,
+      "displayed": 5,
+      "names": 5,
+      "colours": 5,
+      "customerFilterEntries": 5
+    },
+    {
+      "cycle": "Cycle_1",
+      "fittedK": 5,
+      "displayed": 5,
+      "names": 5,
+      "colours": 5,
+      "customerFilterEntries": 5
+    },
+    {
+      "cycle": "Cycle_2",
+      "fittedK": 5,
+      "displayed": 5,
+      "names": 5,
+      "colours": 5,
+      "customerFilterEntries": 5
+    },
+    {
+      "cycle": "Cycle_3",
+      "fittedK": 5,
+      "displayed": 5,
+      "names": 5,
+      "colours": 5,
+      "customerFilterEntries": 5
+    },
+    {
+      "cycle": "Cycle_4",
+      "fittedK": 5,
+      "displayed": 5,
+      "names": 5,
+      "colours": 5,
+      "customerFilterEntries": 5
+    },
+    {
+      "cycle": "Cycle_5",
+      "fittedK": 6,
+      "displayed": 6,
+      "names": 6,
+      "colours": 6,
+      "customerFilterEntries": 6
+    },
+    {
+      "cycle": "Cycle_6",
+      "fittedK": 6,
+      "displayed": 6,
+      "names": 6,
+      "colours": 6,
+      "customerFilterEntries": 6
+    },
+    {
+      "cycle": "Cycle_7",
+      "fittedK": 7,
+      "displayed": 7,
+      "names": 7,
+      "colours": 7,
+      "customerFilterEntries": 7
+    },
+    {
+      "cycle": "Cycle_8",
+      "fittedK": 8,
+      "displayed": 8,
+      "names": 8,
+      "colours": 8,
+      "customerFilterEntries": 8
+    },
+    {
+      "cycle": "Cycle_9",
+      "fittedK": 9,
+      "displayed": 9,
+      "names": 9,
+      "colours": 9,
+      "customerFilterEntries": 9
+    }
+  ]
+}

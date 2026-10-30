@@ -9,8 +9,9 @@
   },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc -p tsconfig.json",
-    "start": "node dist/server.js",
+    "build": "node scripts/prepare-deployment.cjs && tsc -p tsconfig.json",
+    "start": "node scripts/start.cjs",
+    "prepare:deployment": "node scripts/prepare-deployment.cjs",
     "lint": "echo \"No linter configured\""
   },
   "dependencies": {

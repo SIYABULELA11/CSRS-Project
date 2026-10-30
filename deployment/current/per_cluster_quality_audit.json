@@ -1,0 +1,97 @@
+{
+  "passed": true,
+  "model_numeric_signature_unchanged": true,
+  "core_function_ast_unchanged": {
+    "safe_cluster_metrics": true,
+    "match_cluster_ids": true,
+    "memberships_from_centroids": true,
+    "fit_fuzzy_c_means": true,
+    "fit_incremental_fuzzy_movement": true,
+    "dynamic_fuzzy_update": true,
+    "previous_membership_mass_by_cluster": true
+  },
+  "approved_names": [
+    "Champions",
+    "High-Value Regulars",
+    "Loyalists",
+    "Valuable Customers at Risk",
+    "Mid-Tier Occasionals",
+    "Occasional Buyers at Risk",
+    "Light Buyers",
+    "Light Buyers at Risk",
+    "Hibernating / Lost"
+  ],
+  "cluster_cycle_rows": 61,
+  "cycles": [
+    {
+      "cycle": "Cycle_0",
+      "fittedK": 5,
+      "per_cluster_rows": 5,
+      "quality_sums_reconcile": true,
+      "future_label_function_matches_saved_names": true
+    },
+    {
+      "cycle": "Cycle_1",
+      "fittedK": 5,
+      "per_cluster_rows": 5,
+      "quality_sums_reconcile": true,
+      "future_label_function_matches_saved_names": true
+    },
+    {
+      "cycle": "Cycle_2",
+      "fittedK": 5,
+      "per_cluster_rows": 5,
+      "quality_sums_reconcile": true,
+      "future_label_function_matches_saved_names": true
+    },
+    {
+      "cycle": "Cycle_3",
+      "fittedK": 5,
+      "per_cluster_rows": 5,
+      "quality_sums_reconcile": true,
+      "future_label_function_matches_saved_names": true
+    },
+    {
+      "cycle": "Cycle_4",
+      "fittedK": 5,
+      "per_cluster_rows": 5,
+      "quality_sums_reconcile": true,
+      "future_label_function_matches_saved_names": true
+    },
+    {
+      "cycle": "Cycle_5",
+      "fittedK": 6,
+      "per_cluster_rows": 6,
+      "quality_sums_reconcile": true,
+      "future_label_function_matches_saved_names": true
+    },
+    {
+      "cycle": "Cycle_6",
+      "fittedK": 6,
+      "per_cluster_rows": 6,
+      "quality_sums_reconcile": true,
+      "future_label_function_matches_saved_names": true
+    },
+    {
+      "cycle": "Cycle_7",
+      "fittedK": 7,
+      "per_cluster_rows": 7,
+      "quality_sums_reconcile": true,
+      "future_label_function_matches_saved_names": true
+    },
+    {
+      "cycle": "Cycle_8",
+      "fittedK": 8,
+      "per_cluster_rows": 8,
+      "quality_sums_reconcile": true,
+      "future_label_function_matches_saved_names": true
+    },
+    {
+      "cycle": "Cycle_9",
+      "fittedK": 9,
+      "per_cluster_rows": 9,
+      "quality_sums_reconcile": true,
+      "future_label_function_matches_saved_names": true
+    }
+  ]
+}

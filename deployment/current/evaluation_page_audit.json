@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "scope": "Direct services and actual React component server rendering; no HTTP or browser review",
+  "sectionCount": 3,
+  "interactivePanels": 14,
+  "baselineK": 5,
+  "baselineInertia": 56.5712984635,
+  "dynamicCycles": 9,
+  "geographicCycles": 10,
+  "geographicK": 3,
+  "metricsMatchStoredResults": true,
+  "geographicAssignmentsAndMetricsVerified": true,
+  "exportedFigures": [
+    "Validation/evaluation_metrics_cycles_0_9.png",
+    "Validation/evaluation_cycle0_kmeans.png",
+    "Validation/evaluation_metrics_cycles_1_9.png",
+    "Validation/evaluation_geographic_market.png"
+  ],
+  "databaseUnchanged": true,
+  "databaseSha256": "d35c49ea2e8038b4fbb9fbc44cdea14d77c9998666195565cef908c5f09bd45f"
+}

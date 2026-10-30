@@ -1,0 +1,329 @@
+{
+  "available": true,
+  "method": "Subset diagnostics keep the same fitted centres and saved assignments. They are descriptive comparisons, not independently fitted alternative models. Silhouette is unavailable for a cohort occupying only one label. Membership is not a calibrated probability.",
+  "rows": [
+    {
+      "CycleID": "Cycle_1",
+      "scope": "All observed",
+      "customers": 2134,
+      "occupied_labels": 5,
+      "silhouette": 0.40710606611284855,
+      "mean_max_membership": 0.7078991918515114
+    },
+    {
+      "CycleID": "Cycle_1",
+      "scope": "Purchased this month",
+      "customers": 974,
+      "occupied_labels": 5,
+      "silhouette": 0.21585908528458878,
+      "mean_max_membership": 0.6166558524995388
+    },
+    {
+      "CycleID": "Cycle_1",
+      "scope": "Purchase within 90 days",
+      "customers": 1776,
+      "occupied_labels": 5,
+      "silhouette": 0.28963757653228867,
+      "mean_max_membership": 0.6492578537278151
+    },
+    {
+      "CycleID": "Cycle_1",
+      "scope": "More than 90 days",
+      "customers": 358,
+      "occupied_labels": 1,
+      "silhouette": null,
+      "mean_max_membership": 0.9988126457835915
+    },
+    {
+      "CycleID": "Cycle_2",
+      "scope": "All observed",
+      "customers": 2434,
+      "occupied_labels": 5,
+      "silhouette": 0.4479105773243908,
+      "mean_max_membership": 0.7207326813837888
+    },
+    {
+      "CycleID": "Cycle_2",
+      "scope": "Purchased this month",
+      "customers": 856,
+      "occupied_labels": 4,
+      "silhouette": 0.21155225762872037,
+      "mean_max_membership": 0.6181057181628776
+    },
+    {
+      "CycleID": "Cycle_2",
+      "scope": "Purchase within 90 days",
+      "customers": 1891,
+      "occupied_labels": 5,
+      "silhouette": 0.30281637152981566,
+      "mean_max_membership": 0.6434971275299568
+    },
+    {
+      "CycleID": "Cycle_2",
+      "scope": "More than 90 days",
+      "customers": 543,
+      "occupied_labels": 1,
+      "silhouette": null,
+      "mean_max_membership": 0.989705853276232
+    },
+    {
+      "CycleID": "Cycle_3",
+      "scope": "All observed",
+      "customers": 2718,
+      "occupied_labels": 5,
+      "silhouette": 0.5053978798228277,
+      "mean_max_membership": 0.7618869872590297
+    },
+    {
+      "CycleID": "Cycle_3",
+      "scope": "Purchased this month",
+      "customers": 1056,
+      "occupied_labels": 4,
+      "silhouette": 0.33049391398774075,
+      "mean_max_membership": 0.6319996453043458
+    },
+    {
+      "CycleID": "Cycle_3",
+      "scope": "Purchase within 90 days",
+      "customers": 1959,
+      "occupied_labels": 5,
+      "silhouette": 0.3431304177105348,
+      "mean_max_membership": 0.6759599188294655
+    },
+    {
+      "CycleID": "Cycle_3",
+      "scope": "More than 90 days",
+      "customers": 759,
+      "occupied_labels": 1,
+      "silhouette": null,
+      "mean_max_membership": 0.983667128304505
+    },
+    {
+      "CycleID": "Cycle_4",
+      "scope": "All observed",
+      "customers": 2960,
+      "occupied_labels": 5,
+      "silhouette": 0.5257281498234283,
+      "mean_max_membership": 0.7704768474737608
+    },
+    {
+      "CycleID": "Cycle_4",
+      "scope": "Purchased this month",
+      "customers": 991,
+      "occupied_labels": 4,
+      "silhouette": 0.21277362809270167,
+      "mean_max_membership": 0.6346671897524347
+    },
+    {
+      "CycleID": "Cycle_4",
+      "scope": "Purchase within 90 days",
+      "customers": 1969,
+      "occupied_labels": 5,
+      "silhouette": 0.33274717229564993,
+      "mean_max_membership": 0.6661603201182605
+    },
+    {
+      "CycleID": "Cycle_4",
+      "scope": "More than 90 days",
+      "customers": 991,
+      "occupied_labels": 1,
+      "silhouette": null,
+      "mean_max_membership": 0.9777414714525499
+    },
+    {
+      "CycleID": "Cycle_5",
+      "scope": "All observed",
+      "customers": 3148,
+      "occupied_labels": 6,
+      "silhouette": 0.530119058173338,
+      "mean_max_membership": 0.748479414253514
+    },
+    {
+      "CycleID": "Cycle_5",
+      "scope": "Purchased this month",
+      "customers": 949,
+      "occupied_labels": 4,
+      "silhouette": 0.26407542689978963,
+      "mean_max_membership": 0.5917589837968974
+    },
+    {
+      "CycleID": "Cycle_5",
+      "scope": "Purchase within 90 days",
+      "customers": 2025,
+      "occupied_labels": 6,
+      "silhouette": 0.3267294528253246,
+      "mean_max_membership": 0.6248224202242223
+    },
+    {
+      "CycleID": "Cycle_5",
+      "scope": "More than 90 days",
+      "customers": 1123,
+      "occupied_labels": 1,
+      "silhouette": null,
+      "mean_max_membership": 0.9714584106108745
+    },
+    {
+      "CycleID": "Cycle_6",
+      "scope": "All observed",
+      "customers": 3317,
+      "occupied_labels": 6,
+      "silhouette": 0.551141011262616,
+      "mean_max_membership": 0.7616945558501016
+    },
+    {
+      "CycleID": "Cycle_6",
+      "scope": "Purchased this month",
+      "customers": 935,
+      "occupied_labels": 4,
+      "silhouette": 0.24377953099073346,
+      "mean_max_membership": 0.5835068954275386
+    },
+    {
+      "CycleID": "Cycle_6",
+      "scope": "Purchase within 90 days",
+      "customers": 1923,
+      "occupied_labels": 6,
+      "silhouette": 0.3115475621278653,
+      "mean_max_membership": 0.6167891070048738
+    },
+    {
+      "CycleID": "Cycle_6",
+      "scope": "More than 90 days",
+      "customers": 1394,
+      "occupied_labels": 1,
+      "silhouette": null,
+      "mean_max_membership": 0.9615892316961364
+    },
+    {
+      "CycleID": "Cycle_7",
+      "scope": "All observed",
+      "customers": 3616,
+      "occupied_labels": 7,
+      "silhouette": 0.5300851689688757,
+      "mean_max_membership": 0.7423176325771704
+    },
+    {
+      "CycleID": "Cycle_7",
+      "scope": "Purchased this month",
+      "customers": 1266,
+      "occupied_labels": 5,
+      "silhouette": 0.26985920719375406,
+      "mean_max_membership": 0.5851176345716451
+    },
+    {
+      "CycleID": "Cycle_7",
+      "scope": "Purchase within 90 days",
+      "customers": 2151,
+      "occupied_labels": 7,
+      "silhouette": 0.29583761819581095,
+      "mean_max_membership": 0.5998567871439754
+    },
+    {
+      "CycleID": "Cycle_7",
+      "scope": "More than 90 days",
+      "customers": 1465,
+      "occupied_labels": 1,
+      "silhouette": null,
+      "mean_max_membership": 0.9514871059743054
+    },
+    {
+      "CycleID": "Cycle_8",
+      "scope": "All observed",
+      "customers": 3974,
+      "occupied_labels": 8,
+      "silhouette": 0.5110513571567499,
+      "mean_max_membership": 0.7092619062419435
+    },
+    {
+      "CycleID": "Cycle_8",
+      "scope": "Purchased this month",
+      "customers": 1364,
+      "occupied_labels": 6,
+      "silhouette": 0.27394598047866964,
+      "mean_max_membership": 0.5451751160791503
+    },
+    {
+      "CycleID": "Cycle_8",
+      "scope": "Purchase within 90 days",
+      "customers": 2461,
+      "occupied_labels": 8,
+      "silhouette": 0.29281914318615104,
+      "mean_max_membership": 0.5685897255484315
+    },
+    {
+      "CycleID": "Cycle_8",
+      "scope": "More than 90 days",
+      "customers": 1513,
+      "occupied_labels": 1,
+      "silhouette": null,
+      "mean_max_membership": 0.9380750170725669
+    },
+    {
+      "CycleID": "Cycle_9",
+      "scope": "All observed",
+      "customers": 4297,
+      "occupied_labels": 9,
+      "silhouette": 0.4755391437138394,
+      "mean_max_membership": 0.6846982903014063
+    },
+    {
+      "CycleID": "Cycle_9",
+      "scope": "Purchased this month",
+      "customers": 1664,
+      "occupied_labels": 7,
+      "silhouette": 0.23294583963755408,
+      "mean_max_membership": 0.5209534906142923
+    },
+    {
+      "CycleID": "Cycle_9",
+      "scope": "Purchase within 90 days",
+      "customers": 2840,
+      "occupied_labels": 9,
+      "silhouette": 0.28233148082679127,
+      "mean_max_membership": 0.560866434998958
+    },
+    {
+      "CycleID": "Cycle_9",
+      "scope": "More than 90 days",
+      "customers": 1457,
+      "occupied_labels": 1,
+      "silhouette": null,
+      "mean_max_membership": 0.9260726685161988
+    }
+  ],
+  "latestCycle": "Cycle_9",
+  "latest": [
+    {
+      "CycleID": "Cycle_9",
+      "scope": "All observed",
+      "customers": 4297,
+      "occupied_labels": 9,
+      "silhouette": 0.4755391437138394,
+      "mean_max_membership": 0.6846982903014063
+    },
+    {
+      "CycleID": "Cycle_9",
+      "scope": "Purchased this month",
+      "customers": 1664,
+      "occupied_labels": 7,
+      "silhouette": 0.23294583963755408,
+      "mean_max_membership": 0.5209534906142923
+    },
+    {
+      "CycleID": "Cycle_9",
+      "scope": "Purchase within 90 days",
+      "customers": 2840,
+      "occupied_labels": 9,
+      "silhouette": 0.28233148082679127,
+      "mean_max_membership": 0.560866434998958
+    },
+    {
+      "CycleID": "Cycle_9",
+      "scope": "More than 90 days",
+      "customers": 1457,
+      "occupied_labels": 1,
+      "silhouette": null,
+      "mean_max_membership": 0.9260726685161988
+    }
+  ]
+}

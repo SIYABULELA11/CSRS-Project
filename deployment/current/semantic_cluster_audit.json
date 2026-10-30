@@ -1,0 +1,1284 @@
+{
+  "schemaVersion": 1,
+  "run": "named_20261025_214151",
+  "scope": "All observed customers with consecutive current snapshots; new customers lack a previous-cycle comparison.",
+  "totals": {
+    "profileChecks": 61,
+    "profileRuleFailures": 0,
+    "primaryIdLinks": 51,
+    "sameNameLinks": 40,
+    "renamedLinks": 11,
+    "sharedCustomerComparisons": 25983,
+    "actualIdMigrations": 14905,
+    "behaviourOnly": 12072,
+    "boundaryOnly": 262,
+    "both": 1906,
+    "interaction": 665,
+    "profileOnlyRenames": 843,
+    "unchangedRfmMigrants": 0
+  },
+  "cycles": [
+    {
+      "cycleId": "Cycle_1",
+      "sharedCustomers": 1682,
+      "actualIdMigrations": 1386,
+      "behaviourOnly": 565,
+      "boundaryOnly": 118,
+      "both": 324,
+      "interaction": 379,
+      "renamedCentres": 2,
+      "primaryIdLinks": 4,
+      "sameNameLinks": 2,
+      "profileOnlyRenames": 206,
+      "unchangedRfmMigrants": 0
+    },
+    {
+      "cycleId": "Cycle_2",
+      "sharedCustomers": 2134,
+      "actualIdMigrations": 1371,
+      "behaviourOnly": 1141,
+      "boundaryOnly": 10,
+      "both": 191,
+      "interaction": 29,
+      "renamedCentres": 0,
+      "primaryIdLinks": 5,
+      "sameNameLinks": 5,
+      "profileOnlyRenames": 0,
+      "unchangedRfmMigrants": 0
+    },
+    {
+      "cycleId": "Cycle_3",
+      "sharedCustomers": 2434,
+      "actualIdMigrations": 1487,
+      "behaviourOnly": 1238,
+      "boundaryOnly": 18,
+      "both": 183,
+      "interaction": 48,
+      "renamedCentres": 1,
+      "primaryIdLinks": 5,
+      "sameNameLinks": 4,
+      "profileOnlyRenames": 209,
+      "unchangedRfmMigrants": 0
+    },
+    {
+      "cycleId": "Cycle_4",
+      "sharedCustomers": 2718,
+      "actualIdMigrations": 1527,
+      "behaviourOnly": 1373,
+      "boundaryOnly": 7,
+      "both": 126,
+      "interaction": 21,
+      "renamedCentres": 0,
+      "primaryIdLinks": 5,
+      "sameNameLinks": 5,
+      "profileOnlyRenames": 0,
+      "unchangedRfmMigrants": 0
+    },
+    {
+      "cycleId": "Cycle_5",
+      "sharedCustomers": 2960,
+      "actualIdMigrations": 1540,
+      "behaviourOnly": 1189,
+      "boundaryOnly": 40,
+      "both": 269,
+      "interaction": 42,
+      "renamedCentres": 0,
+      "primaryIdLinks": 5,
+      "sameNameLinks": 5,
+      "profileOnlyRenames": 0,
+      "unchangedRfmMigrants": 0
+    },
+    {
+      "cycleId": "Cycle_6",
+      "sharedCustomers": 3148,
+      "actualIdMigrations": 1617,
+      "behaviourOnly": 1539,
+      "boundaryOnly": 0,
+      "both": 68,
+      "interaction": 10,
+      "renamedCentres": 0,
+      "primaryIdLinks": 6,
+      "sameNameLinks": 6,
+      "profileOnlyRenames": 0,
+      "unchangedRfmMigrants": 0
+    },
+    {
+      "cycleId": "Cycle_7",
+      "sharedCustomers": 3317,
+      "actualIdMigrations": 1690,
+      "behaviourOnly": 1507,
+      "boundaryOnly": 8,
+      "both": 145,
+      "interaction": 30,
+      "renamedCentres": 2,
+      "primaryIdLinks": 6,
+      "sameNameLinks": 4,
+      "profileOnlyRenames": 53,
+      "unchangedRfmMigrants": 0
+    },
+    {
+      "cycleId": "Cycle_8",
+      "sharedCustomers": 3616,
+      "actualIdMigrations": 2003,
+      "behaviourOnly": 1632,
+      "boundaryOnly": 31,
+      "both": 293,
+      "interaction": 47,
+      "renamedCentres": 3,
+      "primaryIdLinks": 7,
+      "sameNameLinks": 4,
+      "profileOnlyRenames": 53,
+      "unchangedRfmMigrants": 0
+    },
+    {
+      "cycleId": "Cycle_9",
+      "sharedCustomers": 3974,
+      "actualIdMigrations": 2284,
+      "behaviourOnly": 1888,
+      "boundaryOnly": 30,
+      "both": 307,
+      "interaction": 59,
+      "renamedCentres": 3,
+      "primaryIdLinks": 8,
+      "sameNameLinks": 5,
+      "profileOnlyRenames": 322,
+      "unchangedRfmMigrants": 0
+    }
+  ],
+  "profiles": [
+    {
+      "cycleId": "Cycle_0",
+      "stableClusterId": "CL-001",
+      "displayLabel": "Champions",
+      "customers": 111,
+      "weightedRecency": 10.477477477477477,
+      "weightedFrequency": 2.6996996996997,
+      "weightedMonetary": 1623.6671771771776,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_0",
+      "stableClusterId": "CL-003",
+      "displayLabel": "Loyalists",
+      "customers": 252,
+      "weightedRecency": 4.833333333333333,
+      "weightedFrequency": 0.6018518518518519,
+      "weightedMonetary": 200.39924603174603,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_0",
+      "stableClusterId": "CL-002",
+      "displayLabel": "Valuable Customers at Risk",
+      "customers": 278,
+      "weightedRecency": 40.08273381294964,
+      "weightedFrequency": 0.9016786570743405,
+      "weightedMonetary": 626.5049760191847,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_0",
+      "stableClusterId": "CL-004",
+      "displayLabel": "Mid-Tier Occasionals",
+      "customers": 480,
+      "weightedRecency": 23.958333333333332,
+      "weightedFrequency": 0.46527777777777773,
+      "weightedMonetary": 135.98950694444449,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_0",
+      "stableClusterId": "CL-005",
+      "displayLabel": "Light Buyers at Risk",
+      "customers": 561,
+      "weightedRecency": 72.88235294117646,
+      "weightedFrequency": 0.3612596553773024,
+      "weightedMonetary": 103.4438027332145,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_1",
+      "stableClusterId": "CL-002",
+      "displayLabel": "Champions",
+      "customers": 386,
+      "weightedRecency": 13.599201142544892,
+      "weightedFrequency": 0.9270290776735904,
+      "weightedMonetary": 437.229350605848,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_1",
+      "stableClusterId": "CL-003",
+      "displayLabel": "Loyalists",
+      "customers": 246,
+      "weightedRecency": 3.493030140099596,
+      "weightedFrequency": 0.7364028638986169,
+      "weightedMonetary": 306.8244728961031,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_1",
+      "stableClusterId": "CL-004",
+      "displayLabel": "Mid-Tier Occasionals",
+      "customers": 512,
+      "weightedRecency": 30.126604425781032,
+      "weightedFrequency": 0.4276118397320478,
+      "weightedMonetary": 153.694600082541,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_1",
+      "stableClusterId": "CL-005",
+      "displayLabel": "Occasional Buyers at Risk",
+      "customers": 624,
+      "weightedRecency": 60.89528545015149,
+      "weightedFrequency": 0.40237427979004825,
+      "weightedMonetary": 174.49620374517525,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_1",
+      "stableClusterId": "CL-006",
+      "displayLabel": "Hibernating / Lost",
+      "customers": 366,
+      "weightedRecency": 111.7793640790476,
+      "weightedFrequency": 0.007351844623122437,
+      "weightedMonetary": 3.710955147949313,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_2",
+      "stableClusterId": "CL-002",
+      "displayLabel": "Champions",
+      "customers": 335,
+      "weightedRecency": 21.91991465384186,
+      "weightedFrequency": 1.119912902999792,
+      "weightedMonetary": 510.8148546765377,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_2",
+      "stableClusterId": "CL-003",
+      "displayLabel": "Loyalists",
+      "customers": 238,
+      "weightedRecency": 7.084459473263285,
+      "weightedFrequency": 0.7938444173177897,
+      "weightedMonetary": 313.7387055079694,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_2",
+      "stableClusterId": "CL-004",
+      "displayLabel": "Mid-Tier Occasionals",
+      "customers": 585,
+      "weightedRecency": 29.682039481889994,
+      "weightedFrequency": 0.4096850189596626,
+      "weightedMonetary": 130.0003546633168,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_2",
+      "stableClusterId": "CL-005",
+      "displayLabel": "Occasional Buyers at Risk",
+      "customers": 724,
+      "weightedRecency": 62.74441856763184,
+      "weightedFrequency": 0.3908615491678815,
+      "weightedMonetary": 151.82436341829958,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_2",
+      "stableClusterId": "CL-006",
+      "displayLabel": "Hibernating / Lost",
+      "customers": 552,
+      "weightedRecency": 124.31029529724358,
+      "weightedFrequency": 0.004343887104663959,
+      "weightedMonetary": 1.5294203858087754,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_3",
+      "stableClusterId": "CL-002",
+      "displayLabel": "Champions",
+      "customers": 269,
+      "weightedRecency": 15.55818153726838,
+      "weightedFrequency": 1.535315774737551,
+      "weightedMonetary": 739.4915799441349,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_3",
+      "stableClusterId": "CL-003",
+      "displayLabel": "Loyalists",
+      "customers": 303,
+      "weightedRecency": 8.456519834637831,
+      "weightedFrequency": 0.7091826951053779,
+      "weightedMonetary": 261.28832107247956,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_3",
+      "stableClusterId": "CL-004",
+      "displayLabel": "Mid-Tier Occasionals",
+      "customers": 557,
+      "weightedRecency": 25.339970988683113,
+      "weightedFrequency": 0.4825600023215701,
+      "weightedMonetary": 165.24630928931825,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_3",
+      "stableClusterId": "CL-005",
+      "displayLabel": "Light Buyers at Risk",
+      "customers": 822,
+      "weightedRecency": 62.77572115175042,
+      "weightedFrequency": 0.38289826866411414,
+      "weightedMonetary": 133.64155824617123,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_3",
+      "stableClusterId": "CL-006",
+      "displayLabel": "Hibernating / Lost",
+      "customers": 767,
+      "weightedRecency": 135.86665499406044,
+      "weightedFrequency": 0.003213925305107776,
+      "weightedMonetary": 1.2587388001981918,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_4",
+      "stableClusterId": "CL-002",
+      "displayLabel": "Champions",
+      "customers": 317,
+      "weightedRecency": 18.20772128545028,
+      "weightedFrequency": 1.3543375273734448,
+      "weightedMonetary": 630.1362516598588,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_4",
+      "stableClusterId": "CL-003",
+      "displayLabel": "Loyalists",
+      "customers": 259,
+      "weightedRecency": 4.937513561142202,
+      "weightedFrequency": 0.7850777153293327,
+      "weightedMonetary": 292.90901894959376,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_4",
+      "stableClusterId": "CL-004",
+      "displayLabel": "Mid-Tier Occasionals",
+      "customers": 542,
+      "weightedRecency": 25.600574783505575,
+      "weightedFrequency": 0.4718707828835545,
+      "weightedMonetary": 156.01537110974678,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_4",
+      "stableClusterId": "CL-005",
+      "displayLabel": "Light Buyers at Risk",
+      "customers": 845,
+      "weightedRecency": 60.4051045250452,
+      "weightedFrequency": 0.39893203594603927,
+      "weightedMonetary": 152.54136776912827,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_4",
+      "stableClusterId": "CL-006",
+      "displayLabel": "Hibernating / Lost",
+      "customers": 997,
+      "weightedRecency": 144.84968849315868,
+      "weightedFrequency": 0.0024955710326208347,
+      "weightedMonetary": 1.239636397071834,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_5",
+      "stableClusterId": "CL-002",
+      "displayLabel": "Champions",
+      "customers": 217,
+      "weightedRecency": 11.016262822542233,
+      "weightedFrequency": 1.9055925512820269,
+      "weightedMonetary": 987.2497899807323,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_5",
+      "stableClusterId": "CL-003",
+      "displayLabel": "Loyalists",
+      "customers": 258,
+      "weightedRecency": 5.79859864808746,
+      "weightedFrequency": 0.6933376097427312,
+      "weightedMonetary": 246.5398294444529,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_5",
+      "stableClusterId": "CL-007",
+      "displayLabel": "Valuable Customers at Risk",
+      "customers": 357,
+      "weightedRecency": 38.93079592336017,
+      "weightedFrequency": 0.7533831467165505,
+      "weightedMonetary": 318.66038614415766,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_5",
+      "stableClusterId": "CL-004",
+      "displayLabel": "Mid-Tier Occasionals",
+      "customers": 437,
+      "weightedRecency": 24.756650521802836,
+      "weightedFrequency": 0.45132522063932246,
+      "weightedMonetary": 142.85248634847392,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_5",
+      "stableClusterId": "CL-005",
+      "displayLabel": "Light Buyers at Risk",
+      "customers": 749,
+      "weightedRecency": 66.77387934045525,
+      "weightedFrequency": 0.36758617805500077,
+      "weightedMonetary": 120.54615351703227,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_5",
+      "stableClusterId": "CL-006",
+      "displayLabel": "Hibernating / Lost",
+      "customers": 1130,
+      "weightedRecency": 160.51750443601586,
+      "weightedFrequency": 0.0016966344875335446,
+      "weightedMonetary": 0.7112928431351545,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_6",
+      "stableClusterId": "CL-002",
+      "displayLabel": "Champions",
+      "customers": 215,
+      "weightedRecency": 11.607110671320926,
+      "weightedFrequency": 1.709783639700827,
+      "weightedMonetary": 839.5286118495873,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_6",
+      "stableClusterId": "CL-003",
+      "displayLabel": "Loyalists",
+      "customers": 267,
+      "weightedRecency": 8.052967709093187,
+      "weightedFrequency": 0.6260042096798699,
+      "weightedMonetary": 234.39679946602394,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_6",
+      "stableClusterId": "CL-007",
+      "displayLabel": "Valuable Customers at Risk",
+      "customers": 348,
+      "weightedRecency": 37.15133971286686,
+      "weightedFrequency": 0.7339286500999721,
+      "weightedMonetary": 344.6198802573111,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_6",
+      "stableClusterId": "CL-004",
+      "displayLabel": "Mid-Tier Occasionals",
+      "customers": 404,
+      "weightedRecency": 26.45154572299971,
+      "weightedFrequency": 0.4486537069358386,
+      "weightedMonetary": 147.1374201926662,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_6",
+      "stableClusterId": "CL-005",
+      "displayLabel": "Light Buyers at Risk",
+      "customers": 682,
+      "weightedRecency": 68.069055171144,
+      "weightedFrequency": 0.36336101343380306,
+      "weightedMonetary": 114.48627201958544,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_6",
+      "stableClusterId": "CL-006",
+      "displayLabel": "Hibernating / Lost",
+      "customers": 1401,
+      "weightedRecency": 169.1792955665306,
+      "weightedFrequency": 0.0012154663713324055,
+      "weightedMonetary": 0.6160821137559179,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_7",
+      "stableClusterId": "CL-002",
+      "displayLabel": "Champions",
+      "customers": 205,
+      "weightedRecency": 11.271689703047592,
+      "weightedFrequency": 1.7555797979590004,
+      "weightedMonetary": 923.5391162481826,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_7",
+      "stableClusterId": "CL-008",
+      "displayLabel": "Loyalists",
+      "customers": 280,
+      "weightedRecency": 2.9702836999696673,
+      "weightedFrequency": 0.611990308752477,
+      "weightedMonetary": 252.45241009066422,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_7",
+      "stableClusterId": "CL-007",
+      "displayLabel": "Valuable Customers at Risk",
+      "customers": 333,
+      "weightedRecency": 38.408115376045366,
+      "weightedFrequency": 0.734267043784738,
+      "weightedMonetary": 360.4939879678398,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_7",
+      "stableClusterId": "CL-003",
+      "displayLabel": "Mid-Tier Occasionals",
+      "customers": 310,
+      "weightedRecency": 10.288286976686999,
+      "weightedFrequency": 0.4889565465907358,
+      "weightedMonetary": 214.7145449331096,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_7",
+      "stableClusterId": "CL-004",
+      "displayLabel": "Light Buyers",
+      "customers": 437,
+      "weightedRecency": 26.592848468245922,
+      "weightedFrequency": 0.4235281427233198,
+      "weightedMonetary": 150.72268147747795,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_7",
+      "stableClusterId": "CL-005",
+      "displayLabel": "Light Buyers at Risk",
+      "customers": 580,
+      "weightedRecency": 66.37883866624112,
+      "weightedFrequency": 0.3672930931601065,
+      "weightedMonetary": 120.82837477643218,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_7",
+      "stableClusterId": "CL-006",
+      "displayLabel": "Hibernating / Lost",
+      "customers": 1471,
+      "weightedRecency": 183.1855893977444,
+      "weightedFrequency": 0.0008680308990459964,
+      "weightedMonetary": 0.5370857124417244,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-002",
+      "displayLabel": "Champions",
+      "customers": 178,
+      "weightedRecency": 8.006654065699584,
+      "weightedFrequency": 1.8830837958298225,
+      "weightedMonetary": 1113.6317560462358,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-009",
+      "displayLabel": "Loyalists",
+      "customers": 297,
+      "weightedRecency": 19.392087408583176,
+      "weightedFrequency": 0.8476464587126981,
+      "weightedMonetary": 398.9293432594655,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-007",
+      "displayLabel": "Valuable Customers at Risk",
+      "customers": 378,
+      "weightedRecency": 40.04164867149928,
+      "weightedFrequency": 0.6460536166818632,
+      "weightedMonetary": 340.81500003573393,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-008",
+      "displayLabel": "Mid-Tier Occasionals",
+      "customers": 174,
+      "weightedRecency": 2.5095593938383622,
+      "weightedFrequency": 0.7400694323449863,
+      "weightedMonetary": 298.3078894186479,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-004",
+      "displayLabel": "Occasional Buyers at Risk",
+      "customers": 536,
+      "weightedRecency": 32.18752403520626,
+      "weightedFrequency": 0.3706285661581589,
+      "weightedMonetary": 120.49880814436094,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-003",
+      "displayLabel": "Light Buyers",
+      "customers": 369,
+      "weightedRecency": 10.705643310956265,
+      "weightedFrequency": 0.4348028856053665,
+      "weightedMonetary": 158.10298378553998,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-005",
+      "displayLabel": "Light Buyers at Risk",
+      "customers": 524,
+      "weightedRecency": 65.10727071679759,
+      "weightedFrequency": 0.36104866133399616,
+      "weightedMonetary": 131.9472185820406,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-006",
+      "displayLabel": "Hibernating / Lost",
+      "customers": 1518,
+      "weightedRecency": 198.47125623978602,
+      "weightedFrequency": 0.0006588339585622667,
+      "weightedMonetary": 0.4955343225240275,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-010",
+      "displayLabel": "Champions",
+      "customers": 165,
+      "weightedRecency": 3.030164654838991,
+      "weightedFrequency": 1.7021813371185088,
+      "weightedMonetary": 771.6931658367989,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-002",
+      "displayLabel": "High-Value Regulars",
+      "customers": 281,
+      "weightedRecency": 11.411536839530028,
+      "weightedFrequency": 1.5924135153381838,
+      "weightedMonetary": 775.9349127417394,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-009",
+      "displayLabel": "Loyalists",
+      "customers": 395,
+      "weightedRecency": 18.024757033688314,
+      "weightedFrequency": 0.7578558979278881,
+      "weightedMonetary": 299.3544297300296,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-007",
+      "displayLabel": "Valuable Customers at Risk",
+      "customers": 358,
+      "weightedRecency": 41.658568719859126,
+      "weightedFrequency": 0.6705579003695085,
+      "weightedMonetary": 352.85151515203535,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-008",
+      "displayLabel": "Mid-Tier Occasionals",
+      "customers": 170,
+      "weightedRecency": 2.7677519388965544,
+      "weightedFrequency": 0.6464502736671058,
+      "weightedMonetary": 232.84695407214642,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-005",
+      "displayLabel": "Occasional Buyers at Risk",
+      "customers": 540,
+      "weightedRecency": 65.49107204543873,
+      "weightedFrequency": 0.35614844015218117,
+      "weightedMonetary": 147.71767899940127,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-003",
+      "displayLabel": "Light Buyers",
+      "customers": 396,
+      "weightedRecency": 12.933899115337747,
+      "weightedFrequency": 0.43169638914653,
+      "weightedMonetary": 128.16820740828848,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-004",
+      "displayLabel": "Light Buyers at Risk",
+      "customers": 530,
+      "weightedRecency": 39.008489880660946,
+      "weightedFrequency": 0.36549622501013407,
+      "weightedMonetary": 95.79128290202479,
+      "recencyRulePassed": true
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-006",
+      "displayLabel": "Hibernating / Lost",
+      "customers": 1462,
+      "weightedRecency": 213.02094067902667,
+      "weightedFrequency": 0.0007271542903488855,
+      "weightedMonetary": 0.4664104129547369,
+      "recencyRulePassed": true
+    }
+  ],
+  "identityLinks": [
+    {
+      "cycleId": "Cycle_1",
+      "stableClusterId": "CL-002",
+      "previousName": "Valuable Customers at Risk",
+      "currentName": "Champions",
+      "sameName": false,
+      "recencyChange": -26.48353267040475,
+      "frequencyChange": 0.025350420599249968,
+      "monetaryChange": -189.27562541333668
+    },
+    {
+      "cycleId": "Cycle_1",
+      "stableClusterId": "CL-003",
+      "previousName": "Loyalists",
+      "currentName": "Loyalists",
+      "sameName": true,
+      "recencyChange": -1.340303193233737,
+      "frequencyChange": 0.134551012046765,
+      "monetaryChange": 106.42522686435706
+    },
+    {
+      "cycleId": "Cycle_1",
+      "stableClusterId": "CL-004",
+      "previousName": "Mid-Tier Occasionals",
+      "currentName": "Mid-Tier Occasionals",
+      "sameName": true,
+      "recencyChange": 6.1682710924477,
+      "frequencyChange": -0.03766593804572993,
+      "monetaryChange": 17.705093138096515
+    },
+    {
+      "cycleId": "Cycle_1",
+      "stableClusterId": "CL-005",
+      "previousName": "Light Buyers at Risk",
+      "currentName": "Occasional Buyers at Risk",
+      "sameName": false,
+      "recencyChange": -11.987067491024973,
+      "frequencyChange": 0.041114624412745826,
+      "monetaryChange": 71.05240101196075
+    },
+    {
+      "cycleId": "Cycle_2",
+      "stableClusterId": "CL-002",
+      "previousName": "Champions",
+      "currentName": "Champions",
+      "sameName": true,
+      "recencyChange": 8.320713511296969,
+      "frequencyChange": 0.19288382532620163,
+      "monetaryChange": 73.5855040706897
+    },
+    {
+      "cycleId": "Cycle_2",
+      "stableClusterId": "CL-003",
+      "previousName": "Loyalists",
+      "currentName": "Loyalists",
+      "sameName": true,
+      "recencyChange": 3.5914293331636893,
+      "frequencyChange": 0.057441553419172786,
+      "monetaryChange": 6.914232611866339
+    },
+    {
+      "cycleId": "Cycle_2",
+      "stableClusterId": "CL-004",
+      "previousName": "Mid-Tier Occasionals",
+      "currentName": "Mid-Tier Occasionals",
+      "sameName": true,
+      "recencyChange": -0.44456494389103796,
+      "frequencyChange": -0.01792682077238522,
+      "monetaryChange": -23.69424541922419
+    },
+    {
+      "cycleId": "Cycle_2",
+      "stableClusterId": "CL-005",
+      "previousName": "Occasional Buyers at Risk",
+      "currentName": "Occasional Buyers at Risk",
+      "sameName": true,
+      "recencyChange": 1.8491331174803491,
+      "frequencyChange": -0.011512730622166734,
+      "monetaryChange": -22.671840326875667
+    },
+    {
+      "cycleId": "Cycle_2",
+      "stableClusterId": "CL-006",
+      "previousName": "Hibernating / Lost",
+      "currentName": "Hibernating / Lost",
+      "sameName": true,
+      "recencyChange": 12.530931218195988,
+      "frequencyChange": -0.003007957518458478,
+      "monetaryChange": -2.1815347621405374
+    },
+    {
+      "cycleId": "Cycle_3",
+      "stableClusterId": "CL-002",
+      "previousName": "Champions",
+      "currentName": "Champions",
+      "sameName": true,
+      "recencyChange": -6.361733116573481,
+      "frequencyChange": 0.4154028717377589,
+      "monetaryChange": 228.67672526759713
+    },
+    {
+      "cycleId": "Cycle_3",
+      "stableClusterId": "CL-003",
+      "previousName": "Loyalists",
+      "currentName": "Loyalists",
+      "sameName": true,
+      "recencyChange": 1.3720603613745457,
+      "frequencyChange": -0.08466172221241175,
+      "monetaryChange": -52.450384435489866
+    },
+    {
+      "cycleId": "Cycle_3",
+      "stableClusterId": "CL-004",
+      "previousName": "Mid-Tier Occasionals",
+      "currentName": "Mid-Tier Occasionals",
+      "sameName": true,
+      "recencyChange": -4.342068493206881,
+      "frequencyChange": 0.07287498336190751,
+      "monetaryChange": 35.245954626001435
+    },
+    {
+      "cycleId": "Cycle_3",
+      "stableClusterId": "CL-005",
+      "previousName": "Occasional Buyers at Risk",
+      "currentName": "Light Buyers at Risk",
+      "sameName": false,
+      "recencyChange": 0.03130258411857767,
+      "frequencyChange": -0.007963280503767378,
+      "monetaryChange": -18.182805172128354
+    },
+    {
+      "cycleId": "Cycle_3",
+      "stableClusterId": "CL-006",
+      "previousName": "Hibernating / Lost",
+      "currentName": "Hibernating / Lost",
+      "sameName": true,
+      "recencyChange": 11.556359696816855,
+      "frequencyChange": -0.001129961799556183,
+      "monetaryChange": -0.27068158561058353
+    },
+    {
+      "cycleId": "Cycle_4",
+      "stableClusterId": "CL-002",
+      "previousName": "Champions",
+      "currentName": "Champions",
+      "sameName": true,
+      "recencyChange": 2.6495397481818994,
+      "frequencyChange": -0.18097824736410617,
+      "monetaryChange": -109.35532828427608
+    },
+    {
+      "cycleId": "Cycle_4",
+      "stableClusterId": "CL-003",
+      "previousName": "Loyalists",
+      "currentName": "Loyalists",
+      "sameName": true,
+      "recencyChange": -3.519006273495629,
+      "frequencyChange": 0.07589502022395478,
+      "monetaryChange": 31.620697877114196
+    },
+    {
+      "cycleId": "Cycle_4",
+      "stableClusterId": "CL-004",
+      "previousName": "Mid-Tier Occasionals",
+      "currentName": "Mid-Tier Occasionals",
+      "sameName": true,
+      "recencyChange": 0.26060379482246177,
+      "frequencyChange": -0.010689219438015596,
+      "monetaryChange": -9.230938179571467
+    },
+    {
+      "cycleId": "Cycle_4",
+      "stableClusterId": "CL-005",
+      "previousName": "Light Buyers at Risk",
+      "currentName": "Light Buyers at Risk",
+      "sameName": true,
+      "recencyChange": -2.370616626705214,
+      "frequencyChange": 0.016033767281925126,
+      "monetaryChange": 18.899809522957042
+    },
+    {
+      "cycleId": "Cycle_4",
+      "stableClusterId": "CL-006",
+      "previousName": "Hibernating / Lost",
+      "currentName": "Hibernating / Lost",
+      "sameName": true,
+      "recencyChange": 8.98303349909824,
+      "frequencyChange": -0.0007183542724869415,
+      "monetaryChange": -0.019102403126357803
+    },
+    {
+      "cycleId": "Cycle_5",
+      "stableClusterId": "CL-002",
+      "previousName": "Champions",
+      "currentName": "Champions",
+      "sameName": true,
+      "recencyChange": -7.191458462908047,
+      "frequencyChange": 0.551255023908582,
+      "monetaryChange": 357.11353832087354
+    },
+    {
+      "cycleId": "Cycle_5",
+      "stableClusterId": "CL-003",
+      "previousName": "Loyalists",
+      "currentName": "Loyalists",
+      "sameName": true,
+      "recencyChange": 0.8610850869452582,
+      "frequencyChange": -0.0917401055866015,
+      "monetaryChange": -46.36918950514087
+    },
+    {
+      "cycleId": "Cycle_5",
+      "stableClusterId": "CL-004",
+      "previousName": "Mid-Tier Occasionals",
+      "currentName": "Mid-Tier Occasionals",
+      "sameName": true,
+      "recencyChange": -0.8439242617027389,
+      "frequencyChange": -0.02054556224423204,
+      "monetaryChange": -13.162884761272863
+    },
+    {
+      "cycleId": "Cycle_5",
+      "stableClusterId": "CL-005",
+      "previousName": "Light Buyers at Risk",
+      "currentName": "Light Buyers at Risk",
+      "sameName": true,
+      "recencyChange": 6.368774815410049,
+      "frequencyChange": -0.0313458578910385,
+      "monetaryChange": -31.995214252096005
+    },
+    {
+      "cycleId": "Cycle_5",
+      "stableClusterId": "CL-006",
+      "previousName": "Hibernating / Lost",
+      "currentName": "Hibernating / Lost",
+      "sameName": true,
+      "recencyChange": 15.667815942857175,
+      "frequencyChange": -0.0007989365450872901,
+      "monetaryChange": -0.5283435539366795
+    },
+    {
+      "cycleId": "Cycle_6",
+      "stableClusterId": "CL-002",
+      "previousName": "Champions",
+      "currentName": "Champions",
+      "sameName": true,
+      "recencyChange": 0.5908478487786937,
+      "frequencyChange": -0.19580891158119984,
+      "monetaryChange": -147.72117813114505
+    },
+    {
+      "cycleId": "Cycle_6",
+      "stableClusterId": "CL-003",
+      "previousName": "Loyalists",
+      "currentName": "Loyalists",
+      "sameName": true,
+      "recencyChange": 2.2543690610057263,
+      "frequencyChange": -0.06733340006286126,
+      "monetaryChange": -12.143029978428956
+    },
+    {
+      "cycleId": "Cycle_6",
+      "stableClusterId": "CL-004",
+      "previousName": "Mid-Tier Occasionals",
+      "currentName": "Mid-Tier Occasionals",
+      "sameName": true,
+      "recencyChange": 1.694895201196875,
+      "frequencyChange": -0.002671513703483841,
+      "monetaryChange": 4.284933844192295
+    },
+    {
+      "cycleId": "Cycle_6",
+      "stableClusterId": "CL-005",
+      "previousName": "Light Buyers at Risk",
+      "currentName": "Light Buyers at Risk",
+      "sameName": true,
+      "recencyChange": 1.2951758306887484,
+      "frequencyChange": -0.004225164621197708,
+      "monetaryChange": -6.059881497446824
+    },
+    {
+      "cycleId": "Cycle_6",
+      "stableClusterId": "CL-006",
+      "previousName": "Hibernating / Lost",
+      "currentName": "Hibernating / Lost",
+      "sameName": true,
+      "recencyChange": 8.661791130514757,
+      "frequencyChange": -0.0004811681162011391,
+      "monetaryChange": -0.09521072937923658
+    },
+    {
+      "cycleId": "Cycle_6",
+      "stableClusterId": "CL-007",
+      "previousName": "Valuable Customers at Risk",
+      "currentName": "Valuable Customers at Risk",
+      "sameName": true,
+      "recencyChange": -1.779456210493315,
+      "frequencyChange": -0.019454496616578387,
+      "monetaryChange": 25.959494113153426
+    },
+    {
+      "cycleId": "Cycle_7",
+      "stableClusterId": "CL-002",
+      "previousName": "Champions",
+      "currentName": "Champions",
+      "sameName": true,
+      "recencyChange": -0.33542096827333445,
+      "frequencyChange": 0.0457961582581734,
+      "monetaryChange": 84.01050439859534
+    },
+    {
+      "cycleId": "Cycle_7",
+      "stableClusterId": "CL-003",
+      "previousName": "Loyalists",
+      "currentName": "Mid-Tier Occasionals",
+      "sameName": false,
+      "recencyChange": 2.2353192675938125,
+      "frequencyChange": -0.13704766308913413,
+      "monetaryChange": -19.682254532914328
+    },
+    {
+      "cycleId": "Cycle_7",
+      "stableClusterId": "CL-004",
+      "previousName": "Mid-Tier Occasionals",
+      "currentName": "Light Buyers",
+      "sameName": false,
+      "recencyChange": 0.141302745246211,
+      "frequencyChange": -0.025125564212518825,
+      "monetaryChange": 3.585261284811736
+    },
+    {
+      "cycleId": "Cycle_7",
+      "stableClusterId": "CL-005",
+      "previousName": "Light Buyers at Risk",
+      "currentName": "Light Buyers at Risk",
+      "sameName": true,
+      "recencyChange": -1.6902165049028781,
+      "frequencyChange": 0.003932079726303439,
+      "monetaryChange": 6.342102756846742
+    },
+    {
+      "cycleId": "Cycle_7",
+      "stableClusterId": "CL-006",
+      "previousName": "Hibernating / Lost",
+      "currentName": "Hibernating / Lost",
+      "sameName": true,
+      "recencyChange": 14.006293831213782,
+      "frequencyChange": -0.0003474354722864091,
+      "monetaryChange": -0.0789964013141935
+    },
+    {
+      "cycleId": "Cycle_7",
+      "stableClusterId": "CL-007",
+      "previousName": "Valuable Customers at Risk",
+      "currentName": "Valuable Customers at Risk",
+      "sameName": true,
+      "recencyChange": 1.2567756631785088,
+      "frequencyChange": 0.0003383936847658475,
+      "monetaryChange": 15.874107710528733
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-002",
+      "previousName": "Champions",
+      "currentName": "Champions",
+      "sameName": true,
+      "recencyChange": -3.2650356373480083,
+      "frequencyChange": 0.12750399787082212,
+      "monetaryChange": 190.09263979805314
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-003",
+      "previousName": "Mid-Tier Occasionals",
+      "currentName": "Light Buyers",
+      "sameName": false,
+      "recencyChange": 0.4173563342692663,
+      "frequencyChange": -0.05415366098536928,
+      "monetaryChange": -56.61156114756963
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-004",
+      "previousName": "Light Buyers",
+      "currentName": "Occasional Buyers at Risk",
+      "sameName": false,
+      "recencyChange": 5.594675566960337,
+      "frequencyChange": -0.052899576565160866,
+      "monetaryChange": -30.223873333117012
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-005",
+      "previousName": "Light Buyers at Risk",
+      "currentName": "Light Buyers at Risk",
+      "sameName": true,
+      "recencyChange": -1.2715679494435363,
+      "frequencyChange": -0.0062444318261103415,
+      "monetaryChange": 11.118843805608407
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-006",
+      "previousName": "Hibernating / Lost",
+      "currentName": "Hibernating / Lost",
+      "sameName": true,
+      "recencyChange": 15.285666842041621,
+      "frequencyChange": -0.00020919694048372967,
+      "monetaryChange": -0.04155138991769691
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-007",
+      "previousName": "Valuable Customers at Risk",
+      "currentName": "Valuable Customers at Risk",
+      "sameName": true,
+      "recencyChange": 1.6335332954539155,
+      "frequencyChange": -0.08821342710287472,
+      "monetaryChange": -19.678987932105883
+    },
+    {
+      "cycleId": "Cycle_8",
+      "stableClusterId": "CL-008",
+      "previousName": "Loyalists",
+      "currentName": "Mid-Tier Occasionals",
+      "sameName": false,
+      "recencyChange": -0.4607243061313051,
+      "frequencyChange": 0.1280791235925094,
+      "monetaryChange": 45.85547932798369
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-002",
+      "previousName": "Champions",
+      "currentName": "High-Value Regulars",
+      "sameName": false,
+      "recencyChange": 3.404882773830444,
+      "frequencyChange": -0.2906702804916388,
+      "monetaryChange": -337.6968433044964
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-003",
+      "previousName": "Light Buyers",
+      "currentName": "Light Buyers",
+      "sameName": true,
+      "recencyChange": 2.2282558043814813,
+      "frequencyChange": -0.003106496458836483,
+      "monetaryChange": -29.934776377251495
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-004",
+      "previousName": "Occasional Buyers at Risk",
+      "currentName": "Light Buyers at Risk",
+      "sameName": false,
+      "recencyChange": 6.820965845454687,
+      "frequencyChange": -0.005132341148024855,
+      "monetaryChange": -24.707525242336146
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-005",
+      "previousName": "Light Buyers at Risk",
+      "currentName": "Occasional Buyers at Risk",
+      "sameName": false,
+      "recencyChange": 0.383801328641141,
+      "frequencyChange": -0.00490022118181499,
+      "monetaryChange": 15.770460417360681
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-006",
+      "previousName": "Hibernating / Lost",
+      "currentName": "Hibernating / Lost",
+      "sameName": true,
+      "recencyChange": 14.54968443924065,
+      "frequencyChange": 6.832033178661876e-05,
+      "monetaryChange": -0.029123909569290618
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-007",
+      "previousName": "Valuable Customers at Risk",
+      "currentName": "Valuable Customers at Risk",
+      "sameName": true,
+      "recencyChange": 1.6169200483598445,
+      "frequencyChange": 0.024504283687645234,
+      "monetaryChange": 12.036515116301416
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-008",
+      "previousName": "Mid-Tier Occasionals",
+      "currentName": "Mid-Tier Occasionals",
+      "sameName": true,
+      "recencyChange": 0.2581925450581921,
+      "frequencyChange": -0.09361915867788051,
+      "monetaryChange": -65.46093534650149
+    },
+    {
+      "cycleId": "Cycle_9",
+      "stableClusterId": "CL-009",
+      "previousName": "Loyalists",
+      "currentName": "Loyalists",
+      "sameName": true,
+      "recencyChange": -1.3673303748948626,
+      "frequencyChange": -0.08979056078480996,
+      "monetaryChange": -99.57491352943589
+    }
+  ],
+  "method": {
+    "identity": "One-to-one matching combines centre distance and fuzzy membership overlap. A continued CL ID records an accepted algorithmic match; its descriptive name is checked separately.",
+    "profileCheck": "Every fitted centre is checked against its weighted-RFM recency eligibility and its raw weighted R/F/M are exported. Frequency/spend ranks and descriptive prototypes are relative reporting rules, not independently validated customer types.",
+    "counterfactual": "For each returning customer compare old features/old centres with (1) current features/old centres, (2) old features/current centres, and (3) current features/current centres, using the same frozen PCA coordinates. Compare stable IDs separately from names.",
+    "limitations": [
+      "These geometric comparisons do not prove a causal explanation for customer behaviour.",
+      "Both means each change separately crosses an assignment boundary; it does not estimate a percentage causal contribution.",
+      "A profile-only rename can change the displayed segment even when the tracking ID stays the same.",
+      "Changing K, new or retired IDs and relative naming rules can affect continuity. Perfect semantic persistence is not assumed.",
+      "Greater maximum membership is an internal concentration measure, not a calibrated probability of a correct customer label."
+    ]
+  }
+}

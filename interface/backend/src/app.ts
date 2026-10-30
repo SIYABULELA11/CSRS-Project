@@ -73,10 +73,16 @@ app.use(
   "/CSRS",
   express.static(frontendDistPath, {
     maxAge: "1h",
+    setHeaders: (res, filePath) => {
+      if (path.extname(filePath).toLowerCase() === ".html") {
+        res.setHeader("Cache-Control", "no-cache");
+      }
+    },
   })
 );
 
 app.get("/CSRS/*", (_req, res) => {
+  res.setHeader("Cache-Control", "no-cache");
   res.sendFile(path.join(frontendDistPath, "index.html"));
 });
 

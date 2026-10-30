@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "scope": "Actual React page render using direct application services; no browser or HTTP access",
+  "replacementCard": "Cluster separation",
+  "checkedCycles": [
+    {
+      "cycle": "Cycle_0",
+      "silhouette": 0.3651888174347971
+    },
+    {
+      "cycle": "Cycle_6",
+      "silhouette": 0.551141011262616
+    },
+    {
+      "cycle": "Cycle_9",
+      "silhouette": 0.4755391437138394
+    }
+  ],
+  "trackingExplanationPresent": true,
+  "databaseUnchanged": true,
+  "databaseSha256": "d35c49ea2e8038b4fbb9fbc44cdea14d77c9998666195565cef908c5f09bd45f"
+}

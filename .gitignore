@@ -14,3 +14,8 @@ __pycache__/
 *.py[cod]
 .venv/
 .ipynb_checkpoints/
+# Keep historical experiments and temporary reviews local; deploy the curated current bundle.
+model/pipeline b/repair_outputs_2026-10-23/
+tmp/
+deployment/current/*.db
+deployment/current/*.tmp-*

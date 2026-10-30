@@ -1,0 +1,13 @@
+{
+  "source_run": "run_20261025_113044",
+  "scope": "FCM/MDFCM computation and identity matching must remain unchanged during reporting changes",
+  "function_ast_sha256": {
+    "safe_cluster_metrics": "235335ac100f156a360dab0b58c36c88b100ad51f7b0d3f45e16d8524d54a43d",
+    "match_cluster_ids": "d819b72c744d32996c596c0f3af8a952d0f23f13504138b5e9e0edfacee415b8",
+    "memberships_from_centroids": "6e6f06cb4c7f96501a05dcea50f625e9704c8b7cf2a23c15aee9773e0895caa8",
+    "fit_fuzzy_c_means": "9768c5471463d95e41d99d011a4667f13b902c4e400af0f1225c565ed2dab9ef",
+    "fit_incremental_fuzzy_movement": "f86f4dbd724b1c49ca95fbc81889dc3bef3006ddc69abb9b7e262212ae6af263",
+    "dynamic_fuzzy_update": "17d1b54929ac78e226154bec89cd92114725a6abd9eb6c6664a8dae26cc54235",
+    "previous_membership_mass_by_cluster": "88ca89a83a0faeb4f7459fb111afeed562ecfd075999c60da34749ed0c391afb"
+  }
+}

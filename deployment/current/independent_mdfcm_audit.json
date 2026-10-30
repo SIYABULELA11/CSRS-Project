@@ -1,0 +1,157 @@
+{
+  "scope": "Executed research data; independent condition geometry, membership and validity arithmetic",
+  "database_integrity": "ok",
+  "cycle0_nearest_centre_mismatches": 0,
+  "cycles": [
+    {
+      "cycle": "Cycle_1",
+      "previous_k": 5,
+      "selected_k": 5,
+      "condition1_count": 0,
+      "condition2_count": 401,
+      "evaluated_k": [
+        5,
+        6
+      ],
+      "selected_operation": "incremental_center_movement",
+      "iterations": 18,
+      "hard_winners": 5,
+      "passed": true
+    },
+    {
+      "cycle": "Cycle_2",
+      "previous_k": 5,
+      "selected_k": 5,
+      "condition1_count": 0,
+      "condition2_count": 46,
+      "evaluated_k": [
+        5,
+        6
+      ],
+      "selected_operation": "incremental_center_movement",
+      "iterations": 10,
+      "hard_winners": 5,
+      "passed": true
+    },
+    {
+      "cycle": "Cycle_3",
+      "previous_k": 5,
+      "selected_k": 5,
+      "condition1_count": 0,
+      "condition2_count": 48,
+      "evaluated_k": [
+        5,
+        6
+      ],
+      "selected_operation": "incremental_center_movement",
+      "iterations": 14,
+      "hard_winners": 5,
+      "passed": true
+    },
+    {
+      "cycle": "Cycle_4",
+      "previous_k": 5,
+      "selected_k": 5,
+      "condition1_count": 0,
+      "condition2_count": 45,
+      "evaluated_k": [
+        5,
+        6
+      ],
+      "selected_operation": "incremental_center_movement",
+      "iterations": 14,
+      "hard_winners": 5,
+      "passed": true
+    },
+    {
+      "cycle": "Cycle_5",
+      "previous_k": 5,
+      "selected_k": 6,
+      "condition1_count": 0,
+      "condition2_count": 34,
+      "evaluated_k": [
+        5,
+        6
+      ],
+      "selected_operation": "split_one_cluster",
+      "iterations": 15,
+      "hard_winners": 6,
+      "passed": true
+    },
+    {
+      "cycle": "Cycle_6",
+      "previous_k": 6,
+      "selected_k": 6,
+      "condition1_count": 0,
+      "condition2_count": 13,
+      "evaluated_k": [
+        6,
+        7
+      ],
+      "selected_operation": "incremental_center_movement",
+      "iterations": 6,
+      "hard_winners": 6,
+      "passed": true
+    },
+    {
+      "cycle": "Cycle_7",
+      "previous_k": 6,
+      "selected_k": 7,
+      "condition1_count": 0,
+      "condition2_count": 25,
+      "evaluated_k": [
+        6,
+        7
+      ],
+      "selected_operation": "split_one_cluster",
+      "iterations": 6,
+      "hard_winners": 7,
+      "passed": true
+    },
+    {
+      "cycle": "Cycle_8",
+      "previous_k": 7,
+      "selected_k": 8,
+      "condition1_count": 0,
+      "condition2_count": 16,
+      "evaluated_k": [
+        7,
+        8
+      ],
+      "selected_operation": "split_one_cluster",
+      "iterations": 15,
+      "hard_winners": 8,
+      "passed": true
+    },
+    {
+      "cycle": "Cycle_9",
+      "previous_k": 8,
+      "selected_k": 9,
+      "condition1_count": 0,
+      "condition2_count": 13,
+      "evaluated_k": [
+        8,
+        9
+      ],
+      "selected_operation": "split_one_cluster",
+      "iterations": 15,
+      "hard_winners": 9,
+      "passed": true
+    }
+  ],
+  "max_membership_error": 4.999966388835597e-09,
+  "max_objective_error": 5.4493916934461595e-08,
+  "max_xie_beni_error": 3.466512910055286e-10,
+  "business_groups": [
+    "Champions",
+    "Hibernating / Lost",
+    "High-Value Regulars",
+    "Light Buyers",
+    "Light Buyers at Risk",
+    "Loyalists",
+    "Mid-Tier Occasionals",
+    "Occasional Buyers at Risk",
+    "Valuable Customers at Risk"
+  ],
+  "passed": true
+}

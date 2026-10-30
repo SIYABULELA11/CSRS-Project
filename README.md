@@ -1,225 +1,83 @@
-<p align="center">
-  <img src="interface/frontend/src/assets/iconName.png" alt="CSRS logo" width="220" />
-</p>
+# CSRS — customer segmentation and retail analytics
 
-<h1 align="center">Customer Segmentation in the Retail Sector</h1>
+Current local dashboard: **http://localhost:4000/CSRS/**.
 
-<p align="center">
-  A full-stack research platform for firmographic customer segmentation in online retail.
-</p>
+Render/GitHub deployment uses the verified snapshot in [`deployment/current`](deployment/current), including the current database archive, figures and evaluation evidence. See [deployment instructions](deployment/README.md). Historical run folders remain local; the pre-update main is preserved on `older-version`, and the current release is recorded on `updated` before promotion to main.
 
-<p align="center">
-  <a href="https://csrs-project.onrender.com/CSRS/"><strong>Live website</strong></a>
-  ·
-  <a href="https://csrs-project.onrender.com/health">API health check</a>
-</p>
+Current executed run: **`model/pipeline b/repair_outputs_2026-10-23/named_20261025_214151/`**. This supersedes the purchaser-only run `run_20261025_113044`; old outputs and documentation remain preserved. Hosted deployment follows its own deployment state.
 
-## Overview
+Read [the current model review](CURRENT_MODEL_REVIEW_2026-10-25.md), [brief identity/migration explanation](CLUSTER_IDENTITY_AND_MIGRATION.md), [MDFCM implementation status](MDFCM_PAPER_IMPLEMENTATION_STATUS.md), and [rebuild instructions](model/pipeline%20b/MODEL_REBUILD.md).
 
-Customer Segmentation in the Retail Sector (CSRS) is an academic research project that combines **behavioural segmentation** and **geographic segmentation** into one firmographic customer view.
+## Methodology
 
-The analytical pipeline uses transaction history from the UK Online Retail dataset to calculate Cascaded RFM features, establish a baseline segmentation, and track customer movement through time with Modified Dynamic Fuzzy C-Means (MDFCM). Geographic market information is then connected to the behavioural results to support location-aware customer analytics and strategic decision-making.
+1. **Data cleaning:** exact-row deduplication, valid linked customer IDs/invoices/dates, positive finite quantity/price, cancellation exclusions and explicit missing-description/country placeholders.
+2. **Customer snapshots:** every customer observed before each cutoff; uncapped recency; one exact trailing 90-day purchase window. C0 covers December 2010–February 2011; C1–C9 end monthly March–November.
+3. **Cascaded RFM:** derive R, distinct paid invoices /3 and positive paid sales /3; apply log1p to each and form RF, RM and FM products of logged values.
+4. **MinMax scaling:** fit on C0 only and reuse.
+5. **PCA:** fit three components on C0 only and reuse in every cycle.
+6. **Static C0 K-means:** accepted WCSS elbow K=5; silhouette supporting evidence. Validation includes inertia (WCSS), silhouette, Davies–Bouldin and Calinski–Harabasz. Inertia is 56.5713. FCM does not run in C0.
+7. **Dynamic C1–C9 MDFCM:** update all observed customer snapshots, including non-purchasers. Replace old observations before adding current ones; carry-over mass is zero and prior centres initialize the next fit. Preserve the FCM equations and MDFCM condition-permitted K−1/K/K+1 comparisons; choose lowest converged finite Xie–Beni. Membership concentration, hard-label metrics and actual centre movement are reported.
+8. **Geographic integration:** separate specified K=3 country-market K-means, baseline RobustScaler/fixed later centres and 90-day commercial features with broad behavioural-family composition; derive customer–market combinations.
 
-In this project, **firmographic segmentation means the integration of customer behaviour and geographic market context**.
-## Research Objectives
+The study contains **375,666 paid-sale rows, 4,297 customers and 30,280 customer-cycle observations**. Model F/M are rolling monthly equivalents. Separate disjoint commercial totals reconcile to **£8,370,018.454 and 17,754 orders**; rolling windows are never summed as extra revenue. Lifetime history establishes observed customers and the latest purchase, rather than replacing rolling spend.
 
-- Identify meaningful customer groups from recency, frequency, and monetary behaviour as well as their pairs (recency-frequency, frequency-monetary, recency-monetory).
-- Preserve uncertainty through fuzzy membership scores instead of relying only on hard cluster labels.
-- Track customer migration, segment stability, centroid movement, and model confidence over time.
-- Compare customer value, products, revenue, and behavioural composition across geographic markets.
-- Convert notebook and database outputs into an accessible, interactive research interface.
+## Results and interpretation
 
-## Analytical Approach
+Fitted K for C0–C9 is **5,5,5,5,5,6,6,7,8,9**. Each fitted centre has a distinct registry entry and display label. Allowed profile hierarchy: Champions; High-Value Regulars; Loyalists; Valuable Customers at Risk; Mid-Tier Occasionals; Occasional Buyers at Risk; Light Buyers; Light Buyers at Risk; Hibernating / Lost. Use names only where supported; an ID/centre qualifier preserves an additional genuine centre instead of forcing an unsupported category.
 
-1. **Data preparation** - cleans retail transactions, derives revenue, and creates ordered time cycles.
-2. **Cascaded RFM** - calculates Recency, Frequency, and Monetary features together with structural RF, RM, and FM combinations.
-3. **Baseline segmentation** - establishes the initial customer clusters and evaluates their quality.
-4. **Dynamic MDFCM** - updates fuzzy memberships and centroids across cycles while retaining information from the previous state.
-5. **Migration analysis** - measures stable customers, movement between segments, transition flows, and migration rates.
-6. **Geographic segmentation** - compares market size, revenue, products, customer value, and behavioural composition by country.
-7. **Firmographic integration** - combines behavioural and geographic evidence into one strategic customer view.
+Names describe weighted RFM; individual customer warnings are separate. At risk: 31–60 days or observed deterioration; Slipping: 61–90; Lost: >90. Hibernating / Lost remains one cluster category. Non-purchasers receive updated RFM and fresh memberships in every cycle.
 
-The current behavioural segment labels are:
+Cycle 9 full-population silhouette is 0.476 and mean maximum membership 68.5%. Current-month purchasers have 0.233 and 52.1%; dormant observations raise headline scores. No probability of a correct customer type or causal campaign improvement is claimed. K increases are data-driven; no research-cycle K−1 condition occurs. Synthetic branch checks are separate.
 
-- **Champions**
-- **Core Loyalists**
-- **Mid-Tier Occasionals**
-- **Hibernating / Lost**
+Cluster tracking IDs and names are distinct: 40 of 51 consecutive ID links retain names and 11 rename. The Model page shows weighted RFM, continuity evidence and feature-versus-boundary migration diagnostics. The primary centroid plot contains actual fitted centres, including genuine creation/retirement gaps. Ten tracking paths across all cycles do not mean ten simultaneous clusters.
 
-## Platform Features
-
-- Executive overview of customer, revenue, product, cycle, and market metrics.
-- Searchable customer explorer with value, basket, membership, migration, and transaction history.
-- Behavioural segment profiles and strategy recommendations.
-- Cycle-by-cycle population, revenue, centroid, confidence, and migration analytics.
-- Product performance, portfolio diversity, exclusivity, and segment affinity analysis.
-- Geographic market intelligence and country-level behavioural composition.
-- Model evaluation using Silhouette, Davies-Bouldin, and Calinski-Harabasz measures.
-- Research figure gallery with notebook-generated plots and interactive HTML artifacts.
-- Database explorer for viewing the relational analytical tables.
-- Light, dark, high-contrast, reduced-motion, font-scaling, and colour-blind-friendly settings.
-
-## System Architecture
+## Data flow
 
 ```mermaid
 flowchart LR
-    A[UCI Online Retail transactions] --> B[Jupyter research pipeline]
-    B --> C[Cascaded RFM features]
-    C --> D[Baseline clustering]
-    D --> E[Modified Dynamic Fuzzy C-Means]
-    A --> F[Geographic market aggregation]
-    E --> G[Behavioural segments and migrations]
-    F --> H[Firmographic integration]
-    G --> H
-    H --> I[SQLite analytical database]
-    B --> J[Research figures and reports]
-    I --> K[Express and TypeScript API]
-    J --> K
-    K --> L[React analytics interface]
+    A[UCI paid-sale cleaning] --> B[All observed customers at each cutoff]
+    B --> C[Exact recency and 90-day F/M]
+    C --> D[Log1p and RF/RM/FM interactions]
+    D --> E[C0 MinMax and PCA reference]
+    E --> F[C0 K-means K5 and inertia validation]
+    F --> G[C1-C9 full-snapshot MDFCM]
+    G --> H[Current memberships and real fitted centres]
+    H --> I[Profile checks and individual risk]
+    H --> J[Feature/boundary migration diagnostics]
+    B --> K[90-day country aggregates]
+    I --> K
+    K --> L[Separate geographic K-means K3]
+    L --> M[Customer-market combinations]
+    I --> N[Versioned SQLite and figures]
+    J --> N
+    M --> N
+    N --> O[Express API and React dashboard]
 ```
 
-## Technology Stack
+## Running locally
 
-| Layer | Technologies |
-| --- | --- |
-| Research and modelling | Python, Jupyter Notebook, pandas, NumPy, scikit-learn, fuzzy clustering, PCA |
-| Analytical storage | SQLite |
-| Backend | Node.js 22, Express, TypeScript, better-sqlite3, Zod |
-| Frontend | React 19, Vite, Recharts, CSS |
-| Deployment | Render, GitHub Actions, GitHub Pages |
+The local server reads `interface/backend/.env`. Set `DATABASE_PATH` to `model/pipeline b/repair_outputs_2026-10-23/named_20261025_214151/csrs_pipeline_b_repaired.db` and `ARTIFACT_ROOT` to that run's `Research_Figures` directory, using absolute paths locally. Node.js 22 is used for the backend.
 
-## Repository Structure
-
-```text
-CSRS/
-├── interface/
-│   ├── backend/                 # Express API and analytical services
-│   └── frontend/                # React research interface
-├── model/
-│   └── pipeline b/
-│       ├── csrs_B.ipynb         # Main research and modelling notebook
-│       ├── csrs_pipeline_b.db   # SQLite analytical database
-│       ├── Online UK_Retail.xlsx
-│       └── Research_Figures/    # Baseline, dynamic, geographic, and BI outputs
-├── .github/workflows/deploy.yml # GitHub Pages frontend workflow
-└── render.yaml                  # Full-stack Render deployment
-```
-
-## Running the Project Locally
-
-### Prerequisites
-
-- Node.js `22.x` (the deployed project uses `22.22.0`)
-- npm
-- Python and Jupyter only if you want to rerun the modelling notebook
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/SIYABULELA11/CSRS-Project.git
-cd CSRS-Project
-```
-
-### 2. Start the backend
-
-```bash
-cd interface/backend
-npm ci
-npm run dev
-```
-
-The API starts on `http://localhost:4000` and reads the included SQLite database and research artifacts.
-
-### 3. Start the frontend
-
-Open a second terminal:
-
-```bash
+```powershell
 cd interface/frontend
 npm ci
-npm run dev
+npm run build
+cd ../backend
+npm ci
+npm run build
+npm start
 ```
 
-Open `http://localhost:5173/CSRS/`.
+Source: `model/pipeline b/csrs_model.py`. Reporting labels: `cluster_labels.py`; authoritative centre/metric registry: `cluster_reporting.py`. Full processing and audit instructions: [MODEL_REBUILD.md](model/pipeline%20b/MODEL_REBUILD.md).
 
-### Optional environment configuration
+The dashboard includes customer explorer with All cycles, behavioural analytics, cycle comparison, actual-centre PCA paths, geographic/customer-market/product analytics, quality and K-selection plots, Model methodology/audit evidence, research figures and database tables. Numerical audits, service checks and production builds are recorded in the current run. Live browser visual review was deferred separately.
 
-Backend defaults are documented in `interface/backend/.env.example`. The main variables are:
+The **Evaluation** navigation tab separates Cycle 0 K-means (including inertia and K-selection), Cycles 1–9 MDFCM, and geographic market validation. Green line-and-marker panels use the saved results. Matching PNG/SVG figures and source CSVs are in the active run's `Research_Figures/Validation/`; `evaluation_report.json` supplies the page. This presentation update does not refit the models or change the database.
 
-```env
-PORT=4000
-CORS_ORIGIN=http://localhost:5173
-CACHE_TTL_SECONDS=120
-DATABASE_PATH=model/pipeline b/csrs_pipeline_b.db
-ARTIFACT_ROOT=model
-```
+## Dataset and reuse
 
-The frontend automatically uses `http://localhost:4000` during local development. Set `VITE_API_URL` only when using a different API host.
+[UCI Online Retail](https://archive.ics.uci.edu/dataset/352/online+retail): Chen, D. (2015), DOI [10.24432/C5BW33](https://doi.org/10.24432/C5BW33). This study ends before December 2011. [MDFCM source paper](https://doi.org/10.1007/s10489-019-01626-x). Project source: [MIT License](LICENSE); dataset: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Visual credits: `interface/frontend/src/assets/IMAGE_CREDITS.md`.
 
-## API Overview
+## Approved naming revision
 
-| Endpoint | Purpose |
-| --- | --- |
-| `GET /health` | Service health check |
-| `GET /api/dashboard/overview` | Headline metrics and dashboard bundle |
-| `GET /api/customers` | Filtered and paginated customer records |
-| `GET /api/customers/:id` | Detailed customer profile and cycle history |
-| `GET /api/segments` | Segment summaries and metrics |
-| `GET /api/cycles` | Dynamic cycle analytics |
-| `GET /api/migration` | Segment transition and migration analysis |
-| `GET /api/analytics/products` | Product and portfolio analytics |
-| `GET /api/analytics/geography` | Geographic market analytics |
-| `GET /api/model/evaluation` | Model validation metrics |
-| `GET /api/artifacts` | Available research figures and reports |
-| `GET /api/schema` | Database schema metadata |
-
-## Deployment
-
-The primary live application is deployed as a Render web service:
-
-- Render builds both the backend and frontend from `render.yaml`.
-- Express serves the production API and the compiled React application.
-- The `/health` endpoint is used for deployment health checks.
-- Pushes to the connected `main` branch trigger automatic Render redeployment.
-
-The repository also contains a GitHub Actions workflow that builds the frontend for GitHub Pages. The frontend uses the Render service as its production API.
-
-## Dataset
-
-This project uses the [UCI Online Retail dataset](https://archive.ics.uci.edu/dataset/352/online+retail), which contains 541,909 transactions recorded between 1 December 2010 and 9 December 2011 for a UK-based non-store retailer.
-
-Suggested dataset citation:
-
-> Chen, D. (2015). *Online Retail* [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5BW33
-
-The dataset is distributed under the [Creative Commons Attribution 4.0 International licence](https://creativecommons.org/licenses/by/4.0/).
-
-## Research Outputs
-
-The repository includes:
-
-- The complete modelling notebook.
-- A relational SQLite database containing customer, preprocessing, baseline, dynamic, centroid, segment, product, and cycle results.
-- Baseline cluster profiles and PCA visualisations.
-- Dynamic migration, transition, population, revenue, confidence, and stability figures.
-- Product and business-intelligence figures.
-- Geographic segmentation plots.
-- Model performance comparisons.
-
-## Limitations
-
-- This is an academic research and decision-support prototype, not a production marketing decision engine.
-- Segment names are analytical interpretations of model outputs and should be validated against business context.
-- Results depend on the selected cleaning rules, RFM construction, time-cycle design, and model parameters.
-- Geographic context is based on transaction country and should not be interpreted as personal demographic profiling.
-- A public deployment should avoid adding confidential or personally identifiable customer information.
-
-## Licence and Reuse
-
-The original source code in this repository is available under the [MIT License](LICENSE).
-
-The UCI Online Retail dataset remains governed by its [CC BY 4.0 licence](https://creativecommons.org/licenses/by/4.0/) and attribution requirements. Third-party visual assets remain subject to their respective licences and credits, as documented in `interface/frontend/src/assets/IMAGE_CREDITS.md`.
-
-## Author
-
-Developed by [Siyabulela Malinga](https://github.com/SIYABULELA11) as a customer segmentation research project.
+Current reporting output: `model/pipeline b/repair_outputs_2026-10-23/named_20261025_214151`. Numerical fitting source: `run_20261025_195725`. The approved nine names are Champions; High-Value Regulars; Loyalists; Valuable Customers at Risk; Mid-Tier Occasionals; Occasional Buyers at Risk; Light Buyers; Light Buyers at Risk; Hibernating / Lost. The naming-only revision preserves K, all memberships/assignments/RFM/PCA values, fitted centres, outliers, model files and cycle metrics. Per-cluster silhouette, negative-silhouette share, membership strength, hard SSE, fuzzy-objective contribution and centre-distance summaries are exported in `per_cluster_quality.csv`; coordinates are in `per_cluster_centroids.csv`. Global DB/CH/XB remain cycle-level measures. The primary nine-profile movement plot uses actual centres, with dashed links for a changed tracking ID; the separate ID plot preserves the ten historical paths.

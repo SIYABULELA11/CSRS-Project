@@ -1,0 +1,101 @@
+{
+  "passed": true,
+  "scope": "Direct application services and read-only SQLite; no HTTP/browser access",
+  "customerCycleRows": 30280,
+  "paginatedUniqueRows": 30280,
+  "currentFittedPositions": 61,
+  "latestFittedK": 9,
+  "positivePeriodRevenue": 8370018.454,
+  "periodOrders": 17754,
+  "semanticAuditAvailable": true,
+  "populationQualityAvailable": true,
+  "cycle0Inertia": 56.57129846352494,
+  "geographicK": 3,
+  "firmographicCustomers": 4297,
+  "approvedNamesVerified": true,
+  "perClusterQualityVerified": true,
+  "loadedAdditionalServices": {
+    "segments": [
+      "latestCycle",
+      "segments",
+      "trends",
+      "profiles",
+      "clusterRegistry",
+      "clusterCounts",
+      "fittedClusterCount",
+      "businessGroupCount"
+    ],
+    "migration": [
+      "transitionMatrix",
+      "topFlows",
+      "migrationStatistics",
+      "transitionStateTotals",
+      "transitionStateEvolution",
+      "positiveMigrationCount",
+      "negativeMigrationCount",
+      "cycleMigration"
+    ]
+  },
+  "cycles": [
+    {
+      "cycle": "Cycle_0",
+      "customers": 1682,
+      "fittedK": 5,
+      "warningCustomers": 875
+    },
+    {
+      "cycle": "Cycle_1",
+      "customers": 2134,
+      "fittedK": 5,
+      "warningCustomers": 850
+    },
+    {
+      "cycle": "Cycle_2",
+      "customers": 2434,
+      "fittedK": 5,
+      "warningCustomers": 1042
+    },
+    {
+      "cycle": "Cycle_3",
+      "customers": 2718,
+      "fittedK": 5,
+      "warningCustomers": 931
+    },
+    {
+      "cycle": "Cycle_4",
+      "customers": 2960,
+      "fittedK": 5,
+      "warningCustomers": 990
+    },
+    {
+      "cycle": "Cycle_5",
+      "customers": 3148,
+      "fittedK": 6,
+      "warningCustomers": 1110
+    },
+    {
+      "cycle": "Cycle_6",
+      "customers": 3317,
+      "fittedK": 6,
+      "warningCustomers": 1028
+    },
+    {
+      "cycle": "Cycle_7",
+      "customers": 3616,
+      "fittedK": 7,
+      "warningCustomers": 903
+    },
+    {
+      "cycle": "Cycle_8",
+      "customers": 3974,
+      "fittedK": 8,
+      "warningCustomers": 1104
+    },
+    {
+      "cycle": "Cycle_9",
+      "customers": 4297,
+      "fittedK": 9,
+      "warningCustomers": 1188
+    }
+  ]
+}

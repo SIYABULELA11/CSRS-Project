@@ -15,7 +15,7 @@ const getCached = (key, fetcher) => {
 };
 
 export const fetchDashboardBundle = () =>
-  getCached('dashboard:bundle:v4', async () => {
+  getCached('dashboard:bundle:v5', async () => {
     const [
       overview,
       segments,
@@ -28,7 +28,6 @@ export const fetchDashboardBundle = () =>
       cycleComparisonAnalytics,
       pcaAnalytics,
       modelEvaluation,
-      cycle10Simulation,
       artifacts,
       schema,
       filters,
@@ -44,7 +43,6 @@ export const fetchDashboardBundle = () =>
       apiGet('/api/analytics/cycle-comparison'),
       apiGet('/api/analytics/pca'),
       apiGet('/api/model/evaluation/detailed'),
-      apiGet('/api/simulation/cycle-10'),
       apiGet('/api/artifacts'),
       apiGet('/api/schema'),
       apiGet('/api/filters'),
@@ -62,7 +60,6 @@ export const fetchDashboardBundle = () =>
       cycleComparisonAnalytics,
       pcaAnalytics,
       modelEvaluation,
-      cycle10Simulation,
       artifacts,
       schema,
       filters,
@@ -74,6 +71,7 @@ export const fetchCustomers = ({
   pageSize = 20,
   query = '',
   segment = '',
+  cluster = '',
   country = '',
   cycle = '',
 } = {}) => {
@@ -85,6 +83,7 @@ export const fetchCustomers = ({
   });
   if (query) params.set('q', query);
   if (segment) params.set('segment', segment);
+  if (cluster) params.set('cluster', cluster);
   if (country) params.set('country', country);
   if (cycle) params.set('cycle', cycle);
   return apiGet(`/api/customers?${params.toString()}`);

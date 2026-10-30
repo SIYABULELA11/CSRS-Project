@@ -1,0 +1,107 @@
+{
+  "scope": "Customer warning policy; not a churn-prediction accuracy claim",
+  "checked_customer_cycle_rows": 30280,
+  "incorrect_status_or_change_values": 0,
+  "maximum_change_value_error": 0.0,
+  "distributions": [
+    {
+      "cycle": "Cycle_0",
+      "statuses": {
+        "No prior comparison": 807,
+        "Slipping": 445,
+        "At risk": 430
+      }
+    },
+    {
+      "cycle": "Cycle_1",
+      "statuses": {
+        "At risk": 537,
+        "No risk flag": 493,
+        "No prior comparison": 433,
+        "Lost": 358,
+        "Slipping": 313
+      }
+    },
+    {
+      "cycle": "Cycle_2",
+      "statuses": {
+        "At risk": 652,
+        "No risk flag": 549,
+        "Lost": 543,
+        "Slipping": 390,
+        "No prior comparison": 300
+      }
+    },
+    {
+      "cycle": "Cycle_3",
+      "statuses": {
+        "Lost": 759,
+        "No risk flag": 747,
+        "At risk": 491,
+        "Slipping": 440,
+        "No prior comparison": 281
+      }
+    },
+    {
+      "cycle": "Cycle_4",
+      "statuses": {
+        "Lost": 991,
+        "No risk flag": 737,
+        "At risk": 651,
+        "Slipping": 339,
+        "No prior comparison": 242
+      }
+    },
+    {
+      "cycle": "Cycle_5",
+      "statuses": {
+        "Lost": 1123,
+        "No risk flag": 730,
+        "At risk": 642,
+        "Slipping": 468,
+        "No prior comparison": 185
+      }
+    },
+    {
+      "cycle": "Cycle_6",
+      "statuses": {
+        "Lost": 1394,
+        "No risk flag": 734,
+        "At risk": 588,
+        "Slipping": 440,
+        "No prior comparison": 161
+      }
+    },
+    {
+      "cycle": "Cycle_7",
+      "statuses": {
+        "Lost": 1465,
+        "No risk flag": 949,
+        "At risk": 514,
+        "Slipping": 389,
+        "No prior comparison": 299
+      }
+    },
+    {
+      "cycle": "Cycle_8",
+      "statuses": {
+        "Lost": 1513,
+        "No risk flag": 999,
+        "At risk": 765,
+        "No prior comparison": 358,
+        "Slipping": 339
+      }
+    },
+    {
+      "cycle": "Cycle_9",
+      "statuses": {
+        "Lost": 1457,
+        "No risk flag": 1329,
+        "At risk": 754,
+        "Slipping": 434,
+        "No prior comparison": 323
+      }
+    }
+  ],
+  "passed": true
+}

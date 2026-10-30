@@ -1,0 +1,62 @@
+{
+  "passed": true,
+  "source_run": "C:\\Users\\siyam\\OneDrive - University of the Western Cape\\Desktop\\Desktop stuff\\Hon project\\CSRS\\model\\pipeline b\\repair_outputs_2026-10-23\\run_20261025_195725",
+  "renamed_run": "C:\\Users\\siyam\\OneDrive - University of the Western Cape\\Desktop\\Desktop stuff\\Hon project\\CSRS\\model\\pipeline b\\repair_outputs_2026-10-23\\named_20261025_214151",
+  "numerical_model_signature_before": "8c94bf9d95c8c29ac9e9dc510c1fe61a3616011b777fe7fd795ddf903a685e0f",
+  "numerical_model_signature_after": "8c94bf9d95c8c29ac9e9dc510c1fe61a3616011b777fe7fd795ddf903a685e0f",
+  "assignments_memberships_centres_RFM_and_model_parameters_unchanged": true,
+  "cycle_quality_metrics_unchanged": true,
+  "new_per_cluster_diagnostics": true,
+  "model_file_sha256": {
+    "cycle0_feature_scaler.pkl": "4ac28e7af285fc0c0ec502a7797f0a3eab2e0c1af2d3a9ca9766e9546969a96c",
+    "cycle0_geographic_kmeans.pkl": "58dafce36687d0d6969ae439155ba31474e7c337925c6db314f15020286c22a6",
+    "cycle0_geographic_scaler.pkl": "533dfb76c3f37d53ca4eb34285b81e1cb04ad0beb0c834a5e81fd66b75f5888d",
+    "cycle0_kmeans_model.pkl": "6d4ea319bdc1483c63469c4a132c58aa2e3952b9040e17d2e938d1149e0ba826",
+    "cycle0_pca_model.pkl": "338a2c5a7dac15bd39a37740886402b33198f3be1530eae36af7e26fa95b7255"
+  },
+  "changed_reporting_columns": {
+    "Data_Preprocessing_Results.Model_Profile_Name": 15423,
+    "Time_Cycle_0_Segmentation.Fuzzy_Membership_Details": 1682,
+    "Time_Cycle_0_Segmentation.Model_Profile_Name": 1319,
+    "Time_Cycle_0_Segmentation.Segment_Name": 1319,
+    "Dynamic_Loop_Results.Fuzzy_Membership_Details": 28598,
+    "Dynamic_Loop_Results.Model_Profile_Name": 14104,
+    "Dynamic_Loop_Results.Previous_Segment_Name": 13148,
+    "Dynamic_Loop_Results.Segment_Name": 14104,
+    "Customer_Transitions.Fuzzy_Membership_Details": 28598,
+    "Customer_Transitions.Model_Profile_Name": 14104,
+    "Customer_Transitions.Previous_Segment_Name": 13148,
+    "Customer_Transitions.Segment_Name": 14104,
+    "Dynamic_Customer_Summary.Segment_Name": 14104,
+    "Dynamic_Segment_Summary.Segment_Name": 29,
+    "Dynamic_Product_Summary.Segment_Name": 32798,
+    "Dynamic_Business_Analytics.Segment_Name": 135721,
+    "Firmographic_Customer_Segmentation.Firmographic_Segment_Name": 15423,
+    "Firmographic_Customer_Segmentation.Segment_Name": 15423,
+    "Current_Cluster_Profiles.businessProfile": 32,
+    "Current_Cluster_Profiles.displayLabel": 32,
+    "Current_Cluster_Profiles.storedBusinessProfile": 32
+  },
+  "approved_names": [
+    "Champions",
+    "High-Value Regulars",
+    "Loyalists",
+    "Valuable Customers at Risk",
+    "Mid-Tier Occasionals",
+    "Occasional Buyers at Risk",
+    "Light Buyers",
+    "Light Buyers at Risk",
+    "Hibernating / Lost"
+  ],
+  "descriptions": {
+    "Champions": "The freshest high-value repeat-purchase profile.",
+    "High-Value Regulars": "Strong repeat purchasing and spending with a slightly longer purchase gap than the freshest Champions profile.",
+    "Loyalists": "A recent, moderate-value repeat-purchase profile.",
+    "Valuable Customers at Risk": "Meaningful rolling-window purchasing value with a longer purchase gap; this does not establish a previous Loyalists assignment.",
+    "Mid-Tier Occasionals": "Recent purchasing with moderate value and less frequent ordering than the strongest repeat-purchase profiles.",
+    "Occasional Buyers at Risk": "Infrequent purchasing with a substantial purchase gap.",
+    "Light Buyers": "Relatively low-frequency, lower-spending customers who purchased recently; growth is not assumed.",
+    "Light Buyers at Risk": "A light purchasing profile with a longer purchase gap.",
+    "Hibernating / Lost": "Predominantly customers without purchases for more than 90 days; individuals can differ from the weighted profile."
+  }
+}

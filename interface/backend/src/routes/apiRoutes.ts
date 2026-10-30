@@ -24,6 +24,7 @@ apiRouter.get("/dashboard/overview", controller.dashboardOverview.bind(controlle
  */
 apiRouter.get("/model/evaluation", controller.modelEvaluation.bind(controller));
 apiRouter.get("/model/evaluation/detailed", controller.modelEvaluationDetailed.bind(controller));
+apiRouter.get("/model/clusters", controller.fittedClusters.bind(controller));
 
 apiRouter.get("/segments", controller.segments.bind(controller));
 apiRouter.get("/segments/:segment", controller.segmentByName.bind(controller));
@@ -43,7 +44,6 @@ apiRouter.get("/analytics/geography", controller.geographicAnalytics.bind(contro
 apiRouter.get("/analytics/firmographic", controller.firmographicAnalytics.bind(controller));
 apiRouter.get("/analytics/cycle-comparison", controller.cycleComparisonAnalytics.bind(controller));
 apiRouter.get("/analytics/pca", controller.pcaAnalytics.bind(controller));
-apiRouter.get("/simulation/cycle-10", controller.cycle10Simulation.bind(controller));
 apiRouter.get("/artifacts", controller.artifacts.bind(controller));
 apiRouter.get("/charts", controller.charts.bind(controller));
 apiRouter.get("/images", controller.images.bind(controller));

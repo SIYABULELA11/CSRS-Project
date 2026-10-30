@@ -11,6 +11,7 @@ const getCategory = (fullPath: string, ext: string): string => {
   if (normalized.includes("research_figures/business_intelligence")) return "business intelligence";
   if (normalized.includes("research_figures/dynamic_analytics")) return "dynamic analytics";
   if (normalized.includes("research_figures/geographic segmentation")) return "geography";
+  if (normalized.includes("research_figures/methodology")) return "methodology";
   if (normalized.includes("research_figures/performance")) return "performance";
   if (normalized.includes("research_figures/baseline")) return "baseline";
   if (normalized.includes("research_figures/dynamic")) return "dynamic segmentation";

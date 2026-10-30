@@ -6,6 +6,7 @@ import { MigrationService } from "../services/migrationService";
 import { ArtifactService } from "../services/artifactService";
 import { SearchService } from "../services/searchService";
 import { AnalyticsService } from "../services/analyticsService";
+import { ClusterRegistryService } from "../services/clusterRegistryService";
 
 const dashboardService = new DashboardService();
 const segmentService = new SegmentService();
@@ -14,6 +15,7 @@ const migrationService = new MigrationService();
 const artifactService = new ArtifactService();
 const searchService = new SearchService();
 const analyticsService = new AnalyticsService();
+const clusterRegistryService = new ClusterRegistryService();
 
 export class ApiController {
   async dashboardOverview(_req: Request, res: Response): Promise<void> {
@@ -28,6 +30,15 @@ export class ApiController {
 
   modelEvaluationDetailed(_req: Request, res: Response): void {
     res.json(analyticsService.getModelEvaluationDetailed());
+  }
+
+  fittedClusters(req: Request, res: Response): void {
+    const cycle = typeof req.query.cycle === "string" ? req.query.cycle : undefined;
+    res.json({
+      clusterRegistry: clusterRegistryService.getRegistry(cycle),
+      clusterCounts: clusterRegistryService.getCounts(cycle),
+      method: "Saved fitted centres and their lineage identities define the registry. Historical inactive assignments and business-group summaries do not create additional fitted clusters.",
+    });
   }
 
   async segments(_req: Request, res: Response): Promise<void> {
@@ -99,8 +110,9 @@ export class ApiController {
     res.json(analyticsService.getFeatureCorrelation(cycleId));
   }
 
-  customerAnalytics(_req: Request, res: Response): void {
-    res.json(analyticsService.getCustomerAnalytics());
+  customerAnalytics(req: Request, res: Response): void {
+    const cycle = typeof req.query.cycle === "string" ? req.query.cycle : undefined;
+    res.json(analyticsService.getCustomerAnalytics(cycle));
   }
 
   productAnalytics(_req: Request, res: Response): void {
@@ -121,10 +133,6 @@ export class ApiController {
 
   pcaAnalytics(_req: Request, res: Response): void {
     res.json(analyticsService.getPcaAnalytics());
-  }
-
-  cycle10Simulation(_req: Request, res: Response): void {
-    res.json(analyticsService.getCycle10Simulation());
   }
 
   artifacts(req: Request, res: Response): void {

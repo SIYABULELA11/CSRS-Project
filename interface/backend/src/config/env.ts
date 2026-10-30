@@ -56,8 +56,21 @@ const validatePath = (filePath: string, description: string, expectedType: "file
 // Log the project root for debugging
 console.log(`📁 Project root: ${projectRoot}`);
 
-const resolvedDatabasePath = toAbsolute(process.env.DATABASE_PATH ?? "model/pipeline b/csrs_pipeline_b.db");
-const resolvedArtifactRoot = toAbsolute(process.env.ARTIFACT_ROOT ?? "model");
+// A deployed release must use its bundled results even when an existing Render
+// service still has environment paths left over from the older implementation.
+const bundledManifest = process.env.RENDER === "true"
+  ? JSON.parse(fs.readFileSync(path.join(projectRoot, "deployment/current/manifest.json"), "utf8"))
+  : null;
+const resolvedDatabasePath = bundledManifest
+  ? path.join(projectRoot, "deployment/current", bundledManifest.database.file)
+  : toAbsolute(process.env.DATABASE_PATH ?? "model/pipeline b/csrs_pipeline_b.db");
+const resolvedArtifactRoot = bundledManifest
+  ? path.join(projectRoot, "deployment/current", bundledManifest.artifactRoot)
+  : toAbsolute(process.env.ARTIFACT_ROOT ?? "model");
+if (bundledManifest) {
+  process.env.CSRS_MODEL_RUN = bundledManifest.sourceRun;
+  process.env.CSRS_DATABASE_SHA256 = bundledManifest.database.sha256;
+}
 
 // Validate paths on startup
 validatePath(resolvedDatabasePath, "Database", "file");
