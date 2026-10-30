@@ -21,3 +21,9 @@ node interface/backend/scripts/prepare-deployment.cjs
 ```
 
 The extracted `.db`, local secrets, logs, temporary reviews and older run directories remain untracked. Older results are retained locally; the pre-update GitHub main is preserved on the `older-version` branch. The `updated` branch records the version promoted to main.
+
+## Dashboard loading repair
+
+The browser previously fetched a 20,042,406-byte all-cycle PCA response during startup, alongside 13 other requests. Startup now requests PCA metadata only, limits traffic to two concurrent requests and shares duplicate in-flight loads. Opening PCA fetches only the selected cycle; all original points and coordinates remain available. Read-only backend summaries avoid cache clones and share concurrent fills. GET requests retry bounded transient 503/network/truncated-JSON failures.
+
+From `interface/frontend`, run `node audit_dashboard_loading.mjs http://localhost:4000` to exercise the real client loader against the server. The audit checks bounded startup, all 30,280 PCA coordinates against the saved database, duplicate loading and explicitly simulated transient failures. A constrained local run with a 192 MB V8 heap passed; its initial payload was 854,845 bytes. This is HTTP/client-flow verification, separate from browser pixel review.

@@ -35,6 +35,7 @@ import {
   fetchCustomerProfile,
   fetchCustomers,
   fetchDashboardBundle,
+  fetchPcaCycle,
   fetchTableRows,
 } from './services/dashboardService';
 
@@ -1801,14 +1802,29 @@ function PcaSegmentAnalysisPage({ data }) {
   const analytics = data.pcaAnalytics;
   const cycleOptions = data.filters.cycles || [];
   const [selectedCycle, setSelectedCycle] = useState(cycleOptions.at(-1)?.value || 'Cycle_9');
+  const [pointState, setPointState] = useState({ cycle: null, points: [], loading: false, error: '' });
+  const [pointRetry, setPointRetry] = useState(0);
+  useEffect(() => {
+    let cancelled = false;
+    setPointState({ cycle: selectedCycle, points: [], loading: true, error: '' });
+    fetchPcaCycle(selectedCycle).then((result) => {
+      if (!cancelled) setPointState({ cycle: selectedCycle, points: result.points || [], loading: false, error: '' });
+    }).catch((requestError) => {
+      if (!cancelled) setPointState({ cycle: selectedCycle, points: [], loading: false, error: requestError.message || 'Unable to load PCA customers.' });
+    });
+    return () => { cancelled = true; };
+  }, [selectedCycle, pointRetry]);
   const registry = fittedRegistry(data);
   const selectedRegistry = orderClusters(registry.filter((cluster) => cluster.CycleID === selectedCycle));
-  const cyclePoints = (analytics.points || []).filter((point) => point.CycleID === selectedCycle);
+  const cyclePoints = pointState.cycle === selectedCycle
+    ? pointState.points
+    : (analytics.points || []).filter((point) => point.CycleID === selectedCycle);
   const selectedPoints = cyclePoints.filter((point) => point.assignmentType !== 'retained historical' && !String(point.assignmentMode || '').startsWith('Retained')).map((point) => {
     const cluster = selectedRegistry.find((row) => row.stableClusterId === point.stableClusterId);
     return { ...point, segment: cluster?.displayLabel || point.currentFittedClusterLabel || point.stableClusterId, businessProfile: cluster?.businessProfile || point.segment, color: cluster ? clusterColor(cluster) : segmentColor(point.segment) };
   });
-  const purchaseInactiveCount = selectedPoints.filter((point) => point.activityStatus === 'Inactive').length;
+  const selectedCounts = (analytics.clusterCounts || []).find((row) => row.CycleID === selectedCycle);
+  const purchaseInactiveCount = selectedCounts?.purchaseInactiveCustomers ?? selectedPoints.filter((point) => point.activityStatus === 'Inactive').length;
   const selectedQuality = (data.modelEvaluation?.cycles || []).find((row) => row.CycleID === selectedCycle);
   const explainedVariance = analytics.explainedVariance || [];
   const twoComponentVariance = explainedVariance.slice(0, 2).reduce((total, item) => total + Number(item.percentage || 0), 0);
@@ -1823,10 +1839,12 @@ function PcaSegmentAnalysisPage({ data }) {
         action={<select className="page-select" value={selectedCycle} onChange={(event) => setSelectedCycle(event.target.value)}>{cycleOptions.map((cycle) => <option key={cycle.value} value={cycle.value}>{cycleLabel(cycle.value)}</option>)}</select>} />
       <div className="metric-grid metric-grid-four">
         <MetricCard label="Fitted clusters (K)" value={formatNumber(selectedRegistry.length)} detail={`${cycleLabel(selectedCycle)} · actual model centres`} />
-        <MetricCard label="Current fitted customers" value={formatNumber(selectedPoints.length)} detail={selectedCycle === 'Cycle_0' ? 'Static K-means assignments' : 'Scope of current MDFCM validation'} />
+        <MetricCard label="Current fitted customers" value={formatNumber(selectedRegistry.reduce((sum, row) => sum + Number(row.hardWinnerCustomers || 0), 0))} detail={selectedCycle === 'Cycle_0' ? 'Static K-means assignments' : 'Scope of current MDFCM validation'} />
         <MetricCard label="Cluster separation" value={selectedQuality?.SilhouetteScore == null ? 'Unavailable' : formatDecimal(selectedQuality.SilhouetteScore, 3)} detail="Silhouette · higher is better (−1 to 1)" />
         <MetricCard label="No purchases this cycle" value={formatNumber(purchaseInactiveCount)} detail="Included in the current model fit" />
       </div>
+      {pointState.loading && <p className="panel-note" role="status">Loading customer points for {cycleLabel(selectedCycle)}…</p>}
+      {pointState.error && <p className="panel-note" role="alert">{pointState.error} <button className="button button-secondary" onClick={() => setPointRetry((value) => value + 1)}>Retry PCA points</button></p>}
       <div className="content-grid equal">
         <Panel title="Current fitted customers: PC1 vs PC2" eyebrow={`${cycleLabel(selectedCycle)} · ${selectedRegistry.length} fitted centres`}>
           <p className="panel-note">Each dot is one currently fitted customer, whether or not they purchased in the commercial cycle. Diamonds mark fitted centres; the legend lists all {formatNumber(selectedRegistry.length)} registry entries, including a centre with no hard-label winner. Colours describe the fitted cluster's current label. PCA reuses the Cycle 0 reference.</p>

@@ -32,21 +32,28 @@ const getHeaders = () => ({
  */
 export const apiCall = async (endpoint, options = {}) => {
   const url = `${API_URL}${endpoint}`;
-  
-  try {
-    const response = await fetch(url, {
-      headers: getHeaders(),
-      ...options,
-    });
-
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+  const mayRetry = (options.method || 'GET').toUpperCase() === 'GET';
+  const attempts = mayRetry ? 4 : 1;
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    try {
+      const response = await fetch(url, {
+        headers: getHeaders(),
+        ...options,
+      });
+      if (!response.ok) {
+        const error = new Error(`API Error: ${response.status} ${response.statusText}`);
+        error.transient = [429, 502, 503, 504].includes(response.status);
+        throw error;
+      }
+      return await response.json();
+    } catch (error) {
+      const transient = error.transient || error instanceof TypeError || error instanceof SyntaxError;
+      if (!mayRetry || !transient || attempt === attempts - 1 || options.signal?.aborted) {
+        console.error(`API Call Failed: ${url}`, error);
+        throw error;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 1000 * (2 ** attempt)));
     }
-
-    return await response.json();
-  } catch (error) {
-    console.error(`API Call Failed: ${url}`, error);
-    throw error;
   }
 };
 

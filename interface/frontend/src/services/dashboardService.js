@@ -2,20 +2,39 @@ import { apiGet } from '../config/api';
 
 const CACHE_TTL = 120000;
 const cache = new Map();
+const inFlight = new Map();
 
 const getCached = (key, fetcher) => {
   const cached = cache.get(key);
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
     return Promise.resolve(cached.data);
   }
-  return fetcher().then((data) => {
+  if (inFlight.has(key)) return inFlight.get(key);
+  const pending = Promise.resolve().then(fetcher).then((data) => {
     cache.set(key, { data, timestamp: Date.now() });
     return data;
+  }).finally(() => {
+    if (inFlight.get(key) === pending) inFlight.delete(key);
   });
+  inFlight.set(key, pending);
+  return pending;
+};
+
+// Keep the small Render service responsive while the dashboard is opening.
+const fetchInBatches = async (endpoints, concurrency = 2) => {
+  const results = new Array(endpoints.length);
+  let next = 0;
+  await Promise.all(Array.from({ length: Math.min(concurrency, endpoints.length) }, async () => {
+    while (next < endpoints.length) {
+      const index = next++;
+      results[index] = await apiGet(endpoints[index]);
+    }
+  }));
+  return results;
 };
 
 export const fetchDashboardBundle = () =>
-  getCached('dashboard:bundle:v5', async () => {
+  getCached('dashboard:bundle:v6', async () => {
     const [
       overview,
       segments,
@@ -31,21 +50,21 @@ export const fetchDashboardBundle = () =>
       artifacts,
       schema,
       filters,
-    ] = await Promise.all([
-      apiGet('/api/overview'),
-      apiGet('/api/segments'),
-      apiGet('/api/cycles'),
-      apiGet('/api/migration'),
-      apiGet('/api/analytics/customers'),
-      apiGet('/api/analytics/products'),
-      apiGet('/api/analytics/geography'),
-      apiGet('/api/analytics/firmographic'),
-      apiGet('/api/analytics/cycle-comparison'),
-      apiGet('/api/analytics/pca'),
-      apiGet('/api/model/evaluation/detailed'),
-      apiGet('/api/artifacts'),
-      apiGet('/api/schema'),
-      apiGet('/api/filters'),
+    ] = await fetchInBatches([
+      '/api/overview',
+      '/api/segments',
+      '/api/cycles',
+      '/api/migration',
+      '/api/analytics/customers',
+      '/api/analytics/products',
+      '/api/analytics/geography',
+      '/api/analytics/firmographic',
+      '/api/analytics/cycle-comparison',
+      '/api/analytics/pca?points=none',
+      '/api/model/evaluation/detailed',
+      '/api/artifacts',
+      '/api/schema',
+      '/api/filters',
     ]);
 
     return {
@@ -65,6 +84,9 @@ export const fetchDashboardBundle = () =>
       filters,
     };
   });
+
+export const fetchPcaCycle = (cycle) =>
+  getCached(`pca:${cycle}`, () => apiGet(`/api/analytics/pca?cycle=${encodeURIComponent(cycle)}`));
 
 export const fetchCustomers = ({
   page = 1,

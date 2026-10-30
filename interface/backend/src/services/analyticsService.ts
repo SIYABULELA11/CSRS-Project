@@ -606,8 +606,8 @@ export class AnalyticsService {
     };
   }
 
-  getPcaAnalytics(): Record<string, unknown> {
-    const points = repository.runMany(`
+  getPcaAnalytics(cycleId?: string, includePoints = true): Record<string, unknown> {
+    const points = includePoints ? repository.runMany(`
       SELECT *
       FROM (
         SELECT
@@ -642,8 +642,9 @@ export class AnalyticsService {
           ON dynamic.CustomerID = features.CustomerID
           AND dynamic.CycleID = features.CycleID
       ) all_points
+      ${cycleId ? 'WHERE CycleID = @cycleId' : ''}
       ORDER BY CAST(REPLACE(CycleID, 'Cycle_', '') AS INTEGER), segment, CustomerID
-    `);
+    `, cycleId ? { cycleId } : {}) : [];
 
     const clusterRegistry = clusterRegistryService.getRegistry();
     const clusterCounts = clusterRegistryService.getCounts();

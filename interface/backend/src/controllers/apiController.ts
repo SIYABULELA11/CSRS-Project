@@ -131,8 +131,10 @@ export class ApiController {
     res.json(analyticsService.getCycleComparisonAnalytics());
   }
 
-  pcaAnalytics(_req: Request, res: Response): void {
-    res.json(analyticsService.getPcaAnalytics());
+  pcaAnalytics(req: Request, res: Response): void {
+    const cycle = typeof req.query.cycle === 'string' ? req.query.cycle : undefined;
+    const includePoints = req.query.points !== 'none';
+    res.json(analyticsService.getPcaAnalytics(cycle, includePoints));
   }
 
   artifacts(req: Request, res: Response): void {
