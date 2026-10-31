@@ -34,7 +34,7 @@ const fetchInBatches = async (endpoints, concurrency = 2) => {
 };
 
 export const fetchDashboardBundle = () =>
-  getCached('dashboard:bundle:v6', async () => {
+  getCached('dashboard:bundle:v7', async () => {
     const [
       overview,
       segments,
@@ -58,7 +58,7 @@ export const fetchDashboardBundle = () =>
       '/api/analytics/customers',
       '/api/analytics/products',
       '/api/analytics/geography',
-      '/api/analytics/firmographic',
+      '/api/analytics/market-behaviour',
       '/api/analytics/cycle-comparison',
       '/api/analytics/pca?points=none',
       '/api/model/evaluation/detailed',

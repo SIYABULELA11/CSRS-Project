@@ -1,11 +1,11 @@
 {
-  "sourceRun": "named_20261025_214151",
+  "sourceRun": "geo_20261031",
   "database": {
     "file": "csrs_pipeline_b_repaired.db",
     "archive": "csrs_pipeline_b_repaired.db.gz",
-    "sha256": "d35c49ea2e8038b4fbb9fbc44cdea14d77c9998666195565cef908c5f09bd45f",
+    "sha256": "730931d0430140041cf1e12593aec9b5a74afe642704d39ff8b42fb1e3802812",
     "uncompressedBytes": 194596864,
-    "archiveBytes": 26050034
+    "archiveBytes": 26132309
   },
   "artifactRoot": "Research_Figures",
   "customers": 4297,
@@ -99,9 +99,44 @@
       "bytes": 6027
     },
     {
+      "path": "country_market_baseline_profiles.csv",
+      "sha256": "85005680740ab12c141c4555b24b68a9cc50c987b1d61d73f6b98a2b7dbeb536",
+      "bytes": 548
+    },
+    {
+      "path": "country_market_k_selection.csv",
+      "sha256": "4796d3d32e16b6f99074c42a7ee61964454e0a50cbd2afcd734b942e8be8152b",
+      "bytes": 975
+    },
+    {
+      "path": "country_market_k_selection.json",
+      "sha256": "8114ded80578d277ead54c510219568264845fc48b6b649a55818049dc4c6062",
+      "bytes": 8403
+    },
+    {
+      "path": "country_market_metrics_all_cycles.csv",
+      "sha256": "09f3a30f520f691533fa89e56a32962f1b281bb13249a382e237eb8e5d0c61ee",
+      "bytes": 1015
+    },
+    {
+      "path": "country_market_profiles_all_cycles.csv",
+      "sha256": "ee1566a505ab6f7ccaf4e4fc714204656b88bab5180657b6977b6a89e030e849",
+      "bytes": 134539
+    },
+    {
+      "path": "COUNTRY_MARKET_UPDATE.md",
+      "sha256": "1e590e0ad63c697687dcfabbf89123f8d66429d9ae3c9cd2299cfc30f043dbc6",
+      "bytes": 2488
+    },
+    {
+      "path": "country_market_update_audit.json",
+      "sha256": "b166ec980576cde477ce05044e8cad4de6a8b7ffadabbc44901508617ab2b248",
+      "bytes": 4927
+    },
+    {
       "path": "csrs_pipeline_b_repaired.db.gz",
-      "sha256": "85a18c73a400ff664a7715d7e90af9dae9d3f4c1007206d4fecdd94bff4c5d25",
-      "bytes": 26050034
+      "sha256": "eea02c7bf60d09c904d65fc73544da15133ab9ceb5b8d1c3b3b5aa03bc5e67ab",
+      "bytes": 26132309
     },
     {
       "path": "current_cluster_profiles.csv",
@@ -125,13 +160,13 @@
     },
     {
       "path": "cycle0_geographic_kmeans.pkl",
-      "sha256": "58dafce36687d0d6969ae439155ba31474e7c337925c6db314f15020286c22a6",
-      "bytes": 1131
+      "sha256": "bb767b0e2f76a73148008e002724d83d0fb1f5ec3a473f2ea6b9550242393914",
+      "bytes": 1035
     },
     {
       "path": "cycle0_geographic_scaler.pkl",
-      "sha256": "533dfb76c3f37d53ca4eb34285b81e1cb04ad0beb0c834a5e81fd66b75f5888d",
-      "bytes": 1223
+      "sha256": "f4fce231d21470eca0c0ce02488a3b91a6e343c95279f0297865ca9a080501b0",
+      "bytes": 983
     },
     {
       "path": "cycle0_kmeans_model.pkl",
@@ -150,13 +185,23 @@
     },
     {
       "path": "evaluation_report.json",
-      "sha256": "b4a2c3222ccad56b0545b495667dea56555836369982bd04ab54872e380ea4fd",
-      "bytes": 25627
+      "sha256": "01bddf795ad0bd4fc53288a559f9d845a06e9061fcecf6a3dbc79e1c980b37bd",
+      "bytes": 26515
     },
     {
       "path": "independent_mdfcm_audit.json",
       "sha256": "4586c4d87c8106e5c1a08aea54e9006120cee3ede638b91d0c80430e327f51b6",
       "bytes": 3665
+    },
+    {
+      "path": "model_metadata.json",
+      "sha256": "7409bc91e63f74c403ef56215c18c44d3aeee6783176e97a285a28086c2b042f",
+      "bytes": 22661
+    },
+    {
+      "path": "model_validation_summary.json",
+      "sha256": "279b106c0dcae45ac762bd73c5f39e4f087339638067956d2f7e8dde81a1d798",
+      "bytes": 3801
     },
     {
       "path": "naming_update_audit.json",
@@ -320,33 +365,98 @@
     },
     {
       "path": "Research_Figures/Firmographic/cycle9_firmographic_segments.png",
-      "sha256": "a0d6a842f405a58fd45674e337819df5bc135afbea3e27a5cd77e33ee6bd7baa",
-      "bytes": 183242
+      "sha256": "055d1fc81b4106891b514e841e12f5f41cc8206c82544368a0a8c2bfd4efa655",
+      "bytes": 182411
+    },
+    {
+      "path": "Research_Figures/Geographic/country_market_elbow_wcss.png",
+      "sha256": "b52656aab9ad025d3e061036bc09a59df6331d2fb4b4745f8337dbb3668a49e6",
+      "bytes": 93730
+    },
+    {
+      "path": "Research_Figures/Geographic/country_market_elbow_wcss.svg",
+      "sha256": "47245087d50a6ea605402312ac589603564ff6bb066b64670e86c5487d6bad07",
+      "bytes": 43389
+    },
+    {
+      "path": "Research_Figures/Geographic/country_market_k_selection.png",
+      "sha256": "5ecdeea6db4acfa0e0a7a5b07a3a9e56814521ad778560647be776c49b1bf606",
+      "bytes": 190380
+    },
+    {
+      "path": "Research_Figures/Geographic/country_market_k_selection.svg",
+      "sha256": "beda6245437125702c3f5bdb042caced5d8afa3fb0c06b4915df9561959316b5",
+      "bytes": 77154
+    },
+    {
+      "path": "Research_Figures/Geographic/country_market_silhouette_by_k.png",
+      "sha256": "e97fcc7b80057f505f704b49666f5319ec11ae6a80f2ef0ffdc441fbd9e210e5",
+      "bytes": 105347
+    },
+    {
+      "path": "Research_Figures/Geographic/country_market_silhouette_by_k.svg",
+      "sha256": "6c59459a7fecf69faa0a562bea3f6f288b2a3c56f6fffd075a5a8d30302f9e01",
+      "bytes": 45184
     },
     {
       "path": "Research_Figures/Geographic/cycle9_market_segments.png",
-      "sha256": "ece3a293a048ba94148e9854a193f8370e9b50ed16d9f1e8f75a10680dd50255",
-      "bytes": 164956
+      "sha256": "65c8faea2744c5956b74330dfd9b9fb8b457d021e4444abf5bc72c40a945911a",
+      "bytes": 62915
+    },
+    {
+      "path": "Research_Figures/Geographic/cycle9_market_segments.svg",
+      "sha256": "5516c37b723d2583acc36017ca3c5100d6e2df4593515c1a850e391d33e22230",
+      "bytes": 38433
     },
     {
       "path": "Research_Figures/Geographic/market_segment_evolution.png",
-      "sha256": "677f4da515a7f8ae123d084f77321f298e6111d6ecaa9eda27d86850a8dcf620",
-      "bytes": 125171
+      "sha256": "97f5c6a96ef7a2aed50d684a828fbfcc9d98b71d2f9a0a8deaac88c7c9f90d48",
+      "bytes": 155508
+    },
+    {
+      "path": "Research_Figures/Geographic/market_segment_evolution.svg",
+      "sha256": "cc4caf770a9f69e979fe699dfacbe565780f6cb09317aca37039480fd6fea612",
+      "bytes": 59274
+    },
+    {
+      "path": "Research_Figures/Market_Behavioural_Integration/cycle9_market_behaviour_matrix.csv",
+      "sha256": "311c32f0c46ed6ae21f925813f36971061c0521d004f2af2af4ff25fbecfe099",
+      "bytes": 422
+    },
+    {
+      "path": "Research_Figures/Market_Behavioural_Integration/cycle9_market_behaviour_matrix.png",
+      "sha256": "cd522bccbb2e96ae8f5b7b33254ba18d5073380f69875aa616a1c93721176b11",
+      "bytes": 188599
+    },
+    {
+      "path": "Research_Figures/Market_Behavioural_Integration/cycle9_market_behaviour_matrix.svg",
+      "sha256": "e5a72f2ed6c5b36df5d7f2835a9f342aa42c78544065e8bb4a1a36dcd17eda08",
+      "bytes": 81326
+    },
+    {
+      "path": "Research_Figures/Market_Behavioural_Integration/cycle9_market_behaviour_segments.png",
+      "sha256": "055d1fc81b4106891b514e841e12f5f41cc8206c82544368a0a8c2bfd4efa655",
+      "bytes": 182411
+    },
+    {
+      "path": "Research_Figures/Market_Behavioural_Integration/cycle9_market_behaviour_segments.svg",
+      "sha256": "6a1bca24276c05d3e3961221f08d9501f562c6c7e5801b1a6560ef461190496c",
+      "bytes": 88795
     },
     {
       "path": "Research_Figures/Methodology/current_methodology.pdf",
-      "sha256": "f344544013dbba6204a2be7b351618de8cd4988955ffca368f7de9fdd1119975",
-      "bytes": 39241
+      "sha256": "f8e838b9404e035676053350216167dfe5e51fd2c1479ac3fe75c74dd4c2fa41",
+      "bytes": 39370
     },
     {
       "path": "Research_Figures/Methodology/current_methodology.png",
-      "sha256": "28edb9feb10bcc2cb9d080d4a414b3996f58474a0292ad071125c95b2c90fdf0",
-      "bytes": 456406
+      "sha256": "84b7d8d81bf517e018edb11ca1a14a1473a6ae41626b2da2be1788eb342958ed",
+      "bytes": 462569
     },
     {
       "path": "Research_Figures/Methodology/current_methodology.svg",
-      "sha256": "e7770c369aa75bae87254719e4b03781c908efcc2298a62ef82850d9e1363144",
-      "bytes": 213854
+      "sha256": "f2ec55fcae423477147f32a9cacb239c799865a12e03a7a1c1f2453ac170faf8",
+      "bytes": 216261
     },
     {
       "path": "Research_Figures/Validation/dynamic_model_quality.png",
@@ -370,18 +480,18 @@
     },
     {
       "path": "Research_Figures/Validation/evaluation_geographic_market.png",
-      "sha256": "9ff2f9aab37283034969a1a16da69597943c203fed033a8bdaf71d50b09dd264",
-      "bytes": 304538
+      "sha256": "02d0886bc3a535fbd96cb5f16dd75fa547bbd391a6c9e890d5b2ee8d57dcee5f",
+      "bytes": 311752
     },
     {
       "path": "Research_Figures/Validation/evaluation_geographic_market.svg",
-      "sha256": "d23d3edceaa569162d138fea3d65ff691f01e22cdc7fea2ec2f5a1318138f473",
-      "bytes": 167357
+      "sha256": "3a2165924f1f55bd4e390ec1b3b709331a2da2b78796026f768d876283cf6a87",
+      "bytes": 163919
     },
     {
       "path": "Research_Figures/Validation/evaluation_geographic_metrics.csv",
-      "sha256": "595f83d5692271eeb5aaa4bab873b5cadc309f2ed71d992a02694626317a2ad0",
-      "bytes": 1084
+      "sha256": "49a5546b4d0970064439cd113cd72923da2bb2775ad95a9da97ff03f3cf840ed",
+      "bytes": 1335
     },
     {
       "path": "Research_Figures/Validation/evaluation_metrics_cycles_0_9.png",
@@ -415,8 +525,8 @@
     },
     {
       "path": "service_audit.json",
-      "sha256": "7cc98267907867530123bbd10ffea1f602da4905ecda199687802a4c065d2c02",
-      "bytes": 2172
+      "sha256": "20a6ab42d88a53c003892bd4a8c9c35d327c02ea84cfe8b5fb19af2b125f6870",
+      "bytes": 2271
     },
     {
       "path": "synthetic_branch_verification.json",

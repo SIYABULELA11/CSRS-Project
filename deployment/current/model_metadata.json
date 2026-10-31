@@ -1,0 +1,509 @@
+{
+  "preprocessing_sequence": [
+    "Clean missing/invalid records, exact deduplication, positive linked paid sales",
+    "Full observed-customer snapshots; uncapped Recency; exact trailing90-day F/M totals normalized by3 in EVERYcycle; current-period commerce separately",
+    "log1p R/F/M then logged RF/RM/FM products",
+    "C0-only MinMax scaling",
+    "C0-only three-component PCA",
+    "Static C0 K-means; full-replacement snapshot MDFCM C1\u20139"
+  ],
+  "behavioural_features": [
+    "Log_R",
+    "Log_F",
+    "Log_M",
+    "RF_Score",
+    "RM_Score",
+    "FM_Score"
+  ],
+  "geographic_features": [
+    "Log_Customer_Count",
+    "Log_Revenue",
+    "Log_Orders_Per_Customer",
+    "Log_Revenue_Per_Customer",
+    "Log_Product_Diversity",
+    "Repeat_Purchase_Rate"
+  ],
+  "behavioural_segments_by_cycle": {
+    "Cycle_0": [
+      "Champions",
+      "Developing at Risk",
+      "Loyalist at Risk",
+      "Loyalists",
+      "Mid-Tier Occasional"
+    ],
+    "Cycle_1": [
+      "Champions",
+      "Hibernating / Lost",
+      "Loyalists",
+      "Mid-Tier Occasional",
+      "Occasional at Risk"
+    ],
+    "Cycle_2": [
+      "Champions",
+      "Hibernating / Lost",
+      "Loyalists",
+      "Mid-Tier Occasional",
+      "Occasional at Risk"
+    ],
+    "Cycle_3": [
+      "Champions",
+      "Developing at Risk",
+      "Hibernating / Lost",
+      "Loyalists",
+      "Mid-Tier Occasional"
+    ],
+    "Cycle_4": [
+      "Champions",
+      "Developing at Risk",
+      "Hibernating / Lost",
+      "Loyalists",
+      "Mid-Tier Occasional"
+    ],
+    "Cycle_5": [
+      "Champions",
+      "Developing at Risk",
+      "Hibernating / Lost",
+      "Loyalist at Risk",
+      "Loyalists",
+      "Mid-Tier Occasional"
+    ],
+    "Cycle_6": [
+      "Champions",
+      "Developing at Risk",
+      "Hibernating / Lost",
+      "Loyalist at Risk",
+      "Loyalists",
+      "Mid-Tier Occasional"
+    ],
+    "Cycle_7": [
+      "Champions",
+      "Developing",
+      "Developing at Risk",
+      "Hibernating / Lost",
+      "Loyalist at Risk",
+      "Loyalists",
+      "Mid-Tier Occasional"
+    ],
+    "Cycle_8": [
+      "Champions",
+      "Developing",
+      "Developing at Risk",
+      "Hibernating / Lost",
+      "Loyalist at Risk",
+      "Loyalists",
+      "Mid-Tier Occasional",
+      "Occasional at Risk"
+    ],
+    "Cycle_9": [
+      "Champions",
+      "Champions \u00b7 centre 8",
+      "Developing",
+      "Developing at Risk",
+      "Hibernating / Lost",
+      "Loyalist at Risk",
+      "Loyalists",
+      "Mid-Tier Occasional",
+      "Occasional at Risk"
+    ]
+  },
+  "customer_risk_policy": "Customer warning flag, separate from model clusters and not a churn probability. Purchase gap >90 days is Lost; 61\u201390 days is Slipping; 31\u201360 days is At risk. Lost is excluded from at-risk assessment. For shorter purchase gaps, At risk also applies when: (1) comparable fuzzy fits for the same stable centre ID show a >=0.10 absolute fall in membership to that stable centre plus a >=25% fall in trailing-90-day frequency or paid sales monthly rate; or (2) both trailing-90-day frequency and paid sales fall >=50% from prior positive rates; or (3) no current-period purchases and purchase gap >30 days. Otherwise No risk flag, or No prior comparison when no earlier snapshot exists. The Cycle 0 crisp-to-fuzzy change is excluded from membership comparisons. All observed customers receive fresh memberships; prior snapshots of repeated IDs are not added as extra observations. Thresholds are transparent study rules, not learned predictions.",
+  "reporting_label_policy": "The approved public names describe the existing fitted profiles without changing numerical clustering. Profiles use u^2-weighted raw RFM (crisp means in Cycle 0), relative F/M ranks and the existing minimum-cost descriptive prototype matching. Champions, High-Value Regulars, Loyalists and Light Buyers have weighted Recency <=30; Mid-Tier Occasionals <=60; the At Risk profiles have 30<Recency<=90; Hibernating / Lost has Recency>90. The additional recent high-value Champions centre is named High-Value Regulars. Names describe current profiles, not proven prior-group origins or calibrated churn probabilities. Each fitted centre stays distinct; no centre, membership, assignment, PCA coordinate, outlier or performance metric is altered by renaming.",
+  "rolling_window_days": 90,
+  "fit_population": "All customers observed before the snapshot; Is_Model_Fit=1 even without current-period purchases",
+  "snapshot_weighting": "Prior IDs included in the incoming full snapshot contribute zero additional historical mass; previous centres remain warm starts",
+  "business_profile_centroid_policy": "Primary movement plots show actual fitted centres and stable IDs; separate group-mean plots are descriptive summaries only.",
+  "behavioural_label_semantics": "Profile-derived and cycle-specific; labels are not persistent cluster identities.",
+  "geographic_segments": {
+    "0": "UK-Dominated Market",
+    "1": "High-Spend-per-Customer Markets",
+    "2": "Higher-Repeat Overseas Markets",
+    "3": "Lower-Volume Occasional-Purchase Markets"
+  },
+  "geographic_method": "Six commercial country-market inputs only: log1p customer count, 90-day paid sales, invoices per active customer, sales per active customer, product diversity; plus repeat-purchase rate. Cycle 0 RobustScaler and K-means (50 starts, seed 42), WCSS elbow among K=2-10 selects K=4; silhouette and commercial profiles support interpretation, not a claim of maximum silhouette. Later cycles reuse the baseline scaler and nearest centres. Behavioural shares are contextual outputs, excluded from the country fit. No country-market PCA.",
+  "geographic_k_policy": "Fit country-market K-means candidates K=2-10 on six Cycle 0 commercial features after log1p on the first five and RobustScaler on all six (50 starts, seed 42). Select the maximum normalized distance below the WCSS endpoint chord as the primary elbow rule. Use silhouette, cluster sizes and observed commercial interpretation as supporting evidence, without claiming the elbow maximizes silhouette. Freeze the selected model and scaling for later cycles.",
+  "cycle_country_policy": "Cycle-level customer-to-market assignment uses each customer's most frequent distinct paid invoice country through the cycle snapshot; ties are resolved alphabetically. Customer.Country remains an all-history transaction-row mode and is not used for cycle-level market assignment.",
+  "behavioural_cluster_mapping": {
+    "2": 0,
+    "3": 1,
+    "1": 2,
+    "4": 3,
+    "0": 4
+  },
+  "geographic_cluster_mapping": {
+    "2": 0,
+    "1": 1,
+    "3": 2,
+    "0": 3
+  },
+  "window_months": 3,
+  "precomputed_cycles": [
+    "Cycle_0",
+    "Cycle_1",
+    "Cycle_2",
+    "Cycle_3",
+    "Cycle_4",
+    "Cycle_5",
+    "Cycle_6",
+    "Cycle_7",
+    "Cycle_8",
+    "Cycle_9"
+  ],
+  "baseline_k_selection": "maximum-distance K-means WCSS elbow is the primary project decision rule; silhouette by candidate K is supporting evidence. For this run the elbow selects K=5 while silhouette peaks at K=2; the user-selected elbow-first rule determines K=5. This deliberately differs from the paper's initial minimum-Xie-Beni K selection.",
+  "baseline_method": "Static K-means fit for Cycle 0 at the WCSS-elbow-selected K; customers have crisp, one-hot assignments. MDFCM is applied only in Cycles 1-9.",
+  "cycle0_fcm_policy": "The earlier Cycle 0 FCM experiment is archive-only and permanently excluded from active preprocessing, model fitting, initialization, and future Cycle 0-9 outputs. Cycle 0 K-means centres initialize Cycle 1.",
+  "feature_engineering": "Cycle RFM snapshots; log1p applied to Recency, Frequency, and Monetary; RF, RM, and FM are products of the corresponding logged values.",
+  "scaling_and_reduction": "Fit MinMaxScaler and three-component PCA on Cycle 0 only; reuse both transforms in Cycles 1-9.",
+  "frequency_monetary_period": "Exact trailing90days before each snapshot, divided by3 for monthly-equivalent rates; current-period commercial totals stored separately.",
+  "recency_period": "exact days since last qualifying purchase, uncapped; >90 days Hibernating / Lost; risk is a separate deterioration/purchase-gap flag",
+  "transaction_inclusion_policy": "Only positive-quantity, positive-unit-price, non-cancellation paid sales enter customer RFM, clustering, and business value summaries. Zero-price, negative-quantity, negative-price, and cancellation rows remain excluded from those model inputs and are documented in the cleaning audit.",
+  "monetary_transformation": "log1p of positive paid sales; no return or cancellation subtraction",
+  "monetary_sensitivity": "No net-versus-gross ranking sensitivity was fitted under the selected positive-sales-only policy. Return and cancellation summaries are audit-only.",
+  "dynamic_method": "Study adaptation of Munusamy-Murugesan MDFCM in Cycles 1-9 only. Eq. 9 Condition 2 requires each incoming point to be farther from every prior centre than half that centre's farthest distinct-centre separation. Permitted candidates follow the published condition-dependent c-1/c/c+1 decision tree and are scored by Xie-Beni. The c movement option uses the incremental centre blend in Eqs. 14-16.",
+  "dynamic_method_adaptations": "Every previously observed customer contributes exactly one current snapshot, including non-purchasers. Previous centres warm-start each update. Prior membership mass only represents prior customer IDs ABSENT from the incoming replacement snapshot; it is zero here because cumulative snapshots include every previous ID, avoiding double-counting overlapping observations. Conditions aggregate by any qualifying observation. Changed-K starts use each prior-centre elimination/principal-direction split then standard FCM. Only converged finite-XB candidates are eligible. m=2, objective-change tolerance0.01, maximum300 iterations. Full-replacement snapshots are a disclosed adaptation of the original incremental-new-object stream.",
+  "inactive_customer_policy": "Non-purchasers remain in the full fitted snapshot with current rolling RFM and fresh fuzzy memberships. Activity_Status describes current-period commerce only; it never excludes a row from fitting or freezes historical assignments.",
+  "cluster_identity_policy": "One-to-one minimum-cost matching by normalized centre distance and fuzzy-membership weighted Jaccard across shared customers, with dummy unmatched options; continue an ID only when weighted Jaccard >=0.05 and match cost is less than the combined retirement/creation cost; unmatched centres retire or receive a new provisional ID. The SQLite column CustomerOverlapJaccard is a legacy name for this weighted fuzzy score.",
+  "dynamic_observation_adaptation": "One current trailing90-day observation per observed customer, replacing their prior snapshot; no duplicate historical membership mass.",
+  "research_title": "Dynamic Customer Segmentation in Retail using Clustering",
+  "firmographic_definition": "Country-market and customer behavioural integration: cross-classify each customer's behavioural profile with the commercial country-market group assigned to their as-of country. This is a joined analytical view, not another clustering fit and not firmographic inference about company size, industry or ownership.",
+  "profile_colors": {
+    "Champions": "#087F5B",
+    "High-Value Regulars": "#004D40",
+    "Loyalists": "#123B73",
+    "Valuable Customers at Risk": "#45A6E5",
+    "Mid-Tier Occasionals": "#C46A00",
+    "Occasional Buyers at Risk": "#B84E35",
+    "Light Buyers": "#6B3FA0",
+    "Light Buyers at Risk": "#C86EAB",
+    "Hibernating / Lost": "#6D7480"
+  },
+  "profile_order": [
+    "Champions",
+    "High-Value Regulars",
+    "Loyalists",
+    "Valuable Customers at Risk",
+    "Mid-Tier Occasionals",
+    "Occasional Buyers at Risk",
+    "Light Buyers",
+    "Light Buyers at Risk",
+    "Hibernating / Lost"
+  ],
+  "profile_descriptions": {
+    "Champions": "The freshest high-value repeat-purchase profile.",
+    "High-Value Regulars": "Strong repeat purchasing and spending with a slightly longer purchase gap than the freshest Champions profile.",
+    "Loyalists": "A recent, moderate-value repeat-purchase profile.",
+    "Valuable Customers at Risk": "Meaningful rolling-window purchasing value with a longer purchase gap; this does not establish a previous Loyalists assignment.",
+    "Mid-Tier Occasionals": "Recent purchasing with moderate value and less frequent ordering than the strongest repeat-purchase profiles.",
+    "Occasional Buyers at Risk": "Infrequent purchasing with a substantial purchase gap.",
+    "Light Buyers": "Relatively low-frequency, lower-spending customers who purchased recently; growth is not assumed.",
+    "Light Buyers at Risk": "A light purchasing profile with a longer purchase gap.",
+    "Hibernating / Lost": "Predominantly customers without purchases for more than 90 days; individuals can differ from the weighted profile."
+  },
+  "source_fitted_run": "C:\\Users\\siyam\\OneDrive - University of the Western Cape\\Desktop\\Desktop stuff\\Hon project\\CSRS\\model\\pipeline b\\repair_outputs_2026-10-23\\run_20261025_195725",
+  "reporting_revision": "Approved descriptive names and per-cluster diagnostics; no refitting.",
+  "geographic_k_selection": {
+    "selectedK": 4,
+    "elbowK": 4,
+    "silhouetteBestK": 3,
+    "silhouetteBestScore": 0.4203587207870334,
+    "candidateRange": [
+      2,
+      10
+    ],
+    "baselineCycle": "Cycle_0",
+    "markets": 29,
+    "featureColumns": [
+      "Log_Customer_Count",
+      "Log_Revenue",
+      "Log_Orders_Per_Customer",
+      "Log_Revenue_Per_Customer",
+      "Log_Product_Diversity",
+      "Repeat_Purchase_Rate"
+    ],
+    "featureCount": 6,
+    "scaler": "Cycle 0 RobustScaler; reused unchanged in subsequent cycles",
+    "method": "K-means; n_init=50; random_state=42; no country-market PCA",
+    "selectionPolicy": "Fit country-market K-means candidates K=2-10 on six Cycle 0 commercial features after log1p on the first five and RobustScaler on all six (50 starts, seed 42). Select the maximum normalized distance below the WCSS endpoint chord as the primary elbow rule. Use silhouette, cluster sizes and observed commercial interpretation as supporting evidence, without claiming the elbow maximizes silhouette. Freeze the selected model and scaling for later cycles.",
+    "interpretationNote": "The normalized endpoint-chord elbow is the primary decision rule, not proof of a unique optimum. K=4 and K=5 form a shallow bend. K=3 has the highest silhouette. K=4 is retained as the elbow-led country-market summary; cluster sizes and the silhouette disagreement must also be reviewed. Names describe baseline commercial profiles and remain fixed later. Behavioural profile shares are contextual outputs only, excluded from the six fitting inputs.",
+    "figures": {
+      "combined": "Geographic/country_market_k_selection.png",
+      "wcss": "Geographic/country_market_elbow_wcss.png",
+      "silhouette": "Geographic/country_market_silhouette_by_k.png"
+    },
+    "candidates": [
+      {
+        "K": 2,
+        "Inertia": 91.4714499131754,
+        "SilhouetteScore": 0.4171714500044239,
+        "Markets": 29,
+        "MinimumClusterSize": 6,
+        "SingletonClusters": 0,
+        "ClusterSizes": "[23, 6]",
+        "ElbowDistance": 0.0,
+        "Selected": 0,
+        "CycleID": "Cycle_0"
+      },
+      {
+        "K": 3,
+        "Inertia": 66.05550395503617,
+        "SilhouetteScore": 0.4203587207870334,
+        "Markets": 29,
+        "MinimumClusterSize": 3,
+        "SingletonClusters": 0,
+        "ClusterSizes": "[22, 4, 3]",
+        "ElbowDistance": 0.18975981391370267,
+        "Selected": 0,
+        "CycleID": "Cycle_0"
+      },
+      {
+        "K": 4,
+        "Inertia": 46.548788615456225,
+        "SilhouetteScore": 0.29577825948775494,
+        "Markets": 29,
+        "MinimumClusterSize": 1,
+        "SingletonClusters": 1,
+        "ClusterSizes": "[13, 13, 2, 1]",
+        "ElbowDistance": 0.306337683982611,
+        "Selected": 1,
+        "CycleID": "Cycle_0"
+      },
+      {
+        "K": 5,
+        "Inertia": 36.8979730088506,
+        "SilhouetteScore": 0.27896155747965967,
+        "Markets": 29,
+        "MinimumClusterSize": 1,
+        "SingletonClusters": 1,
+        "ClusterSizes": "[10, 8, 8, 2, 1]",
+        "ElbowDistance": 0.30085670284792504,
+        "Selected": 0,
+        "CycleID": "Cycle_0"
+      },
+      {
+        "K": 6,
+        "Inertia": 27.93494122309669,
+        "SilhouetteScore": 0.3087950588732841,
+        "Markets": 29,
+        "MinimumClusterSize": 1,
+        "SingletonClusters": 1,
+        "ClusterSizes": "[10, 7, 6, 3, 2, 1]",
+        "ElbowDistance": 0.2868579703841837,
+        "Selected": 0,
+        "CycleID": "Cycle_0"
+      },
+      {
+        "K": 7,
+        "Inertia": 22.419946375387195,
+        "SilhouetteScore": 0.295423020747609,
+        "Markets": 29,
+        "MinimumClusterSize": 1,
+        "SingletonClusters": 1,
+        "ClusterSizes": "[9, 7, 5, 3, 2, 2, 1]",
+        "ElbowDistance": 0.23015756288643183,
+        "Selected": 0,
+        "CycleID": "Cycle_0"
+      },
+      {
+        "K": 8,
+        "Inertia": 17.636173495704014,
+        "SilhouetteScore": 0.30597440958089134,
+        "Markets": 29,
+        "MinimumClusterSize": 1,
+        "SingletonClusters": 2,
+        "ClusterSizes": "[7, 7, 6, 3, 2, 2, 1, 1]",
+        "ElbowDistance": 0.16440145110898668,
+        "Selected": 0,
+        "CycleID": "Cycle_0"
+      },
+      {
+        "K": 9,
+        "Inertia": 13.91033763213927,
+        "SilhouetteScore": 0.3282357513662919,
+        "Markets": 29,
+        "MinimumClusterSize": 1,
+        "SingletonClusters": 2,
+        "ClusterSizes": "[6, 6, 6, 3, 2, 2, 2, 1, 1]",
+        "ElbowDistance": 0.08554348355665477,
+        "Selected": 0,
+        "CycleID": "Cycle_0"
+      },
+      {
+        "K": 10,
+        "Inertia": 10.724337878385962,
+        "SilhouetteScore": 0.34712061763520025,
+        "Markets": 29,
+        "MinimumClusterSize": 1,
+        "SingletonClusters": 3,
+        "ClusterSizes": "[7, 6, 3, 3, 3, 2, 2, 1, 1, 1]",
+        "ElbowDistance": 0.0,
+        "Selected": 0,
+        "CycleID": "Cycle_0"
+      }
+    ],
+    "rows": [
+      {
+        "k": 2,
+        "inertia": 91.4714499131754,
+        "silhouette": 0.4171714500044239,
+        "elbowDistance": 0.0,
+        "selected": false,
+        "clusterSizes": [
+          23,
+          6
+        ],
+        "singletonClusters": 0
+      },
+      {
+        "k": 3,
+        "inertia": 66.05550395503617,
+        "silhouette": 0.4203587207870334,
+        "elbowDistance": 0.18975981391370267,
+        "selected": false,
+        "clusterSizes": [
+          22,
+          4,
+          3
+        ],
+        "singletonClusters": 0
+      },
+      {
+        "k": 4,
+        "inertia": 46.548788615456225,
+        "silhouette": 0.29577825948775494,
+        "elbowDistance": 0.306337683982611,
+        "selected": true,
+        "clusterSizes": [
+          13,
+          13,
+          2,
+          1
+        ],
+        "singletonClusters": 1
+      },
+      {
+        "k": 5,
+        "inertia": 36.8979730088506,
+        "silhouette": 0.27896155747965967,
+        "elbowDistance": 0.30085670284792504,
+        "selected": false,
+        "clusterSizes": [
+          10,
+          8,
+          8,
+          2,
+          1
+        ],
+        "singletonClusters": 1
+      },
+      {
+        "k": 6,
+        "inertia": 27.93494122309669,
+        "silhouette": 0.3087950588732841,
+        "elbowDistance": 0.2868579703841837,
+        "selected": false,
+        "clusterSizes": [
+          10,
+          7,
+          6,
+          3,
+          2,
+          1
+        ],
+        "singletonClusters": 1
+      },
+      {
+        "k": 7,
+        "inertia": 22.419946375387195,
+        "silhouette": 0.295423020747609,
+        "elbowDistance": 0.23015756288643183,
+        "selected": false,
+        "clusterSizes": [
+          9,
+          7,
+          5,
+          3,
+          2,
+          2,
+          1
+        ],
+        "singletonClusters": 1
+      },
+      {
+        "k": 8,
+        "inertia": 17.636173495704014,
+        "silhouette": 0.30597440958089134,
+        "elbowDistance": 0.16440145110898668,
+        "selected": false,
+        "clusterSizes": [
+          7,
+          7,
+          6,
+          3,
+          2,
+          2,
+          1,
+          1
+        ],
+        "singletonClusters": 2
+      },
+      {
+        "k": 9,
+        "inertia": 13.91033763213927,
+        "silhouette": 0.3282357513662919,
+        "elbowDistance": 0.08554348355665477,
+        "selected": false,
+        "clusterSizes": [
+          6,
+          6,
+          6,
+          3,
+          2,
+          2,
+          2,
+          1,
+          1
+        ],
+        "singletonClusters": 2
+      },
+      {
+        "k": 10,
+        "inertia": 10.724337878385962,
+        "silhouette": 0.34712061763520025,
+        "elbowDistance": 0.0,
+        "selected": false,
+        "clusterSizes": [
+          7,
+          6,
+          3,
+          3,
+          3,
+          2,
+          2,
+          1,
+          1,
+          1
+        ],
+        "singletonClusters": 3
+      }
+    ],
+    "fitCycle": "Cycle_0",
+    "features": [
+      "Log_Customer_Count",
+      "Log_Revenue",
+      "Log_Orders_Per_Customer",
+      "Log_Revenue_Per_Customer",
+      "Log_Product_Diversity",
+      "Repeat_Purchase_Rate"
+    ],
+    "selection": {
+      "primary": "WCSS elbow",
+      "elbowK": 4,
+      "highestSilhouetteK": 3,
+      "rationale": "The normalized endpoint-chord elbow is the primary decision rule, not proof of a unique optimum. K=4 and K=5 form a shallow bend. K=3 has the highest silhouette. K=4 is retained as the elbow-led country-market summary; cluster sizes and the silhouette disagreement must also be reviewed. Names describe baseline commercial profiles and remain fixed later. Behavioural profile shares are contextual outputs only, excluded from the six fitting inputs."
+    }
+  },
+  "country_market_revision": {
+    "run": "geo_20261031",
+    "sourceRun": "named_20261025_214151",
+    "behaviouralResultsUnchanged": true
+  }
+}

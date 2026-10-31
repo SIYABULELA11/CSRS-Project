@@ -120,7 +120,7 @@ def export(run):
                  ('CalinskiHarabaszScore','Market Calinski–Harabasz','Higher is better'),
                  ('Inertia','Distance to fixed market centres','Squared-error total; scale and count sensitive'),
                  ('Markets','Country markets evaluated','Population context; not a quality score'),
-                 ('OccupiedK','Occupied geographic groups','Model context; fixed baseline K=3')]):
+                 ('OccupiedK','Occupied country-market groups',f'Model context; fixed baseline K={len(centres)}')]):
             panel(axis,geographic.cycleNumber.to_numpy(int),geographic[field].to_numpy(float),title,subtitle)
         save_figure(figure,output/'evaluation_geographic_market','Country-market K-means: fit at Cycle 0 and use frozen scaling/centres later. No fuzzy metrics apply; market counts and K are context, not validity scores.')
     figures={'combined':'Validation/evaluation_metrics_cycles_0_9.png','baseline':'Validation/evaluation_cycle0_kmeans.png','dynamic':'Validation/evaluation_metrics_cycles_1_9.png','geographic':'Validation/evaluation_geographic_market.png'}

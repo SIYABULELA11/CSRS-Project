@@ -1,0 +1,120 @@
+{
+  "clean_transactions": 375666,
+  "customers": 4297,
+  "cycles": 10,
+  "cycle_0_selected_k": 5,
+  "maximum_recency_days": 365,
+  "hibernating_cycle_9": 1457,
+  "cycle_0_silhouette_candidates": 9,
+  "inactive_records": 18543,
+  "geographic_markets_cycle_9": 37,
+  "firmographic_segments_cycle_9": 31,
+  "mean_migration_rate": 59.014469091563065,
+  "mean_xie_beni": 0.23919313916733692,
+  "dynamic_soft_membership_mass_by_cycle": {
+    "Cycle_1": [
+      358.8554131399993,
+      579.9278942600009,
+      258.1238303900003,
+      406.1304938000003,
+      530.962368300002
+    ],
+    "Cycle_2": [
+      357.54997922000024,
+      661.1847474100006,
+      245.24472280000037,
+      584.5136180700007,
+      585.5069330500003
+    ],
+    "Cycle_3": [
+      292.96219789999975,
+      735.109374120003,
+      328.17033027,
+      793.9841169299975,
+      567.7739812199985
+    ],
+    "Cycle_4": [
+      350.88297052999957,
+      751.98840136,
+      259.39843411999993,
+      1018.2385772299984,
+      579.491615589999
+    ],
+    "Cycle_5": [
+      426.9657437099988,
+      659.3235334499991,
+      270.59940697999934,
+      1132.1058837300009,
+      443.7906730000006,
+      215.2147589999999
+    ],
+    "Cycle_6": [
+      407.67157106000036,
+      608.71538866,
+      274.69137347999975,
+      1378.1261724500014,
+      423.4646805900004,
+      224.33081411999956
+    ],
+    "Cycle_7": [
+      371.11659146000096,
+      533.7732203500015,
+      360.1625646000002,
+      1427.9806732599995,
+      445.1325032700006,
+      207.53968696999905,
+      270.29476107000096
+    ],
+    "Cycle_8": [
+      405.9111756600007,
+      515.0116956999996,
+      351.54254375000033,
+      1450.0923246700024,
+      524.7467455199995,
+      348.5206261400009,
+      200.06180160000002,
+      178.11308679000012
+    ],
+    "Cycle_9": [
+      391.95643067000026,
+      554.0699485899991,
+      382.8120418999992,
+      1379.9176736500008,
+      504.8733994199996,
+      424.0642248000003,
+      210.99983282000005,
+      262.9462339500005,
+      185.36021356000083
+    ]
+  },
+  "dynamic_clusters_without_hard_winner_by_cycle": {
+    "Cycle_1": 0,
+    "Cycle_2": 0,
+    "Cycle_3": 0,
+    "Cycle_4": 0,
+    "Cycle_5": 0,
+    "Cycle_6": 0,
+    "Cycle_7": 0,
+    "Cycle_8": 0,
+    "Cycle_9": 0
+  },
+  "fitted_centre_observations": 61,
+  "tracked_clusters": 10,
+  "database_path": "C:\\Users\\siyam\\OneDrive - University of the Western Cape\\Desktop\\Desktop stuff\\Hon project\\CSRS\\model\\pipeline b\\repair_outputs_2026-10-23\\named_20261025_214151\\csrs_pipeline_b_repaired.db",
+  "figure_directory": "C:\\Users\\siyam\\OneDrive - University of the Western Cape\\Desktop\\Desktop stuff\\Hon project\\CSRS\\model\\pipeline b\\repair_outputs_2026-10-23\\named_20261025_214151\\Research_Figures",
+  "output_directory": "C:\\Users\\siyam\\OneDrive - University of the Western Cape\\Desktop\\Desktop stuff\\Hon project\\CSRS\\model\\pipeline b\\repair_outputs_2026-10-23\\named_20261025_214151",
+  "semantic_profile_checks": 61,
+  "frontend_build": "passed",
+  "backend_build": "passed",
+  "direct_service_audit": "passed",
+  "static_figure_review": "passed",
+  "live_browser_visual_review": "deferred_by_user",
+  "source_fitted_run": "C:\\Users\\siyam\\OneDrive - University of the Western Cape\\Desktop\\Desktop stuff\\Hon project\\CSRS\\model\\pipeline b\\repair_outputs_2026-10-23\\run_20261025_195725",
+  "reporting_only_revision": true,
+  "approved_names_applied": true,
+  "per_cluster_diagnostics": "computed for all 61 cluster-cycle observations",
+  "per_cluster_quality_audit": "passed",
+  "naming_update_audit": "passed",
+  "country_market_selected_k": 4,
+  "country_market_update_run": "geo_20261031"
+}

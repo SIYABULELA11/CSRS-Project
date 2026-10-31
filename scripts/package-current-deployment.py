@@ -27,6 +27,11 @@ files = [
     'current_model_quality.csv', 'current_cluster_profiles.csv', 'per_cluster_quality.csv',
     'per_cluster_centroids.csv', 'population_quality_diagnostics.csv',
     'cluster_identity_profile_history.csv', 'CLUSTER_IDENTITY_AND_MIGRATION.md', 'APPROVED_CLUSTER_NAMES.md',
+    'country_market_k_selection.json', 'country_market_k_selection.csv',
+    'country_market_update_audit.json', 'COUNTRY_MARKET_UPDATE.md', 'model_metadata.json',
+    'country_market_baseline_profiles.csv', 'country_market_profiles_all_cycles.csv',
+    'country_market_metrics_all_cycles.csv',
+    'service_audit.json', 'model_validation_summary.json',
 ]
 for filename in files:
     if (run / filename).exists(): shutil.copy2(run / filename, output / filename)
@@ -43,7 +48,7 @@ manifest = {
     'sourceRun': run.name,
     'database': {'file':database.name,'archive':archive.name,'sha256':before,'uncompressedBytes':database.stat().st_size,'archiveBytes':archive.stat().st_size},
     'artifactRoot':'Research_Figures','customers':customers,'customerCycleRows':observations,'cycles':cycles,
-    'files':[{'path':file.relative_to(output).as_posix(),'sha256':sha(file),'bytes':file.stat().st_size} for file in sorted(output.rglob('*')) if file.is_file() and file.name != 'manifest.json'],
+    'files':[{'path':file.relative_to(output).as_posix(),'sha256':sha(file),'bytes':file.stat().st_size} for file in sorted(output.rglob('*')) if file.is_file() and file.name not in {'manifest.json',database.name}],
 }
 (output / 'manifest.json').write_text(json.dumps(manifest,indent=2),encoding='utf-8')
 assert sha(database) == before

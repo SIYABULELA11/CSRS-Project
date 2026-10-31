@@ -123,6 +123,10 @@ export class ApiController {
     res.json(analyticsService.getGeographicAnalytics());
   }
 
+  countryMarketKSelection(_req: Request, res: Response): void {
+    res.json(analyticsService.getCountryMarketKSelection());
+  }
+
   firmographicAnalytics(_req: Request, res: Response): void {
     res.json(analyticsService.getFirmographicAnalytics());
   }

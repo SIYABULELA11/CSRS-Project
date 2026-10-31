@@ -10,8 +10,13 @@
   "semanticAuditAvailable": true,
   "populationQualityAvailable": true,
   "cycle0Inertia": 56.57129846352494,
-  "geographicK": 3,
-  "firmographicCustomers": 4297,
+  "geographicK": 4,
+  "marketIntegrationCustomers": 4297,
+  "countryMarketSelection": {
+    "selectedK": 4,
+    "candidates": 9,
+    "features": 6
+  },
   "approvedNamesVerified": true,
   "perClusterQualityVerified": true,
   "loadedAdditionalServices": {

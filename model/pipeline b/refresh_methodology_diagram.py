@@ -36,7 +36,7 @@ def create_diagram(figure_root: Path):
     ax.text(.56,.87,'CUSTOMER SEGMENTATION',ha='center',fontsize=12,weight='bold')
     box(.395,.66,.33,.177,'Cycle 0: K-means, K = 5','WCSS elbow selects K; silhouette supports review\nCrisp assignments and initial fitted centres\nSilhouette, Davies–Bouldin, CH and inertia')
     box(.395,.332,.33,.279,'Cycles 1–9: dynamic updates','Replace old snapshots with current customer records\nPrior centres initialize the update\nOld observations are not counted a second time\nMDFCM conditions permit K−1 / K / K+1\nFCM membership and centre updates\nSelect the eligible converged fit with lowest Xie–Beni\nTrack actual centres and current memberships')
-    box(.395,.105,.33,.177,'Geographic integration','Separate baseline K-means with K = 3\n90-day country aggregates and customer mix\nFrozen RobustScaler and country centres\nCustomer–market combinations')
+    box(.395,.105,.33,.177,'Country-market analysis and integration','First five inputs log1p; all six RobustScaler\nK=2–10 WCSS elbow selects 4; silhouette supports\nFrozen Cycle 0 scaling and country centres\nCombine market groups with behavioural profiles')
     arrow((.335,.161),(.365,.161)); arrow((.365,.161),(.365,.746)); arrow((.365,.746),(.395,.746))
     arrow((.56,.66),(.56,.611)); arrow((.56,.332),(.56,.282))
     ax.text(.865,.87,'RESULTS',ha='center',fontsize=12,weight='bold')

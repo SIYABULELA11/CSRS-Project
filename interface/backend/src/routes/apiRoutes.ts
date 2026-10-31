@@ -41,7 +41,10 @@ apiRouter.get("/features/correlation", controller.featureCorrelation.bind(contro
 apiRouter.get("/analytics/customers", controller.customerAnalytics.bind(controller));
 apiRouter.get("/analytics/products", controller.productAnalytics.bind(controller));
 apiRouter.get("/analytics/geography", controller.geographicAnalytics.bind(controller));
+apiRouter.get("/analytics/geographic/k-selection", controller.countryMarketKSelection.bind(controller));
+apiRouter.get("/analytics/geography/k-selection", controller.countryMarketKSelection.bind(controller));
 apiRouter.get("/analytics/firmographic", controller.firmographicAnalytics.bind(controller));
+apiRouter.get("/analytics/market-behaviour", controller.firmographicAnalytics.bind(controller));
 apiRouter.get("/analytics/cycle-comparison", controller.cycleComparisonAnalytics.bind(controller));
 apiRouter.get("/analytics/pca", controller.pcaAnalytics.bind(controller));
 apiRouter.get("/artifacts", controller.artifacts.bind(controller));

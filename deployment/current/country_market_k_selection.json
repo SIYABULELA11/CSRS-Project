@@ -1,0 +1,301 @@
+{
+  "selectedK": 4,
+  "elbowK": 4,
+  "silhouetteBestK": 3,
+  "silhouetteBestScore": 0.4203587207870334,
+  "candidateRange": [
+    2,
+    10
+  ],
+  "baselineCycle": "Cycle_0",
+  "markets": 29,
+  "featureColumns": [
+    "Log_Customer_Count",
+    "Log_Revenue",
+    "Log_Orders_Per_Customer",
+    "Log_Revenue_Per_Customer",
+    "Log_Product_Diversity",
+    "Repeat_Purchase_Rate"
+  ],
+  "featureCount": 6,
+  "scaler": "Cycle 0 RobustScaler; reused unchanged in subsequent cycles",
+  "method": "K-means; n_init=50; random_state=42; no country-market PCA",
+  "selectionPolicy": "Fit country-market K-means candidates K=2-10 on six Cycle 0 commercial features after log1p on the first five and RobustScaler on all six (50 starts, seed 42). Select the maximum normalized distance below the WCSS endpoint chord as the primary elbow rule. Use silhouette, cluster sizes and observed commercial interpretation as supporting evidence, without claiming the elbow maximizes silhouette. Freeze the selected model and scaling for later cycles.",
+  "interpretationNote": "The normalized endpoint-chord elbow is the primary decision rule, not proof of a unique optimum. K=4 and K=5 form a shallow bend. K=3 has the highest silhouette. K=4 is retained as the elbow-led country-market summary; cluster sizes and the silhouette disagreement must also be reviewed. Names describe baseline commercial profiles and remain fixed later. Behavioural profile shares are contextual outputs only, excluded from the six fitting inputs.",
+  "figures": {
+    "combined": "Geographic/country_market_k_selection.png",
+    "wcss": "Geographic/country_market_elbow_wcss.png",
+    "silhouette": "Geographic/country_market_silhouette_by_k.png"
+  },
+  "candidates": [
+    {
+      "K": 2,
+      "Inertia": 91.4714499131754,
+      "SilhouetteScore": 0.4171714500044239,
+      "Markets": 29,
+      "MinimumClusterSize": 6,
+      "SingletonClusters": 0,
+      "ClusterSizes": "[23, 6]",
+      "ElbowDistance": 0.0,
+      "Selected": 0,
+      "CycleID": "Cycle_0"
+    },
+    {
+      "K": 3,
+      "Inertia": 66.05550395503617,
+      "SilhouetteScore": 0.4203587207870334,
+      "Markets": 29,
+      "MinimumClusterSize": 3,
+      "SingletonClusters": 0,
+      "ClusterSizes": "[22, 4, 3]",
+      "ElbowDistance": 0.18975981391370267,
+      "Selected": 0,
+      "CycleID": "Cycle_0"
+    },
+    {
+      "K": 4,
+      "Inertia": 46.548788615456225,
+      "SilhouetteScore": 0.29577825948775494,
+      "Markets": 29,
+      "MinimumClusterSize": 1,
+      "SingletonClusters": 1,
+      "ClusterSizes": "[13, 13, 2, 1]",
+      "ElbowDistance": 0.306337683982611,
+      "Selected": 1,
+      "CycleID": "Cycle_0"
+    },
+    {
+      "K": 5,
+      "Inertia": 36.8979730088506,
+      "SilhouetteScore": 0.27896155747965967,
+      "Markets": 29,
+      "MinimumClusterSize": 1,
+      "SingletonClusters": 1,
+      "ClusterSizes": "[10, 8, 8, 2, 1]",
+      "ElbowDistance": 0.30085670284792504,
+      "Selected": 0,
+      "CycleID": "Cycle_0"
+    },
+    {
+      "K": 6,
+      "Inertia": 27.93494122309669,
+      "SilhouetteScore": 0.3087950588732841,
+      "Markets": 29,
+      "MinimumClusterSize": 1,
+      "SingletonClusters": 1,
+      "ClusterSizes": "[10, 7, 6, 3, 2, 1]",
+      "ElbowDistance": 0.2868579703841837,
+      "Selected": 0,
+      "CycleID": "Cycle_0"
+    },
+    {
+      "K": 7,
+      "Inertia": 22.419946375387195,
+      "SilhouetteScore": 0.295423020747609,
+      "Markets": 29,
+      "MinimumClusterSize": 1,
+      "SingletonClusters": 1,
+      "ClusterSizes": "[9, 7, 5, 3, 2, 2, 1]",
+      "ElbowDistance": 0.23015756288643183,
+      "Selected": 0,
+      "CycleID": "Cycle_0"
+    },
+    {
+      "K": 8,
+      "Inertia": 17.636173495704014,
+      "SilhouetteScore": 0.30597440958089134,
+      "Markets": 29,
+      "MinimumClusterSize": 1,
+      "SingletonClusters": 2,
+      "ClusterSizes": "[7, 7, 6, 3, 2, 2, 1, 1]",
+      "ElbowDistance": 0.16440145110898668,
+      "Selected": 0,
+      "CycleID": "Cycle_0"
+    },
+    {
+      "K": 9,
+      "Inertia": 13.91033763213927,
+      "SilhouetteScore": 0.3282357513662919,
+      "Markets": 29,
+      "MinimumClusterSize": 1,
+      "SingletonClusters": 2,
+      "ClusterSizes": "[6, 6, 6, 3, 2, 2, 2, 1, 1]",
+      "ElbowDistance": 0.08554348355665477,
+      "Selected": 0,
+      "CycleID": "Cycle_0"
+    },
+    {
+      "K": 10,
+      "Inertia": 10.724337878385962,
+      "SilhouetteScore": 0.34712061763520025,
+      "Markets": 29,
+      "MinimumClusterSize": 1,
+      "SingletonClusters": 3,
+      "ClusterSizes": "[7, 6, 3, 3, 3, 2, 2, 1, 1, 1]",
+      "ElbowDistance": 0.0,
+      "Selected": 0,
+      "CycleID": "Cycle_0"
+    }
+  ],
+  "rows": [
+    {
+      "k": 2,
+      "inertia": 91.4714499131754,
+      "silhouette": 0.4171714500044239,
+      "elbowDistance": 0.0,
+      "selected": false,
+      "clusterSizes": [
+        23,
+        6
+      ],
+      "singletonClusters": 0
+    },
+    {
+      "k": 3,
+      "inertia": 66.05550395503617,
+      "silhouette": 0.4203587207870334,
+      "elbowDistance": 0.18975981391370267,
+      "selected": false,
+      "clusterSizes": [
+        22,
+        4,
+        3
+      ],
+      "singletonClusters": 0
+    },
+    {
+      "k": 4,
+      "inertia": 46.548788615456225,
+      "silhouette": 0.29577825948775494,
+      "elbowDistance": 0.306337683982611,
+      "selected": true,
+      "clusterSizes": [
+        13,
+        13,
+        2,
+        1
+      ],
+      "singletonClusters": 1
+    },
+    {
+      "k": 5,
+      "inertia": 36.8979730088506,
+      "silhouette": 0.27896155747965967,
+      "elbowDistance": 0.30085670284792504,
+      "selected": false,
+      "clusterSizes": [
+        10,
+        8,
+        8,
+        2,
+        1
+      ],
+      "singletonClusters": 1
+    },
+    {
+      "k": 6,
+      "inertia": 27.93494122309669,
+      "silhouette": 0.3087950588732841,
+      "elbowDistance": 0.2868579703841837,
+      "selected": false,
+      "clusterSizes": [
+        10,
+        7,
+        6,
+        3,
+        2,
+        1
+      ],
+      "singletonClusters": 1
+    },
+    {
+      "k": 7,
+      "inertia": 22.419946375387195,
+      "silhouette": 0.295423020747609,
+      "elbowDistance": 0.23015756288643183,
+      "selected": false,
+      "clusterSizes": [
+        9,
+        7,
+        5,
+        3,
+        2,
+        2,
+        1
+      ],
+      "singletonClusters": 1
+    },
+    {
+      "k": 8,
+      "inertia": 17.636173495704014,
+      "silhouette": 0.30597440958089134,
+      "elbowDistance": 0.16440145110898668,
+      "selected": false,
+      "clusterSizes": [
+        7,
+        7,
+        6,
+        3,
+        2,
+        2,
+        1,
+        1
+      ],
+      "singletonClusters": 2
+    },
+    {
+      "k": 9,
+      "inertia": 13.91033763213927,
+      "silhouette": 0.3282357513662919,
+      "elbowDistance": 0.08554348355665477,
+      "selected": false,
+      "clusterSizes": [
+        6,
+        6,
+        6,
+        3,
+        2,
+        2,
+        2,
+        1,
+        1
+      ],
+      "singletonClusters": 2
+    },
+    {
+      "k": 10,
+      "inertia": 10.724337878385962,
+      "silhouette": 0.34712061763520025,
+      "elbowDistance": 0.0,
+      "selected": false,
+      "clusterSizes": [
+        7,
+        6,
+        3,
+        3,
+        3,
+        2,
+        2,
+        1,
+        1,
+        1
+      ],
+      "singletonClusters": 3
+    }
+  ],
+  "fitCycle": "Cycle_0",
+  "features": [
+    "Log_Customer_Count",
+    "Log_Revenue",
+    "Log_Orders_Per_Customer",
+    "Log_Revenue_Per_Customer",
+    "Log_Product_Diversity",
+    "Repeat_Purchase_Rate"
+  ],
+  "selection": {
+    "primary": "WCSS elbow",
+    "elbowK": 4,
+    "highestSilhouetteK": 3,
+    "rationale": "The normalized endpoint-chord elbow is the primary decision rule, not proof of a unique optimum. K=4 and K=5 form a shallow bend. K=3 has the highest silhouette. K=4 is retained as the elbow-led country-market summary; cluster sizes and the silhouette disagreement must also be reviewed. Names describe baseline commercial profiles and remain fixed later. Behavioural profile shares are contextual outputs only, excluded from the six fitting inputs."
+  }
+}

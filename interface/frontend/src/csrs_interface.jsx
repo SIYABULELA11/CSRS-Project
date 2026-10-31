@@ -103,17 +103,26 @@ function ClusterQualityTable({ clusters }) {
   ]} />;
 }
 
-const GEOGRAPHIC_SEGMENTS = [
-  'Largest Revenue Market',
-  'Highest Revenue-per-Customer Market',
-  'Other Markets',
-];
-
 const GEOGRAPHIC_COLORS = {
+  'UK-Dominated Market': '#0d6f48',
+  'High-Spend-per-Customer Markets': '#2469a5',
+  'Higher-Repeat Overseas Markets': '#a66b16',
+  'Lower-Volume Occasional-Purchase Markets': '#8b60a8',
   'Largest Revenue Market': '#0d6f48',
   'Highest Revenue-per-Customer Market': '#2469a5',
   'Other Markets': '#bb7925',
 };
+const marketSegmentNames = (data) => [...new Set([
+  ...(data.geographicAnalytics?.segmentNames || []),
+  ...(data.modelEvaluation?.geographicMethod?.segmentNames || []),
+  ...(data.modelEvaluation?.geographicMethod?.groups || []).map(row => typeof row === 'string' ? row : row.segment || row.name),
+  ...(data.geographicAnalytics?.segmentSummary || []).map(row => row.segment),
+  ...(data.geographicAnalytics?.evolution || []).map(row => row.segment),
+  ...(data.firmographicAnalytics?.matrix || []).map(row => row.geographicSegment),
+].filter(Boolean))];
+const marketSegmentColor = (name, data) => data?.geographicAnalytics?.segmentColors?.[name]
+  || GEOGRAPHIC_COLORS[name] || ['#0d6f48', '#2469a5', '#a66b16', '#8b60a8'][Math.max(0, marketSegmentNames(data).indexOf(name)) % 4];
+const artifactCategoryLabel = (category) => String(category || '').replace(/firmographic segmentation|firmographic/gi, 'market–behaviour integration');
 
 const TRANSITION_STATES = [
   'New',
@@ -144,8 +153,8 @@ const ANALYTICS_PAGES = [
   { id: 'comparison', label: 'Cycle comparison' },
   { id: 'dynamics', label: 'Cycle dynamics' },
   { id: 'pca', label: 'PCA segment analysis' },
-  { id: 'geography', label: 'Geography' },
-  { id: 'firmographic', label: 'Firmographic' },
+  { id: 'geography', label: 'Country markets' },
+  { id: 'firmographic', label: 'Market–behaviour integration' },
   { id: 'products', label: 'Products' },
 ];
 
@@ -215,6 +224,7 @@ const cycleIndex = (value) => Number(String(value || '').match(/\d+/)?.[0] || 0)
 const shortCycleLabel = (value) => `C${cycleIndex(value)}`;
 const titleFromName = (value) => String(value || '')
   .replace(/\.[^/.]+$/, '')
+  .replace(/firmographic/gi, 'market behavioural integration')
   .replace(/[_-]+/g, ' ')
   .replace(/\b\w/g, (letter) => letter.toUpperCase());
 
@@ -250,9 +260,12 @@ const getFigureMeta = (artifact) => {
     ['validation/evaluation_geographic_market.png', 'Geographic market validation', 'Country-market silhouette, DB, CH and fixed-centre SSE, with market count and occupied groups shown separately as context.'],
     ['validation/xie_beni_index.png', 'Xie-Beni fuzzy validity', 'Tracks fuzzy cluster compactness and separation, where lower values indicate stronger validity.'],
     ['validation/dynamic_model_quality.png', 'Dynamic MDFCM validity and customer-movement diagnostics', 'Shows all five dynamic quality measures—Silhouette, Davies–Bouldin, Calinski–Harabasz, Xie–Beni, and mean maximum membership—plus comparable-customer migration as a separate movement diagnostic.'],
-    ['geographic/cycle9_market_segments.png', 'Cycle 9 geographic market segments', 'Shows the geographic segment assigned to each country market using commercial and behavioural composition features.'],
+    ['geographic/cycle9_market_segments.png', 'Cycle 9 geographic market segments', 'Shows country-market assignments based on the six commercial features; behavioural composition is interpreted separately.'],
     ['geographic/market_segment_evolution.png', 'Geographic market segment evolution', 'Tracks the country-level market segmentation from Cycle 0 to Cycle 9.'],
-    ['firmographic/cycle9_firmographic_segments.png', 'Cycle 9 firmographic segments', 'Combines behavioural customer segments with geographic market segments.'],
+    ['geographic/country_market_k_selection.png', 'Country-market K-selection evidence', 'Measured K=2–10 WCSS and silhouette for the six commercial features. K=4 follows the elbow; silhouette provides separate supporting evidence.'],
+    ['geographic/country_market_elbow_wcss.png', 'Country-market WCSS elbow', 'Compares inertia for K=2–10 and marks the accepted elbow-led country-market choice.'],
+    ['geographic/country_market_silhouette_by_k.png', 'Country-market silhouette by K', 'Reports the measured silhouette for each market K candidate; the maximum can differ from the accepted elbow choice.'],
+    ['firmographic/cycle9_firmographic_segments.png', 'Cycle 9 market–behaviour combinations', 'Cross-classifies behavioural customer segments with country-market groups for combined interpretation.'],
     ['geographic segmentation/output.png', 'Market size vs product diversity', 'Compares customer scale with product breadth across countries.'],
     ['geographic segmentation/output2.png', 'Revenue per customer by market', 'Highlights smaller markets with unusually high customer value.'],
     ['geographic segmentation/output3.png', 'Product diversity by market', 'Ranks markets by the number of distinct products purchased.'],
@@ -680,10 +693,10 @@ function HomePage({ data, setPage }) {
       <section className="home-hero">
         <div className="home-copy">
           <span className="hero-kicker">Customer Segmentation in the Retail Sector</span>
-          <h1>Firmographic customer segmentation built from <em>behaviour and geography.</em></h1>
+          <h1>Customer segmentation built from <em>behaviour and geography.</em></h1>
           <p>
             Explore one integrated framework combining dynamic behavioural RFM segmentation with
-            geographic market segmentation, customer value, migration, products, and model quality.
+            country-market segmentation, customer value, migration, products, and model quality.
           </p>
           <div className="hero-actions">
             <button className="button button-primary" onClick={() => setPage('overview')}>
@@ -696,7 +709,7 @@ function HomePage({ data, setPage }) {
           <div className="hero-proof">
             <span><b>{formatNumber(overview.numberOfSegments ?? 4)}</b> core RFM families</span>
             <span><b>{formatNumber(overview.countries)}</b> geographic markets</span>
-            <span><b>1</b> firmographic view</span>
+            <span><b>1</b> market–behaviour view</span>
           </div>
         </div>
         <div className="home-visual">
@@ -731,11 +744,11 @@ function HomePage({ data, setPage }) {
 
       <section className="home-story section-wrap">
         <div className="story-copy">
-          <span className="eyebrow">Firmographic framework</span>
-          <h2>Behavioural segmentation + geographic segmentation</h2>
+          <span className="eyebrow">Integrated analytical framework</span>
+          <h2>Behavioural segmentation + country-market segmentation</h2>
           <p>
-            In this research, firmographic segmentation combines dynamic RFM and fuzzy membership
-            patterns with the geographic markets where customers make purchases. The result
+            This research combines dynamic RFM and fuzzy membership
+            patterns with country markets grouped by commercial characteristics. The result
             is a location-aware view of customer value, movement, and commercial opportunity.
           </p>
           <p className="panel-note">Current fitted clusters are listed from the model registry with distinct labels and tracking IDs. Customer risk warnings are separate from cluster categories; every observed customer is refitted at each snapshot.</p>
@@ -773,8 +786,8 @@ function HomePage({ data, setPage }) {
           {[
             ['Customer analytics', 'Search customers, compare value bands, confidence, baskets, products, and full cycle history.', 'customers'],
             ['Behavioural movement', 'Investigate migration rates, transition flows, segment stability, and confidence over time.', 'dynamics'],
-            ['Geographic intelligence', 'Explore clustered market types, customer value, product breadth, revenue, and behavioural composition.', 'geography'],
-            ['Firmographic analytics', 'Combine customer behaviour with geographic market segments for retailer-facing action.', 'firmographic'],
+            ['Country-market intelligence', 'Compare country markets by commercial characteristics, then interpret their customer mix.', 'geography'],
+            ['Market–behaviour integration', 'Interpret customer behaviour alongside country-market characteristics.', 'firmographic'],
           ].map(([title, description, target]) => (
             <button className="capability-card" key={title} onClick={() => setPage(target)}>
               <h3>{title}</h3>
@@ -807,9 +820,9 @@ function OverviewPage({ data }) {
   return (
     <>
       <PageTitle
-        eyebrow="Firmographic segmentation overview"
-        title="Behavioural and geographic intelligence dashboard"
-        description="An integrated firmographic view of behavioural segments, geographic markets, customer value, commercial performance, and model quality."
+        eyebrow="Customer and country-market overview"
+        title="Customer and country-market intelligence dashboard"
+        description="An integrated view of behavioural segments, country markets, customer value, commercial performance, and model quality."
         action={<StatusPill tone="success">● Data connected</StatusPill>}
       />
 
@@ -1294,7 +1307,7 @@ function SegmentsPage({ data }) {
   return (
     <>
       <PageTitle
-        eyebrow="Firmographic component: behavioural segmentation"
+        eyebrow="Customer behavioural segmentation"
         title={`${formatNumber(currentClusters.length)} fitted clusters in ${cycleLabel(selectedCycle)}`}
         description="The fitted-centre registry supplies the actual cluster count and one distinct label per centre. Every observed customer receives a fresh assignment each cycle. Purchase inactivity and customer warning flags are separate attributes."
         action={<select value={selectedCycle} onChange={(event) => setSelectedCycle(event.target.value)}>{(data.filters.cycles || []).map((option) => <option key={option.value} value={option.value}>{cycleLabel(option.value)}</option>)}</select>}
@@ -1686,7 +1699,7 @@ function StaticToDynamicPage({ data }) {
           ['Customer continuity', 'Cumulative snapshots retain active, inactive, reactivated, and newly observed customers.'],
           ['Movement evidence', 'Stable and migrated customers are separated from lifecycle states for interpretable transition analysis.'],
           ['Fuzzy confidence', 'Membership scores show how strongly an observation belongs to each fitted centre; maximum membership is not a calibrated probability that its label is correct.'],
-          ['Market context', 'Behavioural groups are combined with geographic market clusters to create firmographic customer-market segments.'],
+          ['Market context', 'Behavioural groups are cross-classified with country-market groups to interpret customer behaviour in its commercial market context.'],
         ].map(([title, description]) => <article key={title}><div><h3>{title}</h3><p>{description}</p></div></article>)}
       </div>
     </>
@@ -2041,20 +2054,22 @@ function GeographyPage({ data }) {
   return (
     <>
       <PageTitle
-        eyebrow="Firmographic component: geographic segmentation"
-        title="Discover distinct geographic market segments"
-        description="Country markets are assigned to three K-means groups using country-level customer scale, revenue, order behaviour, product breadth, repeat purchasing, and customer-group composition. The Model page explains the feature preparation and fixed geographic reference."
+        eyebrow="Country-market segmentation"
+        title="Explore country-market segments"
+        description="Country markets are grouped using six commercial characteristics. Cycle 0 K-means candidates K=2–10 are compared primarily through the WCSS elbow, with silhouette and business interpretation as supporting evidence. Behavioural composition is interpreted separately after clustering."
       />
-      <p className="panel-note">Commercial market measures use an exact trailing 90-day transaction window. Customer-group composition uses the current customer snapshot. These window sales differ from the one-month cycle sales shown for dynamic customers.</p>
+      <p className="panel-note">Sales, ordering, product diversity and repeat purchasing use an exact trailing 90-day window. Customer count includes customers observed by each cutoff. Behavioural shares provide separate customer context and are excluded from market fitting.</p>
       <div className="metric-grid metric-grid-four">
-        <MetricCard label="Geographic markets" value={formatNumber(markets.length)} detail="Country-level observations" />
-        <MetricCard label="Market segments" value={formatNumber(segmentSummary.length)} detail="Three K-means geographic groups" tone="blue" />
+        <MetricCard label="Country markets" value={formatNumber(markets.length)} detail="Country-level observations" />
+        <MetricCard label="Market segments" value={formatNumber(segmentSummary.length)} detail={`${formatNumber(analytics.clusterCount || data.modelEvaluation?.geographicMethod?.clusterCount)} fitted baseline groups`} tone="blue" />
         <MetricCard label="Largest market" value={topMarkets[0]?.country || '-'} detail={`${formatNumber(topMarkets[0]?.customers)} customers`} tone="green" />
         <MetricCard label="Geographic silhouette" value={formatDecimal(latestQuality.SilhouetteScore)} detail={cycleLabel(analytics.latestCycle)} tone="gold" />
       </div>
 
+      <CountryMarketSelection data={data} />
+
       <div className="content-grid equal">
-        <Panel title="Leading markets by revenue" eyebrow="Colour shows geographic segment">
+        <Panel title="Leading markets by revenue" eyebrow="Colour shows country-market group">
           <div className="chart-xl">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={[...topMarkets].reverse()} layout="vertical" margin={{ left: 64, right: 18 }}>
@@ -2064,20 +2079,20 @@ function GeographyPage({ data }) {
                 <Tooltip content={<ChartTooltip valueFormatter={(value) => formatCurrency(value)} />} />
                 <Bar dataKey="revenue" name="Positive paid sales" radius={[0, 6, 6, 0]}>
                   {[...topMarkets].reverse().map((market) => (
-                    <Cell key={market.country} fill={GEOGRAPHIC_COLORS[market.geographicSegment] || '#168a58'} />
+                    <Cell key={market.country} fill={marketSegmentColor(market.geographicSegment, data)} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>
         </Panel>
-        <Panel title="Geographic segment scale" eyebrow={cycleLabel(analytics.latestCycle)}>
+        <Panel title="Country-market group scale" eyebrow={cycleLabel(analytics.latestCycle)}>
           <div className="chart-xl">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={segmentSummary} dataKey="markets" nameKey="segment" innerRadius={78} outerRadius={132} paddingAngle={3}>
                   {segmentSummary.map((segment) => (
-                    <Cell key={segment.segment} fill={GEOGRAPHIC_COLORS[segment.segment] || '#168a58'} />
+                    <Cell key={segment.segment} fill={marketSegmentColor(segment.segment, data)} />
                   ))}
                 </Pie>
                 <Tooltip content={<ChartTooltip valueFormatter={(value) => `${formatNumber(value)} markets`} />} />
@@ -2089,7 +2104,7 @@ function GeographyPage({ data }) {
       </div>
 
       <div className="content-grid equal">
-        <Panel title="Market segment evolution" eyebrow="Geographic clustering across cycles">
+        <Panel title="Market segment evolution" eyebrow="Fixed country-market reference across cycles">
           <div className="chart-large">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={marketEvolution}>
@@ -2098,14 +2113,14 @@ function GeographyPage({ data }) {
                 <YAxis />
                 <Tooltip content={<ChartTooltip valueFormatter={(value) => `${formatNumber(value)} markets`} />} />
                 <Legend />
-                {GEOGRAPHIC_SEGMENTS.map((segment) => (
-                  <Bar key={segment} dataKey={segment} stackId="markets" fill={GEOGRAPHIC_COLORS[segment]} />
+                {marketSegmentNames(data).map((segment) => (
+                  <Bar key={segment} dataKey={segment} stackId="markets" fill={marketSegmentColor(segment, data)} />
                 ))}
               </BarChart>
             </ResponsiveContainer>
           </div>
         </Panel>
-        <Panel title="Geographic model quality" eyebrow="Silhouette and Davies-Bouldin">
+        <Panel title="Country-market model quality" eyebrow="Silhouette and Davies-Bouldin">
           <div className="chart-large">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={analytics.quality || []}>
@@ -2138,12 +2153,12 @@ function GeographyPage({ data }) {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <p className="panel-note">Behavioural shares are included with commercial market measures when geographic segments are created.</p>
+        <p className="panel-note">Behavioural shares describe the customer mix after country-market clustering. They are not part of the six commercial fitting features. The family shares combine related behavioural profiles; customer-level labels remain available in the integration view.</p>
       </Panel>
 
       <section className="geographic-evolution-section">
         <div className="section-heading-inline">
-          <div><span className="eyebrow">Cycle 0 to Cycle 9</span><h2>Geographic behavioural segment evolution across cycles</h2></div>
+          <div><span className="eyebrow">Cycle 0 to Cycle 9</span><h2>Customer behaviour within country markets across cycles</h2></div>
           <p>Each chart tracks how the behavioural customer mix changes within one major geographic market.</p>
         </div>
         <div className="geographic-evolution-grid">
@@ -2180,7 +2195,7 @@ function GeographyPage({ data }) {
           rows={markets}
           columns={[
             { key: 'country', label: 'Country' },
-            { key: 'geographicSegment', label: 'Geographic segment' },
+            { key: 'geographicSegment', label: 'Country-market group' },
             { key: 'championsShare', label: 'Champions', render: formatPercent },
             { key: 'loyalistsShare', label: 'Loyalists', render: formatPercent },
             { key: 'midTierOccasionalsShare', label: 'Mid-Tier Occasionals', render: formatPercent },
@@ -2191,12 +2206,12 @@ function GeographyPage({ data }) {
         />
       </Panel>
 
-      <Panel title="Geographic segmentation detail" eyebrow="Market features and assigned segment">
+      <Panel title="Country-market segmentation detail" eyebrow="Market features and assigned segment">
         <DataTable
           rows={markets}
           columns={[
             { key: 'country', label: 'Country' },
-            { key: 'geographicSegment', label: 'Geographic segment' },
+            { key: 'geographicSegment', label: 'Country-market group' },
             { key: 'customers', label: 'Customers', render: formatNumber },
             { key: 'activeCustomers', label: 'Active', render: formatNumber },
             { key: 'orders', label: 'Orders', render: formatNumber },
@@ -2215,10 +2230,12 @@ function FirmographicPage({ data }) {
   const analytics = data.firmographicAnalytics;
   const summary = analytics.summary || {};
   const combinations = [...(analytics.combinations || [])].sort((left, right) => segmentOrder(left.behaviouralSegment) - segmentOrder(right.behaviouralSegment) || String(left.geographicSegment).localeCompare(String(right.geographicSegment)));
-  const combinationChart = combinations.slice(0, 12).reverse();
+  const rankedCombinations = [...combinations].sort((left, right) => Number(right.customers) - Number(left.customers));
+  const combinationChart = rankedCombinations.slice(0, 12).reverse();
+  const leadingCombination = rankedCombinations[0];
   const evolution = pivotSeries(analytics.evolution || [], 'customers', 'geographicSegment');
   const behaviouralNames = orderSegmentProfiles([...new Set((analytics.matrix || []).map((row) => row.behaviouralSegment))].map((segment) => ({ segment }))).map((row) => row.segment);
-  const matrixRows = GEOGRAPHIC_SEGMENTS.map((geographicSegment) => {
+  const matrixRows = marketSegmentNames(data).map((geographicSegment) => {
     const row = { geographicSegment };
     behaviouralNames.forEach((behaviouralSegment) => {
       row[behaviouralSegment] = Number(
@@ -2238,29 +2255,35 @@ function FirmographicPage({ data }) {
   return (
     <>
       <PageTitle
-        eyebrow="Firmographic customer-market segmentation"
-        title="Combine behaviour with geographic market context"
-        description="Each customer receives a derived customer-market label formed from a dynamic behavioural profile and an interpretable country-market profile, such as Highest Revenue per Customer Champions. The combinations use three geographic market groups and the stored behavioural assignment labels. Risk remains a separate customer label. These labels do not verify company size or legal business type."
+        eyebrow="Country-market and behavioural integration"
+        title="Interpret customer behaviour in country-market context"
+        description="Each observed customer is linked to a country-market group and their current behavioural cluster. The combined labels and charts show where customer profiles occur and how their purchasing differs across markets. This is a cross-classification of two existing assignments, not a third clustering model or a verified classification of customer companies."
       />
       <section className="integration-banner">
         <div><span>Behavioural segment</span><strong>How the customer behaves</strong></div>
         <b>+</b>
-        <div><span>Geographic segment</span><strong>What type of market they purchase in</strong></div>
+        <div><span>Country-market group</span><strong>What type of market they purchase in</strong></div>
         <b>=</b>
-        <div><span>Firmographic segment</span><strong>Customer behaviour in market context</strong></div>
+        <div><span>Combined interpretation</span><strong>Customer behaviour in market context</strong></div>
       </section>
 
       <div className="metric-grid metric-grid-six">
         <MetricCard label="Customers" value={formatNumber(summary.customers)} detail={cycleLabel(analytics.latestCycle)} />
-        <MetricCard label="Firmographic groups" value={formatNumber(summary.firmographicSegments)} detail="Occupied combinations" tone="gold" />
-        <MetricCard label="Geographic segments" value={formatNumber(summary.geographicSegments)} detail={`${formatNumber(summary.markets)} markets`} tone="blue" />
+        <MetricCard label="Market–behaviour combinations" value={formatNumber(summary.firmographicSegments)} detail="Occupied combinations" tone="gold" />
+        <MetricCard label="Country-market groups" value={formatNumber(summary.geographicSegments)} detail={`${formatNumber(summary.markets)} markets`} tone="blue" />
         <MetricCard label="Behavioural segments" value={formatNumber(summary.behaviouralSegments)} detail="Dynamic RFM groups" tone="green" />
         <MetricCard label="Active customers" value={formatNumber(summary.activeCustomers)} detail="Current cycle purchasers" />
         <MetricCard label="Average confidence" value={formatPercent(summary.averageMembership)} detail="Fuzzy membership" tone="purple" />
       </div>
 
+      <Panel title="What the combined evidence shows" eyebrow={cycleLabel(analytics.latestCycle)}>
+        {leadingCombination && <p className="method-copy">The largest observed combination is <strong>{leadingCombination.behaviouralSegment}</strong> within <strong>{leadingCombination.geographicSegment}</strong>: {formatNumber(leadingCombination.customers)} customers{Number(summary.customers) > 0 ? ` (${formatPercent(Number(leadingCombination.customers) / Number(summary.customers))} of the recorded customer base)` : ''}. This identifies where a behavioural profile is concentrated in this retailer’s observed markets.</p>}
+        <p className="method-copy">Compare the behavioural composition within each market group with customer activity, purchasing value and product evidence before choosing an action. For example, a substantial inactive profile can identify customers to investigate for reactivation, while recent repeat-purchase profiles can support a retention review. The labels alone do not demonstrate a successful campaign or establish why a customer stopped purchasing.</p>
+        <p className="panel-note">Country-market groups use only the six commercial inputs. Behavioural profiles are added afterwards for interpretation. Baseline market names remain fixed across cycles, so inspect the current measures rather than assuming a market’s characteristics never change. Small country samples and the concentration of customers in the UK limit comparisons.</p>
+      </Panel>
+
       <div className="content-grid two-one">
-        <Panel title="Largest firmographic combinations" eyebrow={cycleLabel(analytics.latestCycle)}>
+        <Panel title="Largest market–behaviour combinations" eyebrow={cycleLabel(analytics.latestCycle)}>
           <div className="chart-xl">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={combinationChart} layout="vertical" margin={{ left: 160, right: 18 }}>
@@ -2290,7 +2313,7 @@ function FirmographicPage({ data }) {
       </div>
 
       <div className="content-grid equal">
-        <Panel title="Behaviour within each market segment" eyebrow="Firmographic composition matrix">
+        <Panel title="Behaviour within each market segment" eyebrow="Customer profiles by country-market group">
           <div className="chart-large">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={matrixRows} margin={{ bottom: 36 }}>
@@ -2306,7 +2329,7 @@ function FirmographicPage({ data }) {
             </ResponsiveContainer>
           </div>
         </Panel>
-        <Panel title="Firmographic customer evolution" eyebrow="Customer base by market segment">
+        <Panel title="Customers across country-market groups" eyebrow="Customer base by market segment">
           <div className="chart-large">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={evolution}>
@@ -2315,8 +2338,8 @@ function FirmographicPage({ data }) {
                 <YAxis />
                 <Tooltip content={<ChartTooltip valueFormatter={(value) => `${formatNumber(value)} customers`} />} />
                 <Legend />
-                {GEOGRAPHIC_SEGMENTS.map((segment) => (
-                  <Area key={segment} dataKey={segment} stackId="markets" stroke={GEOGRAPHIC_COLORS[segment]} fill={GEOGRAPHIC_COLORS[segment]} fillOpacity={0.72} />
+                {marketSegmentNames(data).map((segment) => (
+                  <Area key={segment} dataKey={segment} stackId="markets" stroke={marketSegmentColor(segment, data)} fill={marketSegmentColor(segment, data)} fillOpacity={0.72} />
                 ))}
               </AreaChart>
             </ResponsiveContainer>
@@ -2324,12 +2347,12 @@ function FirmographicPage({ data }) {
         </Panel>
       </div>
 
-      <Panel title="Firmographic segment detail" eyebrow="Behavioural and geographic combination">
+      <Panel title="Market–behaviour combination detail" eyebrow="Behavioural and geographic combination">
         <DataTable
           rows={combinations}
           columns={[
-            { key: 'firmographicSegment', label: 'Firmographic segment' },
-            { key: 'geographicSegment', label: 'Geographic segment' },
+            { key: 'firmographicSegment', label: 'Combined customer–market label' },
+            { key: 'geographicSegment', label: 'Country-market group' },
             { key: 'behaviouralSegment', label: 'Behavioural segment', render: (value) => <SegmentBadge segment={value} /> },
             { key: 'customers', label: 'Customers', render: formatNumber },
             { key: 'activeCustomers', label: 'Active', render: formatNumber },
@@ -2358,7 +2381,7 @@ function FigureGallery({ artifacts, limit }) {
                 <img src={apiAssetUrl(artifact.imageUrl)} alt={meta.title} loading="lazy" />
               </div>
               <div>
-                <span>{artifact.category}</span>
+                <span>{artifactCategoryLabel(artifact.category)}</span>
                 <h3>{meta.title}</h3>
                 <p>{meta.description}</p>
               </div>
@@ -2372,7 +2395,7 @@ function FigureGallery({ artifacts, limit }) {
             <button className="modal-close" onClick={() => setActiveImage(null)} aria-label="Close figure">×</button>
             <img src={apiAssetUrl(activeImage.artifact.imageUrl)} alt={activeImage.meta.title} />
             <div>
-              <span className="eyebrow">{activeImage.artifact.category}</span>
+              <span className="eyebrow">{artifactCategoryLabel(activeImage.artifact.category)}</span>
               <h2>{activeImage.meta.title}</h2>
               <p>{activeImage.meta.description}</p>
             </div>
@@ -2409,6 +2432,44 @@ function SemanticConsistencyPanel({ audit }) {
       ]} />
       <p className="method-copy">The four movement columns partition actual tracking-ID changes. “Both” means either change on its own crosses a boundary; “Combined effect” means the changes together cross it. These geometric diagnostics support interpretation and do not establish a causal explanation. {formatNumber(totals.unchangedRfmMigrants)} migrations had numerically unchanged RFM. Relative naming rules remain descriptive study choices.</p>
     </> : <p className="method-copy">The current run has no saved continuity audit. Numerical evidence is shown only after that audit is available.</p>}
+  </Panel>;
+}
+
+function CountryMarketSelection({ data, showTable = false }) {
+  const selection = data.geographicAnalytics?.kSelection || data.modelEvaluation?.geographicMethod?.kSelection || {};
+  const rows = (selection.rows || selection.candidates || []).map(row => ({
+    k: Number(row.k ?? row.K),
+    inertia: row.inertia ?? row.Inertia,
+    silhouette: row.silhouette ?? row.SilhouetteScore,
+    clusterSizes: row.clusterSizes ?? row.ClusterSizes,
+  })).filter(row => row.k >= 2 && row.k <= 10).sort((a, b) => a.k - b.k);
+  const selectedK = selection.selectedK;
+  const silhouetteBestK = selection.selection?.highestSilhouetteK ?? selection.silhouetteBestK;
+  const bestRow = rows.find(row => row.k === Number(silhouetteBestK));
+  const selectedRow = rows.find(row => row.k === Number(selectedK));
+  const figures = (data.artifacts || []).filter(artifact => artifact.imageUrl && /(?:^|\/)country_market_(?:k_selection|elbow_wcss|silhouette_by_k|wcss_k2_k10|silhouette_k2_k10)\.png$/i.test(String(artifact.relativePath || '')));
+  return <Panel title="Country-market K selection: K=2–10" eyebrow="Cycle 0 · six commercial inputs">
+    {rows.length ? <>
+      <p className="method-copy">The accepted market model uses K={formatNumber(selectedK)}. WCSS / inertia and its elbow are the primary evidence; silhouette and the observed country profiles support interpretation. The endpoint-chord elbow is a heuristic over the tested K=2–10 range, and the neighbouring K=4–5 bend is shallow. This is separate from behavioural Cycle 0 K selection.</p>
+      <div className="metric-grid metric-grid-four">
+        <MetricCard label="Accepted market K" value={formatNumber(selectedK)} detail="Elbow-led choice" />
+        <MetricCard label="WCSS at accepted K" value={selectedRow?.inertia == null ? 'Unavailable' : formatDecimal(selectedRow.inertia, 2)} detail="Six-feature country-market space" />
+        <MetricCard label="Silhouette at accepted K" value={selectedRow?.silhouette == null ? 'Unavailable' : formatDecimal(selectedRow.silhouette, 3)} detail="Supporting evidence" />
+        <MetricCard label="Highest-silhouette K" value={silhouetteBestK == null ? 'Unavailable' : formatNumber(silhouetteBestK)} detail={bestRow?.silhouette == null ? 'Not the primary selection criterion' : `Silhouette ${formatDecimal(bestRow.silhouette, 3)}`} />
+      </div>
+      <div className="evaluation-metric-grid evaluation-metric-grid-two">
+        <EvaluationMetricPlot title="Country-market WCSS elbow" direction="Primary K-selection evidence" rows={rows} field="inertia" xKey="k" xLabel="Number of market groups (K)" selectedX={Number(selectedK)} formatter={value => formatDecimal(value, 2)} />
+        <EvaluationMetricPlot title="Country-market silhouette by K" direction="Supporting evidence; higher is better" rows={rows} field="silhouette" xKey="k" xLabel="Number of market groups (K)" selectedX={Number(selectedK)} />
+      </div>
+      <p className="panel-note">{selection.interpretationNote || selection.selection?.rationale || 'Silhouette can prefer a different K from the WCSS elbow. Group names describe observed commercial profiles, and small country samples limit their interpretation.'}</p>
+      {showTable && <DataTable rows={rows} columns={[
+        { key: 'k', label: 'Candidate K', render: (value) => `${value}${Number(value) === Number(selectedK) ? ' · accepted' : ''}` },
+        { key: 'inertia', label: 'WCSS / inertia', render: value => value == null ? 'Unavailable' : formatDecimal(value, 3) },
+        { key: 'silhouette', label: 'Silhouette', render: value => value == null ? 'Unavailable' : formatDecimal(value, 3) },
+        { key: 'clusterSizes', label: 'Countries per fitted group', render: value => Array.isArray(value) ? value.join(' / ') : String(value || 'Unavailable') },
+      ]} />}
+      {figures.length > 0 && <details className="evaluation-export"><summary>View the saved country-market K-selection figures</summary><FigureGallery artifacts={figures} /></details>}
+    </> : <p className="method-copy">The country-market K-selection evidence is unavailable in the loaded run. No candidate scores are inferred.</p>}
   </Panel>;
 }
 
@@ -2485,6 +2546,8 @@ function ModelPage({ data }) {
       'dynamic segmentation',
       'validation',
       'methodology',
+      'country-market segmentation',
+      'country-market and behavioural integration',
       'geographic segmentation',
       'firmographic segmentation',
     ].includes(artifact.category) && artifact.imageUrl,
@@ -2500,7 +2563,7 @@ function ModelPage({ data }) {
     <main className="standalone-page">
       <PageTitle
         eyebrow="Model and methodology"
-        title="A behavioural and geographic firmographic model"
+        title="Customer behaviour, country markets and their integration"
         description="See how RFM features and fuzzy clustering describe changing customer behaviour, then how those profiles are compared with geographic markets."
         action={<StatusPill tone="success">{formatNumber(averages.convergedCycles)} of {formatNumber(averages.dynamicCycles)} cycle fits converged</StatusPill>}
       />
@@ -2569,12 +2632,18 @@ function ModelPage({ data }) {
         </Panel>
       </div>
 
-      <Panel title="How the three geographic market groups are formed" eyebrow="Country-market K-means · separate from behavioural MDFCM">
-        <p className="method-copy">Each observation is a country market. Exact trailing 90-day transactions provide customer count, positive paid sales, orders per customer, paid sales per customer, distinct product breadth, repeat-purchase rate, and stored behavioural-profile shares. These describe the country’s commercial activity and customer mix.</p>
-        <p className="method-copy">{geographicMethod.preprocessing || 'The scale measures are transformed with log1p; a RobustScaler is fitted on Cycle 0.'} K-means is fitted to the scaled Cycle 0 country features with K={geographicMethod.clusterCount || 3}, {geographicMethod.nInit || 50} initializations, and random seed {geographicMethod.randomState ?? 42}. {geographicMethod.laterCycles || 'Later snapshots use the frozen Cycle 0 scaler and centres.'}</p>
-        <p className="method-copy">{geographicMethod.selection || 'Three descriptive market groups are specified for the geographic analysis; behavioural elbow selection is a separate procedure.'} Baseline groups are named from their total revenue, then the remaining groups’ average revenue per customer: Largest Revenue Market, Highest Revenue-per-Customer Market, and Other Markets. A name describes the baseline group and can be less literal in later cycles.</p>
-        <p className="method-copy">{geographicMethod.risk || 'At-risk share is displayed as customer context and is excluded from the geographic fitting features.'} Geographic results combine with customer assignment labels to form customer-market labels. They do not establish company size, industry, or legal business type.</p>
-        <div className="chart-legend-row">{GEOGRAPHIC_SEGMENTS.map((segment) => <span key={segment}><i style={{ background: GEOGRAPHIC_COLORS[segment] }} />{segment}</span>)}</div>
+      <Panel title="Country-market segmentation: six commercial features" eyebrow="Country-market K-means · separate from behavioural MDFCM">
+        <p className="method-copy">Each observation is one country market. Six commercial inputs describe its scale and purchasing: customer count, positive paid sales, distinct paid invoices per active customer, paid sales per active customer, product diversity measured by distinct product descriptions, and repeat-purchase rate. Customer count includes all observed customers assigned to the country by the cutoff; the other measures use the exact trailing 90-day window. Repeat rate is the share of active customers with at least two paid invoices.</p>
+        <p className="method-copy">The first five inputs use log(1+x). A RobustScaler is fitted on Cycle 0, subtracting each feature’s median and dividing by its interquartile range. K-means is fitted directly to the six scaled inputs with {geographicMethod.nInit || 50} initializations and random seed {geographicMethod.randomState ?? 42}. No PCA or behavioural-profile shares are used in this market model. Later snapshots reuse the frozen Cycle 0 scaler and centres and are assigned to the nearest market centre.</p>
+        <p className="method-copy">K=2–10 is tested. WCSS / inertia and its elbow are the primary selection evidence; silhouette and the interpretation of the actual country groups provide supporting evidence. The accepted K={geographicMethod.clusterCount || data.geographicAnalytics?.clusterCount || '—'} is an elbow-led choice, not a claim that every quality measure selects the same K. Baseline labels describe the observed groups and are retained in later cycles for a consistent reference; they do not assert market potential or growth.</p>
+        <div className="chart-legend-row">{marketSegmentNames(data).map((segment) => <span key={segment}><i style={{ background: marketSegmentColor(segment, data) }} />{segment}</span>)}</div>
+      </Panel>
+
+      <CountryMarketSelection data={data} showTable />
+
+      <Panel title="Country-market and customer-behaviour integration" eyebrow="Interpret existing assignments together">
+        <p className="method-copy">After the country-market model is fitted using commercial features alone, each customer’s country is determined from paid invoices observed by that cutoff and links them to a market group. Their existing behavioural cluster is then combined with that market group. This cross-classification supports comparisons of customer value, behavioural composition, activity and product purchasing within and across markets; it does not fit another clustering model.</p>
+        <p className="method-copy">Behavioural-family shares and customer risk are contextual outputs in these combined views, not country-market fitting inputs. The recorded country and purchase history do not identify a customer company’s industry, employee count, annual turnover or legal business type. Associations in the charts are descriptive and do not establish causes of customer behaviour.</p>
       </Panel>
 
       <ModelComputationVisuals explainedVariance={data.pcaAnalytics?.explainedVariance} />
@@ -2761,6 +2830,7 @@ function EvaluationPage({ data }) {
   const baseline = report.baseline || evaluation.baseline || {};
   const dynamic = (report.dynamicCycles || evaluation.dynamicCycles || []).map(row => ({...row,cycleNumber:cycleIndex(row.CycleID)}));
   const geographic = report.geographic || {};
+  const marketK = data.modelEvaluation?.geographicMethod?.clusterCount ?? geographic.fittedK ?? data.geographicAnalytics.clusterCount;
   const marketRows = (geographic.cycles || data.geographicAnalytics?.quality || []).map(row => ({...row,cycleNumber:cycleIndex(row.CycleID)}));
   const latestMarket = marketRows.at(-1) || {};
   const baselineK = baseline.SelectedK ?? baseline.clusterCount;
@@ -2788,7 +2858,7 @@ function EvaluationPage({ data }) {
   ];
   return <main className="standalone-page evaluation-page">
     <PageTitle eyebrow="Model evaluation" title="Evaluate the baseline, dynamic cycles and geographic markets" description="Review the measured results in three stages. The panels use observed values from the current run; missing or inapplicable metrics are left unavailable." />
-    <nav className="evaluation-section-links" aria-label="Evaluation sections"><a href="#evaluation-baseline">Cycle 0</a><a href="#evaluation-dynamic">Cycles 1–9</a><a href="#evaluation-markets">Geographic markets</a></nav>
+    <nav className="evaluation-section-links" aria-label="Evaluation sections"><a href="#evaluation-baseline">Cycle 0</a><a href="#evaluation-dynamic">Cycles 1–9</a><a href="#evaluation-markets">Country markets</a></nav>
 
     <section id="evaluation-baseline" className="evaluation-section">
       <div className="evaluation-section-title"><span className="eyebrow">01 · Static baseline</span><h2>Cycle 0: K-means validation</h2><p>The accepted WCSS elbow chooses K={formatNumber(baselineK)}; silhouette is supporting evidence. This is one static baseline, so fuzzy membership and Xie–Beni do not apply.</p></div>
@@ -2815,9 +2885,10 @@ function EvaluationPage({ data }) {
     </section>
 
     <section id="evaluation-markets" className="evaluation-section">
-      <div className="evaluation-section-title"><span className="eyebrow">03 · Geographic and market model</span><h2>Geographic market segmentation validation</h2><p>The geographic model groups country markets into K=3 categories. K-means and RobustScaler are fitted on Cycle 0; later market snapshots use the fixed baseline reference. These results evaluate country markets, rather than individual customer clusters.</p></div>
+      <div className="evaluation-section-title"><span className="eyebrow">03 · Country-market model</span><h2>Country-market segmentation validation</h2><p>Six commercial features are used to compare K=2–10 on Cycle 0. WCSS elbow evidence leads the accepted K={formatNumber(marketK)}, with silhouette and interpretation as supporting measures. RobustScaler and K-means centres are fitted on Cycle 0 and reused for later country snapshots. Behavioural composition is interpreted after fitting and is not a market input.</p></div>
+      <CountryMarketSelection data={data} showTable />
       <div className="metric-grid metric-grid-six">
-        <MetricCard label="Geographic K" value={formatNumber(geographic.fittedK ?? data.geographicAnalytics.clusterCount)} detail="Specified baseline market groups" />
+        <MetricCard label="Country-market K" value={formatNumber(marketK)} detail="Elbow-led baseline market groups" />
         <MetricCard label="Country markets" value={formatNumber(latestMarket.Markets)} detail={cycleLabel(latestMarket.CycleID)} />
         <MetricCard label="Market silhouette" value={formatDecimal(latestMarket.SilhouetteScore,3)} detail="Latest market snapshot" />
         <MetricCard label="Market Davies–Bouldin" value={formatDecimal(latestMarket.DaviesBouldinScore,3)} detail="Lower is better" />
@@ -2828,7 +2899,7 @@ function EvaluationPage({ data }) {
         {definitions.slice(0,3).map(metric => <EvaluationMetricPlot key={metric.field} {...metric} rows={marketRows} />)}
         <EvaluationMetricPlot title="Distance to fixed market centres" direction="Squared-error total; scale and count sensitive" rows={marketRows} field="Inertia" formatter={value=>formatNumber(value)} />
         <EvaluationMetricPlot title="Country markets evaluated" direction="Population context; not a quality score" rows={marketRows} field="Markets" formatter={value=>formatNumber(value)} />
-        <EvaluationMetricPlot title="Occupied geographic groups" direction="Model context; baseline K=3" rows={marketRows} field="OccupiedK" formatter={value=>formatNumber(value)} />
+        <EvaluationMetricPlot title="Occupied country-market groups" direction={`Model context; baseline K=${formatNumber(marketK)}`} rows={marketRows} field="OccupiedK" formatter={value=>formatNumber(value)} />
       </div>
       <Panel title="Country-market validation by cycle" eyebrow="Fixed baseline scaler and centres">
         <DataTable rows={marketRows} columns={[
@@ -2856,7 +2927,7 @@ function ResearchPage({ data }) {
     <main className="standalone-page">
       <PageTitle
         eyebrow="Research figure library"
-        title="Explore the firmographic model’s visual evidence"
+        title="Explore the model’s visual evidence"
         description="Browse behavioural, geographic, customer, product, dynamic, baseline, and model-performance outputs generated by the executed model pipeline."
         action={(
           <a
@@ -2877,7 +2948,7 @@ function ResearchPage({ data }) {
       <div className="chip-row">
         {categories.map((name) => (
           <button key={name} className={category === name ? 'active' : ''} onClick={() => setCategory(name)}>
-            {name}
+            {artifactCategoryLabel(name)}
           </button>
         ))}
       </div>
@@ -2928,7 +2999,7 @@ function DataExplorerPage({ data }) {
           <p>
             Source: UCI Machine Learning Repository, dataset 352. The original dataset contains 541,909 transaction records recorded from December 2010 to December 2011.
             The model cleans the records, constructs cumulative customer snapshots, and stores reproducible behavioural,
-            geographic, firmographic, transition, and model evaluation outputs in SQLite.
+            country-market, market–behaviour integration, transition, and model evaluation outputs in SQLite.
           </p>
         </div>
         <a

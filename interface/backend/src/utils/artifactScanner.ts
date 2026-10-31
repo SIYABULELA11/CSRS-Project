@@ -16,8 +16,8 @@ const getCategory = (fullPath: string, ext: string): string => {
   if (normalized.includes("research_figures/baseline")) return "baseline";
   if (normalized.includes("research_figures/dynamic")) return "dynamic segmentation";
   if (normalized.includes("research_figures/validation")) return "validation";
-  if (normalized.includes("research_figures/geographic")) return "geographic segmentation";
-  if (normalized.includes("research_figures/firmographic")) return "firmographic segmentation";
+  if (normalized.includes("research_figures/geographic")) return "country-market segmentation";
+  if (normalized.includes("research_figures/market_behaviour") || normalized.includes("research_figures/firmographic")) return "country-market and behavioural integration";
   if (normalized.includes("radar") || normalized.includes("pca") || normalized.includes("cycle0")) {
     return "model diagnostics";
   }

@@ -29,10 +29,24 @@ import seaborn as sns
 
 RANDOM_STATE = 42
 GEOGRAPHIC_SEGMENTS = {
-    0: "Largest Revenue Market",
-    1: "Highest Revenue-per-Customer Market",
-    2: "Other Markets",
+    0: "UK-Dominated Market",
+    1: "High-Spend-per-Customer Markets",
+    2: "Higher-Repeat Overseas Markets",
+    3: "Lower-Volume Occasional-Purchase Markets",
 }
+GEOGRAPHIC_COLORS = {
+    "UK-Dominated Market": "#0d6f48",
+    "High-Spend-per-Customer Markets": "#2469a5",
+    "Higher-Repeat Overseas Markets": "#a66b16",
+    "Lower-Volume Occasional-Purchase Markets": "#8b60a8",
+}
+GEOGRAPHIC_K_POLICY = (
+    "Fit country-market K-means candidates K=2-10 on six Cycle 0 commercial features "
+    "after log1p on the first five and RobustScaler on all six (50 starts, seed 42). "
+    "Select the maximum normalized distance below the WCSS endpoint chord as the primary elbow rule. "
+    "Use silhouette, cluster sizes and observed commercial interpretation as supporting evidence, "
+    "without claiming the elbow maximizes silhouette. Freeze the selected model and scaling for later cycles."
+)
 FEATURE_COLUMNS = [
     "Log_R",
     "Log_F",
@@ -63,12 +77,6 @@ GEOGRAPHIC_FEATURE_COLUMNS = [
     "Log_Revenue_Per_Customer",
     "Log_Product_Diversity",
     "Repeat_Purchase_Rate",
-    "Champions_Share",
-    "Loyalists_Share",
-    "Mid_Tier_Occasionals_Share",
-    "Developing_Share",
-    "Hibernating_Lost_Share",
-    "Other_Customer_Segment_Share",
 ]
 
 
@@ -104,6 +112,8 @@ class PipelineArtifacts:
     geographic_features: pd.DataFrame
     geographic_segmentation: pd.DataFrame
     geographic_cycle_summary: pd.DataFrame
+    geographic_k_selection: pd.DataFrame
+    geographic_selection_summary: dict[str, Any]
     firmographic_segmentation: pd.DataFrame
     scaler: MinMaxScaler
     pca: PCA
@@ -1170,6 +1180,147 @@ def customer_country_asof(transactions: pd.DataFrame, snapshot_date: pd.Timestam
     ].reset_index(drop=True)
 
 
+def select_geographic_k(
+    baseline_scaled: np.ndarray,
+) -> tuple[KMeans, pd.DataFrame, dict[str, Any]]:
+    """Select baseline market K from WCSS; retain contrary silhouette evidence.
+
+    This selection is independent of behavioural K selection. The incoming rows
+    must be the current Cycle 0 countries, not pooled repeated country snapshots.
+    """
+    points = np.asarray(baseline_scaled, dtype=float)
+    if points.ndim != 2 or points.shape[1] != len(GEOGRAPHIC_FEATURE_COLUMNS):
+        raise ValueError("Country-market selection requires the six scaled commercial features")
+    if not np.isfinite(points).all() or len(points) < 4:
+        raise ValueError("Country-market selection requires at least four finite country rows")
+    maximum_k = min(10, len(points) - 1)
+    models: dict[int, KMeans] = {}
+    rows: list[dict[str, Any]] = []
+    for k in range(2, maximum_k + 1):
+        model = KMeans(n_clusters=k, n_init=50, random_state=RANDOM_STATE).fit(points)
+        counts = np.bincount(model.labels_, minlength=k)
+        if np.any(counts == 0):
+            continue
+        models[k] = model
+        rows.append({
+            "K": k,
+            "Inertia": float(model.inertia_),
+            "SilhouetteScore": float(silhouette_score(points, model.labels_)),
+            "Markets": int(len(points)),
+            "MinimumClusterSize": int(counts.min()),
+            "SingletonClusters": int(np.sum(counts == 1)),
+            "ClusterSizes": json.dumps(sorted(counts.tolist(), reverse=True)),
+        })
+    candidates = pd.DataFrame(rows)
+    if len(candidates) < 3:
+        raise ValueError("At least three distinct valid candidate partitions are needed for an elbow")
+    k_values = candidates["K"].to_numpy(dtype=float)
+    inertia = candidates["Inertia"].to_numpy(dtype=float)
+    inertia_range = inertia[0] - inertia[-1]
+    if inertia_range <= np.finfo(float).eps:
+        raise ValueError("Country-market WCSS has no usable elbow variation")
+    normalized_x = (k_values - k_values[0]) / (k_values[-1] - k_values[0])
+    normalized_y = (inertia - inertia[-1]) / inertia_range
+    candidates["ElbowDistance"] = (1.0 - normalized_x) - normalized_y
+    selected_k = int(candidates.loc[candidates["ElbowDistance"].idxmax(), "K"])
+    best_silhouette_row = candidates.loc[candidates["SilhouetteScore"].idxmax()]
+    strongest_bend = candidates.nlargest(2, "ElbowDistance")
+    bend_is_shallow = (
+        float(strongest_bend["ElbowDistance"].iloc[0] - strongest_bend["ElbowDistance"].iloc[1])
+        < 0.05 * max(float(strongest_bend["ElbowDistance"].iloc[0]), np.finfo(float).eps)
+    )
+    bend_note = (
+        f"K={int(strongest_bend['K'].iloc[0])} and K={int(strongest_bend['K'].iloc[1])} form a shallow bend. "
+        if bend_is_shallow else "The elbow location remains dependent on the tested K range. "
+    )
+    candidates["Selected"] = candidates["K"].eq(selected_k).astype(int)
+    candidates["CycleID"] = "Cycle_0"
+    summary: dict[str, Any] = {
+        "selectedK": selected_k,
+        "elbowK": selected_k,
+        "silhouetteBestK": int(best_silhouette_row["K"]),
+        "silhouetteBestScore": float(best_silhouette_row["SilhouetteScore"]),
+        "candidateRange": [int(k_values[0]), int(k_values[-1])],
+        "baselineCycle": "Cycle_0",
+        "markets": int(len(points)),
+        "featureColumns": GEOGRAPHIC_FEATURE_COLUMNS,
+        "featureCount": len(GEOGRAPHIC_FEATURE_COLUMNS),
+        "scaler": "Cycle 0 RobustScaler; reused unchanged in subsequent cycles",
+        "method": "K-means; n_init=50; random_state=42; no country-market PCA",
+        "selectionPolicy": GEOGRAPHIC_K_POLICY,
+        "interpretationNote": (
+            "The normalized endpoint-chord elbow is the primary decision rule, not proof of a unique optimum. "
+            + bend_note
+            + f"K={int(best_silhouette_row['K'])} has the highest silhouette. "
+            + f"K={selected_k} is retained as the elbow-led country-market summary; "
+            "cluster sizes and the silhouette disagreement must also be reviewed. "
+            "Names describe baseline commercial profiles and remain fixed later. "
+            "Behavioural profile shares are contextual outputs only, excluded from the six fitting inputs."
+        ),
+        "figures": {
+            "combined": "Geographic/country_market_k_selection.png",
+            "wcss": "Geographic/country_market_elbow_wcss.png",
+            "silhouette": "Geographic/country_market_silhouette_by_k.png",
+        },
+        "candidates": candidates.to_dict("records"),
+        "rows": [
+            {"k": int(row.K), "inertia": float(row.Inertia),
+             "silhouette": float(row.SilhouetteScore), "elbowDistance": float(row.ElbowDistance),
+             "selected": bool(row.Selected), "clusterSizes": json.loads(row.ClusterSizes),
+             "singletonClusters": int(row.SingletonClusters)}
+            for row in candidates.itertuples(index=False)
+        ],
+    }
+    return models[selected_k], candidates, summary
+
+
+def save_geographic_selection_evidence(
+    candidates: pd.DataFrame,
+    selection: dict[str, Any],
+    model_directory: Path,
+) -> None:
+    """Export baseline selection data and figures without refitting any model."""
+    model_directory = Path(model_directory)
+    output = model_directory / "Research_Figures" / "Geographic"
+    output.mkdir(parents=True, exist_ok=True)
+    candidates.to_csv(model_directory / "country_market_k_selection.csv", index=False)
+    (model_directory / "country_market_k_selection.json").write_text(
+        json.dumps(selection, indent=2), encoding="utf-8"
+    )
+    selected = candidates.loc[candidates["Selected"].eq(1)].iloc[0]
+    specs = [
+        ("Inertia", "WCSS / inertia", "Lower is better; elbow is the primary rule", "country_market_elbow_wcss"),
+        ("SilhouetteScore", "Mean silhouette score", "Higher is better; supporting evidence", "country_market_silhouette_by_k"),
+    ]
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5))
+    for axis, (column, title, subtitle, _) in zip(axes, specs):
+        axis.plot(candidates["K"], candidates[column], "o-", color="#0d6f48", linewidth=2)
+        axis.scatter([selected["K"]], [selected[column]], s=90, facecolors="white", edgecolors="#0d6f48", linewidths=2, zorder=4)
+        axis.axvline(selected["K"], linestyle=":", color="#0d6f48", alpha=0.4)
+        axis.set_title(f"{title}\n{subtitle}", fontsize=11)
+        axis.set_xlabel("Country-market K")
+        axis.set_ylabel(title)
+        axis.set_xticks(candidates["K"])
+        axis.grid(True, alpha=0.2)
+    fig.suptitle(f"Cycle 0 country-market selection: {selection['markets']} markets, six commercial features", fontsize=13)
+    fig.text(0.5, -0.01, f"Elbow-led K={selection['selectedK']}; silhouette peaks at K={selection['silhouetteBestK']}. Different criteria need not agree.", ha="center", fontsize=10)
+    fig.tight_layout()
+    for suffix in ["png", "svg"]:
+        fig.savefig(output / f"country_market_k_selection.{suffix}", dpi=220, bbox_inches="tight", facecolor="white")
+    plt.close(fig)
+    for column, title, subtitle, name in specs:
+        fig, axis = plt.subplots(figsize=(8, 5))
+        axis.plot(candidates["K"], candidates[column], "o-", color="#0d6f48", linewidth=2)
+        axis.scatter([selected["K"]], [selected[column]], s=90, facecolors="white", edgecolors="#0d6f48", linewidths=2, zorder=4)
+        axis.set(title=f"Cycle 0 country-market {title.lower()}\n{subtitle}", xlabel="Number of country-market clusters (K)", ylabel=title)
+        axis.set_xticks(candidates["K"])
+        axis.grid(True, alpha=0.2)
+        fig.tight_layout()
+        for suffix in ["png", "svg"]:
+            fig.savefig(output / f"{name}.{suffix}", dpi=220, bbox_inches="tight", facecolor="white")
+        plt.close(fig)
+
+
 def order_geographic_clusters(
     baseline_features: pd.DataFrame,
     raw_labels: np.ndarray,
@@ -1187,23 +1338,31 @@ def order_geographic_clusters(
     remaining.remove(dominant)
     high_value = int(profile.loc[list(remaining), "Revenue_Per_Customer"].idxmax())
     remaining.remove(high_value)
-    other = int(next(iter(remaining)))
-    mapping = {dominant: 0, high_value: 1, other: 2}
+    ordered_other = sorted(
+        remaining,
+        key=lambda raw: (-float(profile.loc[raw, "Repeat_Purchase_Rate"]), -float(profile.loc[raw, "Revenue"]), raw),
+    )
+    mapping = {dominant: 0, high_value: 1}
+    mapping.update({raw: index + 2 for index, raw in enumerate(ordered_other)})
     profile["Geographic_Cluster_Number"] = [mapping[int(raw)] for raw in profile.index]
     profile["Geographic_Segment_Name"] = profile["Geographic_Cluster_Number"].map(
-        GEOGRAPHIC_SEGMENTS
+        lambda number: GEOGRAPHIC_SEGMENTS.get(number, f"Country-Market Group {number + 1}")
     )
     return mapping, profile.reset_index()
 
 
 def firmographic_name(geographic_segment: str, behavioural_segment: str) -> str:
     prefixes = {
+        "UK-Dominated Market": "UK-Dominated Market",
+        "High-Spend-per-Customer Markets": "High-Spend-per-Customer Market",
+        "Higher-Repeat Overseas Markets": "Higher-Repeat Overseas Market",
+        "Lower-Volume Occasional-Purchase Markets": "Lower-Volume Occasional-Purchase Market",
         "Largest Revenue Market": "Largest Revenue",
         "Highest Revenue-per-Customer Market": "Highest Revenue per Customer",
         "Other Markets": "Other Market",
     }
     prefix = prefixes.get(geographic_segment, geographic_segment.replace(" Market", ""))
-    return f"{prefix} {behavioural_segment}"
+    return f"{prefix} / {behavioural_segment}"
 
 
 SNAPSHOT_STATE_COLUMNS = ["Is_Model_Fit", "Current_Period_Orders", "Current_Period_Revenue", "Current_Period_Products", "Current_Period_Quantity"]
@@ -1788,8 +1947,10 @@ def run_pipeline(source_path: Path) -> PipelineArtifacts:
     baseline_geographic_scaled = geographic_scaler.fit_transform(
         baseline_geographic_raw[GEOGRAPHIC_FEATURE_COLUMNS]
     )
-    geographic_kmeans = KMeans(n_clusters=3, n_init=50, random_state=RANDOM_STATE)
-    baseline_geographic_labels_raw = geographic_kmeans.fit_predict(baseline_geographic_scaled)
+    geographic_kmeans, geographic_k_selection, geographic_selection_summary = select_geographic_k(
+        baseline_geographic_scaled
+    )
+    baseline_geographic_labels_raw = geographic_kmeans.labels_
     geographic_mapping, _ = order_geographic_clusters(
         baseline_geographic_raw, baseline_geographic_labels_raw
     )
@@ -1809,7 +1970,7 @@ def run_pipeline(source_path: Path) -> PipelineArtifacts:
         ]
         geographic_features["Geographic_Segment_Name"] = geographic_features[
             "Geographic_Cluster_Number"
-        ].map(GEOGRAPHIC_SEGMENTS)
+        ].map(lambda number: GEOGRAPHIC_SEGMENTS.get(number, f"Country-Market Group {number + 1}"))
         for index, column in enumerate(GEOGRAPHIC_FEATURE_COLUMNS):
             geographic_features[f"Scaled_{column}"] = geographic_scaled[:, index]
         geographic_feature_frames.append(geographic_features)
@@ -1845,6 +2006,9 @@ def run_pipeline(source_path: Path) -> PipelineArtifacts:
             {
                 "CycleID": cycle.cycle_id,
                 "Markets": int(len(geographic_features)),
+                "SelectedK": int(geographic_kmeans.n_clusters),
+                "OccupiedGroups": int(np.unique(raw_labels).size),
+                "WCSS": float(np.square(geographic_scaled - geographic_kmeans.cluster_centers_[raw_labels]).sum()),
                 "SilhouetteScore": geo_metrics["silhouette"],
                 "DaviesBouldinScore": geo_metrics["davies_bouldin"],
                 "CalinskiHarabaszScore": geo_metrics["calinski_harabasz"],
@@ -1939,6 +2103,8 @@ def run_pipeline(source_path: Path) -> PipelineArtifacts:
         geographic_features=geographic_features,
         geographic_segmentation=geographic_segmentation,
         geographic_cycle_summary=geographic_cycle_summary,
+        geographic_k_selection=geographic_k_selection,
+        geographic_selection_summary=geographic_selection_summary,
         firmographic_segmentation=firmographic_segmentation,
         scaler=scaler,
         pca=pca,
@@ -1971,6 +2137,9 @@ def save_models(artifacts: PipelineArtifacts, model_directory: Path) -> None:
     joblib.dump(artifacts.baseline_kmeans, model_directory / "cycle0_kmeans_model.pkl")
     joblib.dump(artifacts.geographic_scaler, model_directory / "cycle0_geographic_scaler.pkl")
     joblib.dump(artifacts.geographic_kmeans, model_directory / "cycle0_geographic_kmeans.pkl")
+    save_geographic_selection_evidence(
+        artifacts.geographic_k_selection, artifacts.geographic_selection_summary, model_directory
+    )
     behavioural_segments_by_cycle = {
         "Cycle_0": sorted(artifacts.baseline_segmentation["Segment_Name"].dropna().unique().tolist())
     }
@@ -1993,8 +2162,10 @@ def save_models(artifacts: PipelineArtifacts, model_directory: Path) -> None:
         "business_profile_centroid_policy": "Primary movement plots show actual fitted centres and stable IDs; separate group-mean plots are descriptive summaries only.",
         "behavioural_label_semantics": "Profile-derived and cycle-specific; labels are not persistent cluster identities.",
         "geographic_segments": GEOGRAPHIC_SEGMENTS,
-        "geographic_method": "Exact trailing90-day country commercial features: log customer count, sales, orders/customer, sales/customer, product diversity, repeat rate and five broad behavioural-family shares plus Other. Nine reporting categories are mapped back to five broad market families after removing centre qualifiers. Baseline RobustScaler then K-means K3 (n_init50, seed42); later markets use frozen nearest-centre prediction. Risk share is contextual, excluded from fitting.",
-        "geographic_k_policy": "Cycle 0 geographic K=3 is a pre-specified descriptive market taxonomy, separate from behavioural K selection; this market count is not selected by the behavioural WCSS elbow.",
+        "geographic_method": "Six country-market commercial inputs: log1p customer count, trailing90-day sales, invoices per active customer, sales per active customer and distinct product descriptions, plus unlogged repeat-purchase rate. Baseline RobustScaler and elbow-led K-means; frozen scaler and nearest-centre prediction later. Country-market PCA is not used. Behavioural composition and risk shares are contextual only, excluded from the country-market fit.",
+        "geographic_k_policy": GEOGRAPHIC_K_POLICY,
+        "geographic_k_selection": artifacts.geographic_selection_summary,
+        "market_behavioural_integration": "Cross-classify each customer's country-market group and behavioural profile; interpret their combined commercial context. This is not a third clustering model and does not establish company size, industry or other firmographic attributes.",
         "cycle_country_policy": "Cycle-level customer-to-market assignment uses each customer's most frequent distinct paid invoice country through the cycle snapshot; ties are resolved alphabetically. Customer.Country remains an all-history transaction-row mode and is not used for cycle-level market assignment.",
         "behavioural_cluster_mapping": artifacts.behavioural_cluster_mapping,
         "geographic_cluster_mapping": artifacts.geographic_cluster_mapping,
@@ -2016,7 +2187,7 @@ def save_models(artifacts: PipelineArtifacts, model_directory: Path) -> None:
         "cluster_identity_policy": "One-to-one minimum-cost matching by normalized centre distance and fuzzy-membership weighted Jaccard across shared customers, with dummy unmatched options; continue an ID only when weighted Jaccard >=0.05 and match cost is less than the combined retirement/creation cost; unmatched centres retire or receive a new provisional ID. The SQLite column CustomerOverlapJaccard is a legacy name for this weighted fuzzy score.",
         "dynamic_observation_adaptation": "One current trailing90-day observation per observed customer, replacing their prior snapshot; no duplicate historical membership mass.",
         "research_title": "Dynamic Customer Segmentation in Retail using Clustering",
-        "firmographic_definition": "Firmographic customer-market segmentation operationalised through behavioural customer segments and geographic market segments.",
+        "firmographic_definition": "Legacy key for country-market and behavioural integration: a descriptive cross-classification of current customer behaviour and country-market context, without verified organisational attributes or a third clustering fit.",
     }
     (model_directory / "model_metadata.json").write_text(
         json.dumps(model_metadata, indent=2), encoding="utf-8"
@@ -2168,6 +2339,7 @@ def write_database(artifacts: PipelineArtifacts, database_path: Path) -> None:
         "Geographic_Market_Features": artifacts.geographic_features,
         "Geographic_Segmentation": artifacts.geographic_segmentation,
         "Geographic_Cycle_Summary": artifacts.geographic_cycle_summary,
+        "Geographic_K_Selection": artifacts.geographic_k_selection,
         "Firmographic_Customer_Segmentation": artifacts.firmographic_segmentation,
         "Model_Metadata": pd.DataFrame(
             [
@@ -2177,7 +2349,7 @@ def write_database(artifacts: PipelineArtifacts, database_path: Path) -> None:
                 },
                 {
                     "MetadataKey": "FirmographicDefinition",
-                    "MetadataValue": "Firmographic customer-market segmentation operationalised through behavioural customer segments and geographic market segments.",
+                    "MetadataValue": "Legacy internal table name only. Country-market and customer-behaviour integration cross-classifies existing assignments; it does not measure organisational firmographics or fit a third clustering model.",
                 },
                 {"MetadataKey": "BehaviouralWindowMonths", "MetadataValue": "3"},
                 {"MetadataKey": "AnalysisCycles", "MetadataValue": "Cycle_0 through Cycle_9"},
@@ -2196,7 +2368,11 @@ def write_database(artifacts: PipelineArtifacts, database_path: Path) -> None:
                 {"MetadataKey": "ReportingLabelPolicy", "MetadataValue": LABEL_POLICY},
                 {"MetadataKey": "CustomerRiskPolicy", "MetadataValue": RISK_POLICY},
                 {"MetadataKey": "BusinessProfileCentroidPolicy", "MetadataValue": "Legacy business-profile means are contextual aggregates. The primary centroid_movement_cycles_0_9 figure and registry use actual K-means/MDFCM fitted centres and provisional tracking IDs, including all current fitted customers."},
-                {"MetadataKey": "GeographicKPolicy", "MetadataValue": "Cycle 0 geographic K=3 is a pre-specified descriptive market taxonomy, separate from behavioural WCSS-elbow selection."},
+                {"MetadataKey": "GeographicKPolicy", "MetadataValue": GEOGRAPHIC_K_POLICY},
+                {"MetadataKey": "GeographicMethod", "MetadataValue": "Six country-market commercial inputs; first five log1p transformed, all six scaled by baseline RobustScaler. K-means fitted on Cycle 0, frozen nearest-centre assignment in later cycles. Behavioural shares are interpretation context only; no country-market PCA."},
+                {"MetadataKey": "GeographicFeatures", "MetadataValue": json.dumps(GEOGRAPHIC_FEATURE_COLUMNS)},
+                {"MetadataKey": "GeographicKSelection", "MetadataValue": json.dumps(artifacts.geographic_selection_summary)},
+                {"MetadataKey": "MarketBehaviouralIntegration", "MetadataValue": "Cross-classify current behavioural profile and country-market group using each customer's as-of country. Combined labels are descriptive interpretation, not a third clustering fit or verified firmographic categories."},
                 {"MetadataKey": "CycleCountryAssignmentPolicy", "MetadataValue": "Assign each customer to the most frequent distinct paid-invoice country through the cycle snapshot; alphabetical tie-break. Customer master country is all-history only."},
                 {"MetadataKey": "ClusterIdentityPolicy", "MetadataValue": "Continue tracking ID only with fuzzy-membership weighted Jaccard >=0.05 across shared customers and combined normalized-centre/overlap cost <1 (less than retirement plus creation); otherwise retire/create provisional IDs. SQLite column CustomerOverlapJaccard retains its legacy name."},
                 {"MetadataKey": "InactiveCustomerPolicy", "MetadataValue": "Every observed customer enters each current fit, including non-purchasers. Current snapshot replaces the prior observation for that ID. Activity_Status is commercial activity, not fitting eligibility; memberships are freshly updated."},
@@ -2418,17 +2594,13 @@ def create_figures(artifacts: PipelineArtifacts, figure_directory: Path) -> None
         artifacts.geographic_segmentation["CycleID"].eq("Cycle_9")
     ].sort_values("Revenue", ascending=True)
     plt.figure(figsize=(10, 9))
-    geo_colors = {
-        "Largest Revenue Market": "#0d6f48",
-        "Highest Revenue-per-Customer Market": "#2469a5",
-        "Other Markets": "#bb7925",
-    }
+    geo_colors = GEOGRAPHIC_COLORS
     plt.barh(
         latest_geo["Country"],
         latest_geo["Revenue"],
         color=latest_geo["Geographic_Segment_Name"].map(geo_colors),
     )
-    plt.title("Cycle 9 geographic market segmentation")
+    plt.title("Cycle 9 country-market segmentation")
     plt.xlabel("Three-month rolling revenue")
     plt.ylabel("Country market")
     _save_figure(figure_directory / "Geographic" / "cycle9_market_segments.png")
@@ -2449,7 +2621,7 @@ def create_figures(artifacts: PipelineArtifacts, figure_directory: Path) -> None
             label=segment_name,
             color=geo_colors[segment_name],
         )
-    plt.title("Geographic market segments from Cycle 0 to Cycle 9")
+    plt.title("Country-market groups from Cycle 0 to Cycle 9")
     plt.xlabel("Cycle")
     plt.ylabel("Country markets")
     plt.xticks(range(0, 10))
@@ -2468,9 +2640,9 @@ def create_figures(artifacts: PipelineArtifacts, figure_directory: Path) -> None
     )
     plt.figure(figsize=(11, 7))
     plt.barh(top_firmographic.index, top_firmographic.values, color="#178f5d")
-    plt.title("Cycle 9 firmographic customer-market segments")
+    plt.title("Cycle 9 country-market and behavioural integration")
     plt.xlabel("Customers")
-    plt.ylabel("Firmographic segment")
+    plt.ylabel("Country-market / behavioural profile")
     _save_figure(figure_directory / "Firmographic" / "cycle9_firmographic_segments.png")
 
 
@@ -2590,10 +2762,15 @@ def validate_artifacts(artifacts: PipelineArtifacts) -> dict[str, Any]:
         raise AssertionError("A fitted local centroid maps to more than one stable tracking ID")
     if set(artifacts.geographic_segmentation["CycleID"].unique()) != expected_cycles:
         raise AssertionError("Geographic segmentation does not cover all cycles")
-    if artifacts.geographic_segmentation["Geographic_Segment_Name"].nunique() != 3:
-        raise AssertionError("The geographic model did not produce three market segments")
+    selected_market_k = int(artifacts.geographic_kmeans.n_clusters)
+    if artifacts.geographic_segmentation["Geographic_Segment_Name"].nunique() != selected_market_k:
+        raise AssertionError("Country-market group count does not match the elbow-selected K")
+    if artifacts.geographic_k_selection["Selected"].sum() != 1:
+        raise AssertionError("Country-market K selection must identify one elbow choice")
+    if len(GEOGRAPHIC_FEATURE_COLUMNS) != 6 or artifacts.geographic_kmeans.n_features_in_ != 6:
+        raise AssertionError("Country-market fit must use only six commercial features")
     if set(artifacts.firmographic_segmentation["CycleID"].unique()) != expected_cycles:
-        raise AssertionError("Firmographic customer-market results do not cover Cycle 0-9")
+        raise AssertionError("Country-market and behavioural integration does not cover Cycle 0-9")
     if artifacts.baseline_segmentation["Optimal_K_Value"].nunique() != 1:
         raise AssertionError("Cycle 0 baseline must have one selected K")
     selected_k = int(artifacts.baseline_segmentation["Optimal_K_Value"].iloc[0])

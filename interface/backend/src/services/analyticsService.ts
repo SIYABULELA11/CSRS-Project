@@ -52,6 +52,65 @@ const evaluationReport = (): Record<string, unknown> => {
   } catch { return { available: false }; }
 };
 
+const countryMarketKSelection = (): Record<string, unknown> => {
+  const filename = path.join(path.dirname(env.databasePath), "country_market_k_selection.json");
+  if (!fs.existsSync(filename)) return { available: false, reason: "Country-market K selection has not been exported for this run." };
+  try {
+    const report = JSON.parse(fs.readFileSync(filename, "utf8"));
+    const candidates = report?.rows ?? report?.candidates;
+    const rows = Array.isArray(candidates) ? candidates.map((row) => ({
+      ...row,
+      k: Number(row.k ?? row.K),
+      inertia: Number(row.inertia ?? row.Inertia),
+      silhouette: Number(row.silhouette ?? row.SilhouetteScore),
+      clusterSizes: row.clusterSizes ?? row.ClusterSizes,
+      selected: Boolean(row.selected ?? row.Selected),
+    })).sort((left, right) => left.k - right.k) : null;
+    if (!Array.isArray(rows) || rows.length !== 9 || rows.some((row: Record<string, unknown>, index: number) =>
+      Number(row.k) !== index + 2 || !Number.isFinite(row.inertia) || !Number.isFinite(row.silhouette)
+    ) || !Number.isInteger(report.selectedK) || report.selectedK < 2 || report.selectedK > 10) {
+      throw new Error("Invalid country-market selection report");
+    }
+    const figureUrls: Record<string, string> = {};
+    for (const [kind, relativePath] of Object.entries(report.figures ?? {})) {
+      if (typeof relativePath !== "string") continue;
+      const absolute = path.resolve(env.artifactRoot, relativePath);
+      const relative = path.relative(env.artifactRoot, absolute);
+      if (!relative.startsWith("..") && !path.isAbsolute(relative) && fs.existsSync(absolute)) {
+        figureUrls[kind] = `/api/files/${encodeURIComponent(relativePath.replace(/\\/g, "/"))}`;
+      }
+    }
+    return {
+      ...report,
+      available: true,
+      fitCycle: report.fitCycle ?? report.baselineCycle,
+      features: report.features ?? report.featureColumns,
+      rows,
+      selection: report.selection ?? {
+        primary: report.selectionPolicy,
+        elbowK: report.elbowK,
+        highestSilhouetteK: report.silhouetteBestK,
+        rationale: report.interpretationNote,
+      },
+      figureUrls,
+    };
+  } catch {
+    return { available: false, reason: "The country-market selection report could not be read or validated." };
+  }
+};
+
+const countryMarketFeatures = [
+  "Log_Customer_Count", "Log_Revenue", "Log_Orders_Per_Customer",
+  "Log_Revenue_Per_Customer", "Log_Product_Diversity", "Repeat_Purchase_Rate",
+];
+
+const marketIntegrationMethod = {
+  name: "Country-market and behavioural integration",
+  method: "Cross-classification of each customer's behavioural profile with the country-market group assigned to their as-of country.",
+  interpretation: "Compare customer behaviour within and across commercial market groups. This is an interpretation layer, not a third clustering model or a measurement of company characteristics.",
+  separation: "Country clusters use six commercial features only; behavioural composition is interpreted after country-market fitting and does not determine the market groups.",
+};
+
 const toNumber = (value: unknown): number => {
   const numericValue = Number(value);
   return Number.isFinite(numericValue) ? numericValue : 0;
@@ -157,6 +216,10 @@ const getLatestCycle = (): string => {
 };
 
 export class AnalyticsService {
+  getCountryMarketKSelection(): Record<string, unknown> {
+    return countryMarketKSelection();
+  }
+
   getSchema(): Array<{ table: string; columns: string[]; rowCount: number }> {
     return schemaRepository.getAllSchemas().map((schema) => ({
       ...schema,
@@ -538,20 +601,23 @@ export class AnalyticsService {
         unit: 'country market',
         fitCycle: 'Cycle_0',
         preprocessing: 'Log1p for customer count, paid sales, orders per customer, revenue per customer and product diversity; RobustScaler fitted on Cycle 0.',
-        features: [
-          'Log_Customer_Count', 'Log_Revenue', 'Log_Orders_Per_Customer',
-          'Log_Revenue_Per_Customer', 'Log_Product_Diversity', 'Repeat_Purchase_Rate',
-          'Champions_Share', 'Loyalists_Share', 'Mid_Tier_Occasionals_Share',
-          'Developing_Share', 'Hibernating_Lost_Share', 'Other_Customer_Segment_Share',
-        ],
+        features: countryMarketFeatures,
+        featureCount: countryMarketFeatures.length,
         nInit: 50,
         randomState: 42,
         laterCycles: 'Apply the fixed Cycle 0 scaler and K-means centres to each later country snapshot.',
-        selection: 'Three descriptive market groups specified for this analysis; the behavioural elbow selection is separate.',
-        groups: ['Largest Revenue Market', 'Highest Revenue-per-Customer Market', 'Other Markets'],
-        risk: 'At-risk share is reported as customer context and is not a geographic clustering feature.',
-        interpretation: 'Market groups summarize country-level commercial activity and customer mix. They do not establish company size, industry or other company attributes.',
+        selection: 'Evaluate K=2–10 on Cycle 0; use the WCSS/inertia elbow as the primary criterion, with silhouette and commercial interpretation as supporting evidence. An elbow choice is a heuristic, not proof of a unique optimum.',
+        kSelection: countryMarketKSelection(),
+        groups: repository.runMany(`
+          SELECT DISTINCT Geographic_Cluster_Number, Geographic_Segment_Name
+          FROM Geographic_Segmentation WHERE CycleID = 'Cycle_0'
+          ORDER BY Geographic_Cluster_Number
+        `).map((row) => String(row.Geographic_Segment_Name)),
+        risk: 'Behavioural-family and at-risk shares provide interpretation only; they are excluded from the country-market clustering features.',
+        interpretation: 'Market groups summarize observed country-level commercial activity, not physical proximity, whole-country market potential, company size or industry.',
+        dimensionality: 'K-means fits the six robust-scaled commercial inputs directly; no PCA is applied to the country-market model.',
       },
+      marketIntegrationMethod,
     };
   }
 
@@ -1014,6 +1080,12 @@ export class AnalyticsService {
       evolution,
       quality,
       behaviouralEvolution,
+      kSelection: countryMarketKSelection(),
+      segmentNames: repository.runMany(`
+        SELECT DISTINCT Geographic_Cluster_Number, Geographic_Segment_Name
+        FROM Geographic_Segmentation WHERE CycleID = 'Cycle_0'
+        ORDER BY Geographic_Cluster_Number
+      `).map((row) => String(row.Geographic_Segment_Name)),
       clusterCount: toNumber(repository.runAggregate(`
         SELECT COUNT(DISTINCT Geographic_Cluster_Number) AS clusters
         FROM Geographic_Segmentation WHERE CycleID = @latestCycle
@@ -1081,7 +1153,7 @@ export class AnalyticsService {
       GROUP BY Country, Geographic_Segment_Name
       ORDER BY customers DESC, Country
     `, { latestCycle });
-    return { latestCycle, summary, combinations, matrix, evolution, marketMix };
+    return { latestCycle, summary, combinations, matrix, evolution, marketMix, method: marketIntegrationMethod };
   }
 
 }

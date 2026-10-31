@@ -95,7 +95,18 @@ const close = (left,right) => assert.ok(Math.abs(left-right)<1e-6, `${left} != $
   close(overview.totalRevenue,expectedSales);close(overview.orders,expectedOrders);
   assert.equal(overview.totalCustomers,4297);assert.equal(overview.fittedClusterCount,9);
   const products=a.getProductAnalytics(), geography=a.getGeographicAnalytics(), firmographic=a.getFirmographicAnalytics();
-  assert.equal(geography.clusterCount,3);
+  const marketSelection=a.getCountryMarketKSelection();
+  assert.equal(marketSelection.available,true);
+  assert.equal(marketSelection.selectedK,4);
+  assert.equal(geography.clusterCount,marketSelection.selectedK);
+  assert.equal(geography.segmentNames.length,marketSelection.selectedK);
+  assert.deepEqual(marketSelection.rows.map(row=>row.k),[2,3,4,5,6,7,8,9,10]);
+  assert.ok(marketSelection.rows.every(row=>Number.isFinite(row.inertia)&&Number.isFinite(row.silhouette)));
+  assert.equal(marketSelection.features.length,6);
+  assert.equal(evaluation.geographicMethod.features.length,6);
+  assert.equal(evaluation.geographicMethod.groups.length,marketSelection.selectedK);
+  assert.ok(marketSelection.figureUrls.wcss&&marketSelection.figureUrls.silhouette);
+  assert.equal(geography.kSelection.selectedK,4);
   assert.equal(firmographic.summary.customers,4297);
   assert.equal(firmographic.summary.behaviouralSegments,9);
   close(sum(products.portfolio,'revenue'),db.prepare('SELECT SUM(Revenue) AS n FROM Dynamic_Customer_Summary').get().n);
@@ -106,7 +117,8 @@ const close = (left,right) => assert.ok(Math.abs(left-right)<1e-6, `${left} != $
     customerCycleRows:rawRows,paginatedUniqueRows:seen.size,currentFittedPositions:pca.centroids.length,
     latestFittedK:overview.fittedClusterCount,positivePeriodRevenue:overview.totalRevenue,periodOrders:overview.orders,
     semanticAuditAvailable:true,populationQualityAvailable:true,cycle0Inertia:evaluation.baseline.Inertia,
-    geographicK:geography.clusterCount,firmographicCustomers:firmographic.summary.customers,
+    geographicK:geography.clusterCount,marketIntegrationCustomers:firmographic.summary.customers,
+    countryMarketSelection:{selectedK:marketSelection.selectedK,candidates:marketSelection.rows.length,features:marketSelection.features.length},
     approvedNamesVerified:true,perClusterQualityVerified:true,
     loadedAdditionalServices:{segments:Object.keys(segments),migration:Object.keys(migration)},cycles};
   fs.writeFileSync(path.join(run,'service_audit.json'),JSON.stringify(report,null,2));

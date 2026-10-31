@@ -1,0 +1,5 @@
+Raw_Cluster,Markets,Customer_Count,Revenue,Revenue_Per_Customer,Product_Diversity,Repeat_Purchase_Rate,Geographic_Cluster_Number,Geographic_Segment_Name
+0,13,25,20994.23,992.890282051282,43.23076923076923,0.07948717948717948,3,Lower-Volume Occasional-Purchase Markets
+1,2,7,99237.14,14105.875416666666,442.0,0.4583333333333333,1,High-Spend-per-Customer Markets
+2,1,1513,1291971.87,853.9139920687377,2747.0,0.38797091870456046,0,UK-Dominated Market
+3,13,137,172405.72,1616.2847014357058,239.0,0.538654338814801,2,Higher-Repeat Overseas Markets

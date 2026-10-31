@@ -1,0 +1,146 @@
+{
+  "passed": true,
+  "sourceRun": "named_20261025_214151",
+  "sourceDatabaseSha256": "d35c49ea2e8038b4fbb9fbc44cdea14d77c9998666195565cef908c5f09bd45f",
+  "updatedRun": "geo_20261031",
+  "selectedK": 4,
+  "features": [
+    "Log_Customer_Count",
+    "Log_Revenue",
+    "Log_Orders_Per_Customer",
+    "Log_Revenue_Per_Customer",
+    "Log_Product_Diversity",
+    "Repeat_Purchase_Rate"
+  ],
+  "cycles": 10,
+  "cycle0Markets": 29,
+  "cycle0Inertia": 46.548788615456225,
+  "cycle0Silhouette": 0.29577825948775494,
+  "retainedCustomerCycleRows": 30280,
+  "latestCustomers": 4297,
+  "latestMarketBehaviourCombinations": 31,
+  "baselineGroups": [
+    {
+      "Raw_Cluster": 0,
+      "Markets": 13,
+      "Customer_Count": 25,
+      "Revenue": 20994.23,
+      "Revenue_Per_Customer": 992.890282051282,
+      "Product_Diversity": 43.23076923076923,
+      "Repeat_Purchase_Rate": 0.07948717948717948,
+      "Geographic_Cluster_Number": 3,
+      "Geographic_Segment_Name": "Lower-Volume Occasional-Purchase Markets"
+    },
+    {
+      "Raw_Cluster": 1,
+      "Markets": 2,
+      "Customer_Count": 7,
+      "Revenue": 99237.14,
+      "Revenue_Per_Customer": 14105.875416666666,
+      "Product_Diversity": 442.0,
+      "Repeat_Purchase_Rate": 0.4583333333333333,
+      "Geographic_Cluster_Number": 1,
+      "Geographic_Segment_Name": "High-Spend-per-Customer Markets"
+    },
+    {
+      "Raw_Cluster": 2,
+      "Markets": 1,
+      "Customer_Count": 1513,
+      "Revenue": 1291971.87,
+      "Revenue_Per_Customer": 853.9139920687377,
+      "Product_Diversity": 2747.0,
+      "Repeat_Purchase_Rate": 0.38797091870456046,
+      "Geographic_Cluster_Number": 0,
+      "Geographic_Segment_Name": "UK-Dominated Market"
+    },
+    {
+      "Raw_Cluster": 3,
+      "Markets": 13,
+      "Customer_Count": 137,
+      "Revenue": 172405.72,
+      "Revenue_Per_Customer": 1616.2847014357058,
+      "Product_Diversity": 239.0,
+      "Repeat_Purchase_Rate": 0.538654338814801,
+      "Geographic_Cluster_Number": 2,
+      "Geographic_Segment_Name": "Higher-Repeat Overseas Markets"
+    }
+  ],
+  "unchangedTables": {
+    "Cluster_Lineage": {
+      "rows": 285,
+      "sha256": "16958a393b90739329e0554b3857945ee3a446f58c5e5311a75ab3ddb69a2ca2"
+    },
+    "Current_Cluster_Profiles": {
+      "rows": 61,
+      "sha256": "2b1c37a17000e89c4722a310baa78cb12aa80b7d120e1b1d88213866b3b9c679"
+    },
+    "Current_Model_Quality": {
+      "rows": 10,
+      "sha256": "367f7cba13922754ea91d121b603ed5365403f88e336d989a9671d345e86ae12"
+    },
+    "Customer": {
+      "rows": 4297,
+      "sha256": "c663d6ac25adc5977b263ecb60f3f1998fc5f552afe024eb25e063f4d6088bfd"
+    },
+    "Customer_Transitions": {
+      "rows": 28598,
+      "sha256": "3d380e0268b432baf3c366ff22a16102fe44b26187241a59f250e9b5fadd7788"
+    },
+    "Cycle_0_Elbow_Results": {
+      "rows": 9,
+      "sha256": "34f22deb76768f15220df2f8b01b662c93416d05090b5f7acad395515e65d6d7"
+    },
+    "Cycle_Definitions": {
+      "rows": 10,
+      "sha256": "f12bb9d2c44dde4a545e06d05ecca90e9448892d7bb0e4408f65358ac7298ff6"
+    },
+    "Data_Preprocessing_Results": {
+      "rows": 30280,
+      "sha256": "bacb73ca628bd6d489f11662d61cbc858258a38352c34c8f1ce6e2323c980fb2"
+    },
+    "Dynamic_Business_Analytics": {
+      "rows": 309302,
+      "sha256": "d0b9b712560f94cea20282e3168ce98d133e88e6c114f3d73b7a73c794c2025a"
+    },
+    "Dynamic_Centroids": {
+      "rows": 56,
+      "sha256": "409abec7a7d2e1936412d3584e1b969d1c452900d671f24ebfb8d98e06a2db45"
+    },
+    "Dynamic_Customer_Summary": {
+      "rows": 28598,
+      "sha256": "5ead68a5b18feaebe3a2d53c9c48c7cfb3e57c56e3f7fec17869be63965ddd94"
+    },
+    "Dynamic_Cycle_Summary": {
+      "rows": 9,
+      "sha256": "393cb8ffe0b7105a355171e9fba9a3f9f3d8e02008be62953fa9c3df36f88e3b"
+    },
+    "Dynamic_Loop_Results": {
+      "rows": 28598,
+      "sha256": "b2827039e6ba9dd5e097f95ec5e87706badb9701d559194624064d3d58bb4ca7"
+    },
+    "Dynamic_Product_Summary": {
+      "rows": 65404,
+      "sha256": "6e560f491d71a6805d046785a4bdb8ec1f911cc72b7ddc9b9063b2874a3f0035"
+    },
+    "Dynamic_Segment_Summary": {
+      "rows": 56,
+      "sha256": "1de0c39cf4f8c3b7b85f989005e987e12c8c3a5b9191190394c6a9ea899ce080"
+    },
+    "MDFCM_Candidate_Evaluations": {
+      "rows": 18,
+      "sha256": "13ca83a63a43e4e6ce9bcddd909a04bf0030ca92e77063604e6ccb2f03a77c8a"
+    },
+    "Time_Cycle_0_Segmentation": {
+      "rows": 1682,
+      "sha256": "24c05339e6adaf772211d4ea0122879cdc00d9090b6383b4c8e949cfb3df0121"
+    }
+  },
+  "behaviouralParametersUnchanged": true,
+  "sourceRunUnchanged": true,
+  "geographicMetricVerification": {
+    "noRefitting": true,
+    "allMarketAssignmentsMatchSavedCentres": true,
+    "maximumGeographicMetricResidual": 1.7763568394002505e-15,
+    "baselineGeographicInertiaMatchesSavedModel": true
+  }
+}
