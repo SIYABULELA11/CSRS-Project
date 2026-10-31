@@ -3444,9 +3444,11 @@ th {
   font-weight: 700;
 }
 
-/* Dedicated evaluation page: reference-style green small multiples. */
-.evaluation-page { --evaluation-green: #075f49; }
-:root[data-theme='dark'] .evaluation-page { --evaluation-green: #72cfaa; }
+/* Shared metric plots retain their palette on every dashboard page. */
+.evaluation-page,
+.evaluation-metric-plot { --evaluation-green: #075f49; }
+:root[data-theme='dark'] .evaluation-page,
+:root[data-theme='dark'] .evaluation-metric-plot { --evaluation-green: #72cfaa; }
 .evaluation-section-links { display: flex; flex-wrap: wrap; gap: 1.5rem; border-bottom: 1px solid var(--border); padding: 0 0 1rem; margin: 0 0 2rem; }
 .evaluation-section-links a { color: var(--green-700); font-weight: 650; text-decoration: none; }
 .evaluation-section-links a:hover { text-decoration: underline; }
